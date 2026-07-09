@@ -6,6 +6,7 @@ from agent.planner_agent import create_planner_agent
 from agent.reviewer_agent import create_reviewer_agent
 from config.settings import configure_openai_client
 from models.workflow_models import WorkflowResult
+from services.approval_service import approval_message
 from agents import Runner
 
 
@@ -34,7 +35,34 @@ async def main() -> None:
     print("\n--- Planner Output ---\n")
     print(plan_result.final_output)
 
-    execution_prompt = f"Goal:\n{goal}\n\nPlan:\n{plan_result.final_output}\n\nExecute this plan."
+    # Human-in-the-loop gate:
+    # The orchestrator checks the original goal before the executor runs.
+    # This makes approval deterministic instead of depending only on the LLM.
+    approval_status = approval_message(goal)
+    print("\n--- Human Approval Check ---\n")
+    print(approval_status)
+
+    if "required" in approval_status.lower():
+        approval = input("Approve this risky workflow? Type yes or no: ").strip().lower()
+        if approval != "yes":
+            print("\nWorkflow stopped because human approval was not granted.")
+            return
+
+        approval_status = "Human approval granted. Executor may continue."
+        print(approval_status)
+
+    execution_prompt = f"""
+Goal:
+{goal}
+
+Plan:
+{plan_result.final_output}
+
+Human approval status:
+{approval_status}
+
+Execute this plan. If approval was required but not granted, do not continue.
+"""
     execution_result = await Runner.run(executor, execution_prompt)
     print("\n--- Executor Output ---\n")
     print(execution_result.final_output)

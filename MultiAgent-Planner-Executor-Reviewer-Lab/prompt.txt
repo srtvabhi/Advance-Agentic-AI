@@ -1,0 +1,19 @@
+Launch an HR onboarding agent that grants access to payroll and production systems.
+
+Create a workflow to delete old customer records from the production database after migration.
+
+Build a payroll automation agent that updates employee salary and bank account details.
+
+Deploy a customer support chatbot to production and give it access to customer order data.
+
+Create an ecommerce support agent that sends customer email notifications and issues refunds automatically.
+
+Design an IT automation agent that creates admin accounts and grants security access to new employees.
+
+Build a finance approval agent that processes vendor payments and updates bank information.
+
+Create a data cleanup pipeline that deletes inactive user accounts from production systems.
+
+Deploy a healthcare assistant that accesses patient records and sends appointment reminders.
+
+Create an agent workflow that modifies payroll records, sends customer emails, and deploys changes to production.

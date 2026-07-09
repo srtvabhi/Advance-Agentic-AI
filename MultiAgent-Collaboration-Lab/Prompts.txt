@@ -1,0 +1,9 @@
+Design an AI agent system for IT service desk automation.
+
+Design a multi-agent system for ecommerce customer support.
+
+Design an AI workflow for invoice processing in finance.
+
+Design an AI agent system for employee onboarding.
+
+Design a multi-agent solution for insurance claim processing.
