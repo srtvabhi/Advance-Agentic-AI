@@ -1,0 +1,11 @@
+Enterprise Hybrid Work Policy
+
+Employees may work remotely up to two days per week without special approval when their role is marked hybrid eligible. The employee must keep the team calendar updated and must be reachable during core collaboration hours from 10:00 AM to 3:00 PM local time.
+
+Remote work for three days per week requires manager approval and a business justification. Four or five remote days per week require approval from the department director and HR business partner. Fully remote arrangements must be reviewed every six months.
+
+Employees who handle regulated customer data must use company-managed devices, VPN, endpoint protection, and approved collaboration tools. Confidential documents may not be downloaded to personal devices or printed at home.
+
+Office attendance is required for customer workshops, quarterly planning, security incidents, onboarding activities, and manager-designated team events. Travel time to the office is not reimbursable for normal hybrid work.
+
+Exceptions may be approved for medical accommodation, caregiving emergency, weather disruption, or temporary office closure. Accommodation requests must be handled through HR and should not include medical details in team chat.

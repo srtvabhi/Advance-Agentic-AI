@@ -48,6 +48,48 @@ This repository contains hands-on labs for building agentic AI applications with
    - Resilient workflow with retries
    - Invoice processing with validation, retry, and approval recommendation
 
+### Module 4: AutoGen and Enterprise Agent Collaboration
+
+10. `10-AutoGen-Collaborative-Workflow-Lab`
+   - AutoGen collaborative group conversation
+   - Business, architecture, security, and coordinator agents
+
+11. `11-AutoGen-Reviewer-Validation-Lab`
+   - Reviewer-validation agent pattern
+   - Policy writer and validation reviewer agents
+
+12. `12-AutoGen-Autonomous-Ecosystem-Lab`
+   - Autonomous task-solving ecosystem
+   - Tool-enabled operations agent with incident response agents
+
+### Module 5: Advanced Retrieval-Augmented Generation (RAG)
+
+13. `13-OpenAI-Agentic-RAG-Lab`
+   - Multi-step Agentic RAG workflow
+   - Retrieval planning, PDF chunking, ChromaDB, and grounded answers
+
+14. `14-OpenAI-Query-Decomposition-RAG-Lab`
+   - Query decomposition for retrieval
+   - Multi-hop retrieval over a security incident runbook PDF
+
+15. `15-OpenAI-Hybrid-Search-RAG-Lab`
+   - Hybrid retrieval pipeline
+   - Semantic search, keyword search, metadata filtering, and ChromaDB
+
+### Module 8: Semantic Kernel and Enterprise AI Plugins
+
+16. `16-SemanticKernel-Plugins-RAG-Lab`
+   - Build AI plugins using Semantic Kernel
+   - HR policy RAG plugin with ChromaDB
+
+17. `17-SemanticKernel-Orchestrated-Workflow-Lab`
+   - Orchestrated AI workflow
+   - Vendor risk workflow with native plugins and semantic functions
+
+18. `18-SemanticKernel-Automation-Pipeline-Lab`
+   - Multi-step AI automation pipeline
+   - IT change automation with RAG-backed standards retrieval
+
 ## Setup
 
 Create and activate a virtual environment from the repository root:
@@ -126,6 +168,51 @@ cd 8-LangGraph-Conditional-Routing-Lab
 
 ```bash
 cd 9-LangGraph-Resilient-Retry-Lab
+..\.venv\Scripts\python.exe main.py
+```
+
+```bash
+cd 10-AutoGen-Collaborative-Workflow-Lab
+..\.venv\Scripts\python.exe main.py
+```
+
+```bash
+cd 11-AutoGen-Reviewer-Validation-Lab
+..\.venv\Scripts\python.exe main.py
+```
+
+```bash
+cd 12-AutoGen-Autonomous-Ecosystem-Lab
+..\.venv\Scripts\python.exe main.py
+```
+
+```bash
+cd 13-OpenAI-Agentic-RAG-Lab
+..\.venv\Scripts\python.exe main.py
+```
+
+```bash
+cd 14-OpenAI-Query-Decomposition-RAG-Lab
+..\.venv\Scripts\python.exe main.py
+```
+
+```bash
+cd 15-OpenAI-Hybrid-Search-RAG-Lab
+..\.venv\Scripts\python.exe main.py
+```
+
+```bash
+cd 16-SemanticKernel-Plugins-RAG-Lab
+..\.venv\Scripts\python.exe main.py
+```
+
+```bash
+cd 17-SemanticKernel-Orchestrated-Workflow-Lab
+..\.venv\Scripts\python.exe main.py
+```
+
+```bash
+cd 18-SemanticKernel-Automation-Pipeline-Lab
 ..\.venv\Scripts\python.exe main.py
 ```
 

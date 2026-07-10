@@ -1,0 +1,13 @@
+Enterprise Change Management Standard
+
+All production technology changes must have a change record, implementation owner, business justification, risk assessment, rollback plan, validation plan, and communication plan. The change owner must confirm that monitoring and support coverage are available during the implementation window.
+
+Normal changes require manager approval and service owner approval. They must be submitted at least five business days before implementation. Standard changes may follow a pre-approved template when the action is low risk, repeatable, and has a proven rollback procedure.
+
+High risk changes include firewall rules, identity provider configuration, database schema updates, payment systems, customer-facing services, and changes affecting regulated data. High risk changes require Change Advisory Board approval, service owner approval, security review, and a named rollback owner.
+
+Emergency changes are allowed only to restore service, address active security risk, or prevent major business impact. Emergency changes require incident commander approval before implementation and retrospective CAB review within two business days.
+
+Implementation steps must be clear, ordered, and assigned. Rollback steps must include the exact command, configuration version, or deployment artifact needed to return to the previous state. Validation checks must include technical health checks and business transaction checks.
+
+Communication must be sent before and after the change to service owners, support teams, and affected business stakeholders. Customer communication requires product owner and communications team approval.

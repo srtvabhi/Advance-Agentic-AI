@@ -1,0 +1,17 @@
+Enterprise Product Support Knowledge Base
+
+AnalyticsPro overview: AnalyticsPro is the enterprise analytics dashboard used by finance, sales, and operations teams. It connects to governed datasets, refreshes dashboards on a schedule, and applies row-level security based on group membership.
+
+AnalyticsPro token expired issue: If a dashboard refresh fails with token expired, support should confirm whether the service principal secret or certificate expired. The support engineer should rotate the credential, update the connection profile, run a manual refresh, and confirm that the dataset owner receives a success notification.
+
+AnalyticsPro cache mismatch issue: Cache mismatch means the dashboard metadata does not match the latest dataset schema. Support should clear the workspace cache, refresh the semantic model, validate column mappings, and ask the report owner to republish if the schema changed.
+
+AnalyticsPro escalation: Escalate to the data platform team when refresh failures affect executive dashboards, finance close reporting, regulated metrics, or more than twenty users. Include dataset name, workspace, refresh job ID, error text, and last successful refresh time.
+
+SecurePay overview: SecurePay is the enterprise payment processing service used by digital commerce applications. It supports card authorization, tokenized payment methods, refunds, and settlement reports.
+
+SecurePay authorization failure: If SecurePay returns authorization failed, support should check merchant configuration, payment gateway connectivity, fraud policy response, and card network status. Do not ask customers to send full card numbers. Use tokenized transaction IDs only.
+
+SecurePay settlement delay: Settlement delay usually means the settlement file was not received or reconciliation is waiting for bank confirmation. Support should check settlement batch ID, bank response code, retry status, and finance notification records.
+
+SecurePay escalation: Escalate to payment operations for settlement delays over four hours, customer-impacting authorization failures, suspected fraud rule misconfiguration, or missing transaction logs. Include merchant ID, tokenized transaction ID, timestamp, and gateway response code.

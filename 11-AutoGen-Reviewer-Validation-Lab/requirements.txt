@@ -1,0 +1,6 @@
+openai==2.44.0
+openai-agents==0.18.0
+python-dotenv==1.2.2
+autogen-agentchat==0.7.5
+autogen-ext==0.7.5
+
