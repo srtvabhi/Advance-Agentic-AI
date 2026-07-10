@@ -33,7 +33,7 @@ Final Workflow Summary
 ## Folder Structure
 
 ```text
-MultiAgent-Planner-Executor-Reviewer-Lab/
+4-MultiAgent-Planner-Executor-Reviewer-Lab/
 ├── .env
 ├── requirements.txt
 ├── main.py
@@ -65,7 +65,7 @@ MultiAgent-Planner-Executor-Reviewer-Lab/
 ## How To Run
 
 ```bash
-cd MultiAgent-Planner-Executor-Reviewer-Lab
+cd 4-MultiAgent-Planner-Executor-Reviewer-Lab
 ..\.venv\Scripts\python.exe main.py
 ```
 

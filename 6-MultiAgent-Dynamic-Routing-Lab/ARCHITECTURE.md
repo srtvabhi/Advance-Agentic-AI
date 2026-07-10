@@ -33,7 +33,7 @@ Final Answer
 ## Folder Structure
 
 ```text
-MultiAgent-Dynamic-Routing-Lab/
+6-MultiAgent-Dynamic-Routing-Lab/
 ├── .env
 ├── requirements.txt
 ├── main.py
@@ -66,7 +66,7 @@ MultiAgent-Dynamic-Routing-Lab/
 ## How To Run
 
 ```bash
-cd MultiAgent-Dynamic-Routing-Lab
+cd 6-MultiAgent-Dynamic-Routing-Lab
 ..\.venv\Scripts\python.exe main.py
 ```
 

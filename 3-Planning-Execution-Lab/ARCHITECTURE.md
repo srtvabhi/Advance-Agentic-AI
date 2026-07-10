@@ -36,7 +36,7 @@ Final Pipeline Summary
 ## Folder Structure
 
 ```text
-Planning-Execution-Lab/
+3-Planning-Execution-Lab/
 ├── .env
 ├── requirements.txt
 ├── main.py
@@ -198,7 +198,7 @@ Participants can also enter their own problem statement when running the lab.
 From the root workspace folder:
 
 ```bash
-cd Planning-Execution-Lab
+cd 3-Planning-Execution-Lab
 ..\.venv\Scripts\python.exe main.py
 ```
 

@@ -48,7 +48,7 @@ Enterprise Agent
 ## Folder Structure
 
 ```text
-Enterprise-Agent-Lab/
+1-Enterprise-Agent-Lab/
 ├── .env
 ├── requirements.txt
 ├── main.py
@@ -251,7 +251,7 @@ I am building an enterprise HR helpdesk agent. Search the web for best practices
 From the root workspace folder:
 
 ```bash
-cd Enterprise-Agent-Lab
+cd 1-Enterprise-Agent-Lab
 ..\.venv\Scripts\python.exe main.py
 ```
 

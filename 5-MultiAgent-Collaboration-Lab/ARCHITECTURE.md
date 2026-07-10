@@ -35,7 +35,7 @@ Final Collaboration Summary
 ## Folder Structure
 
 ```text
-MultiAgent-Collaboration-Lab/
+5-MultiAgent-Collaboration-Lab/
 ├── .env
 ├── requirements.txt
 ├── main.py
@@ -63,7 +63,7 @@ MultiAgent-Collaboration-Lab/
 ## How To Run
 
 ```bash
-cd MultiAgent-Collaboration-Lab
+cd 5-MultiAgent-Collaboration-Lab
 ..\.venv\Scripts\python.exe main.py
 ```
 

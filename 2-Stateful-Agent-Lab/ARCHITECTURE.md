@@ -39,7 +39,7 @@ Next user message continues with memory
 ## Folder Structure
 
 ```text
-Stateful-Agent-Lab/
+2-Stateful-Agent-Lab/
 ├── .env
 ├── requirements.txt
 ├── main.py
@@ -201,7 +201,7 @@ Stops the application.
 From the root workspace folder:
 
 ```bash
-cd Stateful-Agent-Lab
+cd 2-Stateful-Agent-Lab
 ..\.venv\Scripts\python.exe main.py
 ```
 
