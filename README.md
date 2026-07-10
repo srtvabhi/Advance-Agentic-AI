@@ -34,6 +34,20 @@ This repository contains hands-on labs for building agentic AI applications with
    - Supervisor/router architecture
    - Router agent selects the correct specialist agent
 
+### Module 3: LangGraph for Advanced Agent Workflows
+
+7. `7-LangGraph-MultiStep-Orchestration-Lab`
+   - Multi-step LangGraph orchestration
+   - Intake -> planning -> execution -> summary
+
+8. `8-LangGraph-Conditional-Routing-Lab`
+   - Conditional agent routing flow
+   - Router node selects business, technical, risk, or general node
+
+9. `9-LangGraph-Resilient-Retry-Lab`
+   - Resilient workflow with retries
+   - Invoice processing with validation, retry, and approval recommendation
+
 ## Setup
 
 Create and activate a virtual environment from the repository root:
@@ -97,6 +111,21 @@ cd 5-MultiAgent-Collaboration-Lab
 
 ```bash
 cd 6-MultiAgent-Dynamic-Routing-Lab
+..\.venv\Scripts\python.exe main.py
+```
+
+```bash
+cd 7-LangGraph-MultiStep-Orchestration-Lab
+..\.venv\Scripts\python.exe main.py
+```
+
+```bash
+cd 8-LangGraph-Conditional-Routing-Lab
+..\.venv\Scripts\python.exe main.py
+```
+
+```bash
+cd 9-LangGraph-Resilient-Retry-Lab
 ..\.venv\Scripts\python.exe main.py
 ```
 
