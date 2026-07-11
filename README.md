@@ -6,31 +6,31 @@ This repository contains hands-on labs for building agentic AI applications with
 
 ### Module 1: Advanced Agentic AI Architecture Patterns
 
-1. `1-Enterprise-Agent-Lab`
+1. `1- OpenAI Agent SDK-Enterprise-Agent-Lab`
    - Enterprise tool-calling agent
    - Tools: calculator, date/time, weather, web search
 
-2. `2-Stateful-Agent-Lab`
+2. `2- OpenAI Agent SDK-Stateful-Agent-Lab`
    - Stateful agent workflow
    - Short-term conversation memory using `Memory.py`
 
-3. `3-Planning-Execution-Lab`
+3. `3- OpenAI Agent SDK-Planning-Execution-Lab`
    - AI planning and execution pipeline
    - Planner, executor, reviewer agents
 
 ### Module 2: Multi-Agent Orchestration Patterns
 
-4. `4-MultiAgent-Planner-Executor-Reviewer-Lab`
+4. `4- OpenAI Agent SDK-MultiAgent-Planner-Executor-Reviewer-Lab`
    - Sequential orchestration
    - Planner Agent -> Executor Agent -> Reviewer Agent
    - Includes human approval gate
 
-5. `5-MultiAgent-Collaboration-Lab`
+5. `5- OpenAI Agent SDK-MultiAgent-Collaboration-Lab`
    - Concurrent orchestration
    - Business, Technical, and Risk agents collaborate
    - Coordinator agent combines results
 
-6. `6-MultiAgent-Dynamic-Routing-Lab`
+6. `6- OpenAI Agent SDK-MultiAgent-Dynamic-Routing-Lab`
    - Supervisor/router architecture
    - Router agent selects the correct specialist agent
 
@@ -125,34 +125,34 @@ AZURE_OPENAI_DEPLOYMENT=gpt-5
 From the repository root:
 
 ```bash
-cd 1-Enterprise-Agent-Lab
+cd 1- OpenAI Agent SDK-Enterprise-Agent-Lab
 ..\.venv\Scripts\python.exe main.py
 ```
 
 Use the same pattern for other labs:
 
 ```bash
-cd 2-Stateful-Agent-Lab
+cd 2- OpenAI Agent SDK-Stateful-Agent-Lab
 ..\.venv\Scripts\python.exe main.py
 ```
 
 ```bash
-cd 3-Planning-Execution-Lab
+cd 3- OpenAI Agent SDK-Planning-Execution-Lab
 ..\.venv\Scripts\python.exe main.py
 ```
 
 ```bash
-cd 4-MultiAgent-Planner-Executor-Reviewer-Lab
+cd 4- OpenAI Agent SDK-MultiAgent-Planner-Executor-Reviewer-Lab
 ..\.venv\Scripts\python.exe main.py
 ```
 
 ```bash
-cd 5-MultiAgent-Collaboration-Lab
+cd 5- OpenAI Agent SDK-MultiAgent-Collaboration-Lab
 ..\.venv\Scripts\python.exe main.py
 ```
 
 ```bash
-cd 6-MultiAgent-Dynamic-Routing-Lab
+cd 6- OpenAI Agent SDK-MultiAgent-Dynamic-Routing-Lab
 ..\.venv\Scripts\python.exe main.py
 ```
 
@@ -221,3 +221,4 @@ cd 18-SemanticKernel-Automation-Pipeline-Lab
 - Do not commit real `.env` files.
 - Use `.env.example` files for sharing configuration templates.
 - `ARCHITECTURE.md` files explain each lab design.
+

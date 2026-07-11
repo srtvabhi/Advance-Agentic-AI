@@ -1,0 +1,11 @@
+Document 1: Employee Hardware Policy
+New employees receive a standard laptop, security token, monitor, keyboard, and headset. Laptop provisioning normally takes three business days after HR confirms start date.
+
+Document 2: Access Management Policy
+Production access requires manager approval, security approval, MFA enrollment, and an audit ticket. Temporary access expires after seven days unless renewed.
+
+Document 3: Support Ticket Policy
+Low-risk service requests can be fulfilled automatically. High-risk requests involving production, payroll, customer data, or admin access must be escalated.
+
+Document 4: Cost Control Policy
+Enterprise AI workflows should track token usage, tool calls, latency, and failed requests. Monthly cost review is required for production AI services.
