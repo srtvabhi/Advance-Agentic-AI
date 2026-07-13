@@ -159,6 +159,37 @@ team = RoundRobinGroupChat(
 result = await team.run(task="Design a customer support automation workflow.")
 ```
 
+### Multi-Agent `main()` Function
+
+```python
+async def main() -> None:
+    model_client = create_model_client()
+    team = create_team(model_client)
+    task = input("Enter enterprise task: ").strip() or "Design a customer support automation workflow."
+    try:
+        result = await team.run(task=task)
+        for message in result.messages:
+            if type(message).__name__ == "ThoughtEvent":
+                continue
+            source = getattr(message, "source", "unknown")
+            content = getattr(message, "content", "")
+            if content:
+                print(f"\n--- {source} ---\n{content}")
+    finally:
+        await model_client.close()
+```
+
+Explanation:
+
+- `create_model_client()` creates the Azure OpenAI client.
+- `create_team(model_client)` creates the AutoGen multi-agent team.
+- `input(...)` asks the user for an enterprise task and uses a default if the user presses Enter.
+- `await team.run(task=task)` runs the full multi-agent conversation.
+- `result.messages` contains all messages produced during the team run.
+- `ThoughtEvent` messages are skipped so the terminal output stays cleaner.
+- `getattr(...)` safely reads the message source and content.
+- `await model_client.close()` closes the model client even if an error happens.
+
 ## 6. Troubleshooting
 
 ### `ModuleNotFoundError: No module named 'tiktoken'`
