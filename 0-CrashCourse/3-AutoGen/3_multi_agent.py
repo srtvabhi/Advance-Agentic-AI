@@ -53,3 +53,13 @@ async def main() -> None:
 
 if __name__ == "__main__":
     asyncio.run(main())
+
+
+"""
+Prompts :
+
+Plan the migration of 50 applications to Azure within 6 months using a team of 10 engineers.
+
+Create a project plan to reduce production incidents by 25% within 90 days.
+
+"""
