@@ -55,3 +55,16 @@ agent = Agent(
 question = input("Ask a math or weather question: ")
 result = Runner.run_sync(agent, question)
 print("Agent:", result.final_output)
+
+"""
+Sample Prompt
+What is 10 + 5?
+Calculate 25 * 8
+What is 100 / 4?
+Calculate (10 + 5) * 3
+What is 2 ** 4?
+Calculate 17 % 5
+What is 20 // 3?
+
+tell me delhi weather
+"""
