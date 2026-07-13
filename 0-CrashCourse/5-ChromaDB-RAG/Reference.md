@@ -8,6 +8,16 @@ python-dotenv==1.2.2
 chromadb==1.5.9
 ```
 
+## Local Environment
+
+Each Python file in this folder loads configuration from this folder's own `.env` file:
+
+```python
+load_dotenv(Path(__file__).with_name(".env"), override=True)
+```
+
+This means the examples do not depend on the parent/global `.env` file. A virtual environment only provides installed packages; it does not provide Azure OpenAI settings. This folder also uses `Embedding_Model=text-embedding-3-large` from its local `.env` file for vector embeddings.
+
 ## 1. Create An OpenAI Client
 
 Syntax:

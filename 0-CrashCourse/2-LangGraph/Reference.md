@@ -9,6 +9,16 @@ langgraph==1.2.9
 langchain-core==1.4.9
 ```
 
+## Local Environment
+
+Each Python file in this folder loads configuration from this folder's own `.env` file:
+
+```python
+load_dotenv(Path(__file__).with_name(".env"), override=True)
+```
+
+This means the examples do not depend on the parent/global `.env` file. A virtual environment only provides installed packages; it does not provide Azure OpenAI settings.
+
 ## 1. Define Graph State
 
 Syntax:
