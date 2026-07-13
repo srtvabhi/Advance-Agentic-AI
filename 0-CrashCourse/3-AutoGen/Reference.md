@@ -10,6 +10,8 @@ autogen-ext==0.7.5
 tiktoken==0.13.0
 ```
 
+`tiktoken` is required because AutoGen's `OpenAIChatCompletionClient` imports it internally for token counting and context-size handling. Your code may not import `tiktoken` directly, but AutoGen needs it at runtime.
+
 ## Local Environment
 
 Each Python file in this folder loads configuration from this folder's own `.env` file:
