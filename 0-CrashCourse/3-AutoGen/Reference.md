@@ -113,6 +113,8 @@ agent = AssistantAgent(
 )
 ```
 
+`max_tool_iterations=3` means the agent can call tools up to 3 times during one task before giving the final answer.
+
 Example:
 
 ```python
