@@ -2,3 +2,4 @@ openai==2.44.0
 python-dotenv==1.2.2
 autogen-agentchat==0.7.5
 autogen-ext==0.7.5
+tiktoken==0.13.0

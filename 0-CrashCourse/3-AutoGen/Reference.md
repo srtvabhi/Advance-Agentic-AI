@@ -7,6 +7,7 @@ openai==2.44.0
 python-dotenv==1.2.2
 autogen-agentchat==0.7.5
 autogen-ext==0.7.5
+tiktoken==0.13.0
 ```
 
 ## Local Environment
@@ -152,4 +153,20 @@ team = RoundRobinGroupChat(
     termination_condition=MaxMessageTermination(4),
 )
 result = await team.run(task="Design a customer support automation workflow.")
+```
+
+## 6. Troubleshooting
+
+### `ModuleNotFoundError: No module named 'tiktoken'`
+
+AutoGen's OpenAI model client imports `tiktoken` internally for token handling. Install this folder's pinned requirements:
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+The `requirements.txt` file includes:
+
+```txt
+tiktoken==0.13.0
 ```
