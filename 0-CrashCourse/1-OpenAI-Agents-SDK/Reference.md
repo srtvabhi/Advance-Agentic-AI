@@ -20,7 +20,7 @@ Create a virtual environment, activate it, and install the packages:
 
 ```powershell
 python -m venv .venv
-.\.venv\Scripts\Activate.ps1
+.\.venv\Scripts\Activate
 python -m pip install -r requirements.txt
 ```
 
@@ -521,7 +521,7 @@ The first two examples use `run_sync` to remain easy for beginners. The multi-ag
 The virtual environment is not active or its requirements were not installed:
 
 ```powershell
-.\.venv\Scripts\Activate.ps1
+.\.venv\Scripts\Activate
 python -m pip install -r requirements.txt
 python -c "import sys; print(sys.executable)"
 ```
