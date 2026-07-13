@@ -45,10 +45,20 @@ def build_graph():
     return graph.compile()
 
 
+# Print the LangGraph structure as Mermaid text.
+# You can paste this Mermaid code into https://mermaid.live to see a visual diagram.
+def show_graph(workflow) -> None:
+    print("\nLangGraph structure:")
+    print(workflow.get_graph().draw_mermaid())
+
+
 # Run the graph with user input.
 def main() -> None:
+    workflow = build_graph()
+    show_graph(workflow)
+
     question = input("Ask a question: ").strip() or "Explain LangGraph in one paragraph."
-    result = build_graph().invoke({"question": question, "answer": ""})
+    result = workflow.invoke({"question": question, "answer": ""})
     print("\nAgent:", result["answer"])
 
 

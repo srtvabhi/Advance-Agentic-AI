@@ -106,28 +106,96 @@ result = build_graph().invoke({"question": question, "answer": ""})
 print(result["answer"])
 ```
 
-## 5. Tool Calling In A Graph
+## 5. Display A Graph
 
 Syntax:
 
 ```python
-def tool_node(state: ToolState) -> ToolState:
-    state["tool_result"] = tool_function(state["question"])
-    return state
+def show_graph(workflow) -> None:
+    print(workflow.get_graph().draw_mermaid())
 ```
 
 Example:
 
 ```python
-def tool_node(state: ToolState) -> ToolState:
+workflow = build_graph()
+show_graph(workflow)
+```
+
+This prints Mermaid diagram text. Paste the Mermaid output into:
+
+```text
+https://mermaid.live
+```
+
+Example graph output:
+
+```text
+__start__ --> router
+router --> calculator
+router --> weather
+router --> no_tool
+calculator --> answer
+weather --> answer
+no_tool --> answer
+answer --> __end__
+```
+
+## 6. Tool Calling With Conditional Branches
+
+Syntax:
+
+```python
+def router_node(state: ToolState) -> ToolState:
     if "weather" in state["question"].lower():
-        state["tool_result"] = get_weather("Delhi")
+        state["route"] = "weather"
+    elif "calculate" in state["question"].lower():
+        state["route"] = "calculator"
     else:
-        state["tool_result"] = calculator("40 * 5")
+        state["route"] = "no_tool"
+    return state
+
+def choose_tool_branch(state: ToolState) -> str:
+    return state["route"]
+```
+
+Example:
+
+```python
+graph = StateGraph(ToolState)
+graph.add_node("router", router_node)
+graph.add_node("calculator", calculator_node)
+graph.add_node("weather", weather_node)
+graph.add_node("no_tool", no_tool_node)
+graph.add_node("answer", answer_node)
+
+graph.set_entry_point("router")
+graph.add_conditional_edges(
+    "router",
+    choose_tool_branch,
+    {
+        "calculator": "calculator",
+        "weather": "weather",
+        "no_tool": "no_tool",
+    },
+)
+graph.add_edge("calculator", "answer")
+graph.add_edge("weather", "answer")
+graph.add_edge("no_tool", "answer")
+graph.add_edge("answer", END)
+workflow = graph.compile()
+```
+
+Branch node example:
+
+```python
+def calculator_node(state: ToolState) -> ToolState:
+    expression = state["question"].lower().replace("calculate", "").strip()
+    state["tool_result"] = calculator(expression)
     return state
 ```
 
-## 6. Multi-Agent Orchestration
+## 7. Multi-Agent Orchestration
 
 Syntax:
 

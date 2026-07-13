@@ -65,10 +65,20 @@ def build_graph():
     return graph.compile()
 
 
+# Print the LangGraph structure as Mermaid text.
+# You can paste this Mermaid code into https://mermaid.live to see a visual diagram.
+def show_graph(workflow) -> None:
+    print("\nLangGraph structure:")
+    print(workflow.get_graph().draw_mermaid())
+
+
 # Run the multi-agent graph.
 def main() -> None:
+    workflow = build_graph()
+    show_graph(workflow)
+
     task = input("Enter enterprise task: ").strip() or "Design an IT incident response workflow."
-    result = build_graph().invoke({"task": task, "plan": "", "execution": "", "review": ""})
+    result = workflow.invoke({"task": task, "plan": "", "execution": "", "review": ""})
     print("\n--- Planner ---\n", result["plan"])
     print("\n--- Executor ---\n", result["execution"])
     print("\n--- Reviewer ---\n", result["review"])
@@ -77,3 +87,11 @@ def main() -> None:
 if __name__ == "__main__":
     main()
 
+"""
+Prompts :
+
+Plan the migration of 50 applications to Azure within 6 months using a team of 10 engineers.
+
+Create a project plan to reduce production incidents by 25% within 90 days.
+
+"""
