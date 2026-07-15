@@ -2,38 +2,44 @@
 
 ## Objective
 
-This merged lab covers three Module 1 hands-on objectives in one enterprise-style folder:
+This single lab demonstrates three Module 1 objectives using one enterprise-grade application architecture:
 
 1. Design an enterprise-grade agent architecture.
 2. Build a stateful agent workflow design.
 3. Create an AI planning and execution pipeline.
 
-The original concepts are preserved, but learners now run everything from one `Module-1 Lab` folder.
+It is not a copy of three separate labs. It is one functional lab with one architecture and three selectable objectives.
 
 ## Architecture Flow
 
 ```text
-Module-1 Lab/main.py
-   |
-   +--> enterprise_architecture/main.py
-   |       |
-   |       +--> Enterprise Tool Agent
-   |       +--> Tools
-   |       +--> Services
-   |       +--> Models
-   |
-   +--> stateful_workflow/main.py
-   |       |
-   |       +--> Stateful Agent
-   |       +--> Conversation Memory
-   |       +--> Conversation Models
-   |
-   +--> planning_pipeline/main.py
-           |
-           +--> Planner Agent
-           +--> Executor Agent
-           +--> Reviewer Agent
-           +--> Approval and Task Tools
+User
+ |
+ v
+main.py
+ |
+ +--> Objective 1: Enterprise Tool Agent
+ |       |
+ |       +--> Date Time Tool
+ |       +--> Calculator Tool
+ |       +--> Weather Tool --> Weather Service --> OpenWeatherMap
+ |       +--> Search Tool  --> Search Service  --> Serper
+ |
+ +--> Objective 2: Stateful Workflow Agent
+ |       |
+ |       +--> ConversationMemory
+ |       +--> Previous messages sent back to agent
+ |
+ +--> Objective 3: Planning Pipeline
+         |
+         +--> Planner Agent
+         +--> Executor Agent
+         |       |
+         |       +--> Approval Tool --> Approval Service
+         |       +--> Task Tool     --> Task Service
+         |
+         +--> Reviewer Agent
+         +--> PipelineResult
 ```
 
 ## Folder Structure
@@ -46,62 +52,69 @@ Module-1 Lab/
 ├── main.py
 ├── ARCHITECTURE.md
 ├── Reference.md
-├── enterprise_architecture/
-│   ├── main.py
-│   ├── config/
-│   ├── agent/
-│   ├── tools/
-│   ├── services/
-│   └── models/
-├── stateful_workflow/
-│   ├── main.py
-│   ├── Memory.py
-│   ├── config/
-│   ├── agent/
-│   └── models/
-└── planning_pipeline/
-    ├── main.py
-    ├── config/
-    ├── agent/
-    ├── tools/
-    ├── services/
-    └── models/
+├── config/
+│   └── settings.py
+├── agent/
+│   └── module1_agents.py
+├── tools/
+│   ├── approval.py
+│   ├── calculator.py
+│   ├── datetime_tool.py
+│   ├── search.py
+│   ├── task_status.py
+│   └── weather.py
+├── services/
+│   ├── approval_service.py
+│   ├── search_service.py
+│   ├── task_service.py
+│   └── weather_service.py
+├── memory/
+│   └── conversation_memory.py
+└── models/
+    ├── conversation_models.py
+    ├── pipeline_models.py
+    └── response_models.py
 ```
 
 ## File Responsibilities
 
-### Root `main.py`
+### `main.py`
 
-This is the merged lab launcher. It displays a menu and runs one of the three lab objectives.
+This is the application entry point. It shows one menu with three Module 1 objectives:
 
-### Root `.env`
+- enterprise architecture
+- stateful workflow
+- planning pipeline
 
-This is the single configuration file for the merged lab. All three internal workflows load this root `.env` file.
+### `config/settings.py`
 
-### `enterprise_architecture/`
+Loads the local `.env` file and configures the OpenAI Agents SDK to use Azure OpenAI Foundry.
 
-This workstream demonstrates an enterprise-style tool-calling agent. The agent can use tools for:
+### `agent/module1_agents.py`
 
-- date and time
-- calculator
-- weather
-- web search
+Creates all agents used by this single lab:
 
-The architecture separates agent behavior, tool wrappers, service logic, response models, and configuration.
+- `Module 1 Enterprise Agent`
+- `Module 1 Stateful Agent`
+- `Planner Agent`
+- `Executor Agent`
+- `Reviewer Agent`
 
-### `stateful_workflow/`
+### `tools/`
 
-This workstream demonstrates short-term session memory. The `ConversationMemory` class keeps previous messages during the running terminal session.
+Contains agent-callable functions. Tools are intentionally thin wrappers around services.
 
-The agent receives the conversation history, so follow-up questions can use earlier context.
+### `services/`
 
-### `planning_pipeline/`
+Contains business logic and external API integration. This keeps tool code simple and keeps integrations reusable.
 
-This workstream demonstrates a planner-executor-reviewer pipeline:
+### `memory/`
 
-1. Planner creates a plan.
-2. Executor turns the plan into actions and calls tools.
-3. Reviewer checks risks, gaps, and approvals.
+Contains short-term conversation memory for the stateful workflow objective.
+
+### `models/`
+
+Contains simple dataclasses for weather/search responses, conversation memory display, and final pipeline output.
 
 ## How To Run
 
@@ -112,24 +125,24 @@ cd "Module-1 Lab"
 & "..\.venv\Scripts\python.exe" main.py
 ```
 
-If you are already inside `Module-1 Lab`, run:
+Then choose:
 
-```powershell
-& "..\.venv\Scripts\python.exe" main.py
+```text
+1 = enterprise-grade agent architecture
+2 = stateful agent workflow design
+3 = AI planning and execution pipeline
 ```
 
-If your terminal does not accept the space in the command above, use:
+## Why This Architecture Is Enterprise Style
 
-```powershell
-& "..\.venv\Scripts\python.exe" main.py
-```
+This architecture separates responsibilities:
 
-## Key Learning Points
+- `main.py` handles user interaction and orchestration.
+- `agent/` defines agent behavior.
+- `tools/` exposes actions to agents.
+- `services/` contains external API and business logic.
+- `memory/` owns stateful conversation behavior.
+- `models/` structures data.
+- `config/` handles environment and SDK setup.
 
-- Enterprise-grade folder structure
-- Tool-driven agent architecture
-- Stateful vs stateless workflows
-- Short-term memory
-- Planning and execution pipeline
-- Reviewer validation pattern
-- Shared configuration from a single `.env`
+That separation makes the lab easier to explain, test, extend, and maintain.

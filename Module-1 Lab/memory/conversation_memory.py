@@ -1,12 +1,9 @@
 from models.conversation_models import MemoryItem
 
 
-# Memory.py
-# This class stores previous conversation messages.
-# It acts as short-term memory for the current terminal session.
-
-
 class ConversationMemory:
+    """Short-term memory for the current terminal session."""
+
     def __init__(self) -> None:
         self.input_items = []
 
@@ -15,7 +12,7 @@ class ConversationMemory:
         self.input_items.append({"role": "user", "content": message})
 
     def get_items(self) -> list:
-        """Return all messages stored in memory."""
+        """Return all stored messages."""
         return self.input_items
 
     def update_from_result(self, result) -> None:
@@ -23,11 +20,11 @@ class ConversationMemory:
         self.input_items = result.to_input_list()
 
     def clear(self) -> None:
-        """Clear all stored conversation messages."""
+        """Clear all stored messages."""
         self.input_items = []
 
     def show_memory(self) -> str:
-        """Show memory in a learner-friendly format."""
+        """Return memory in a learner-friendly text format."""
         if not self.input_items:
             return "No messages stored yet."
 
@@ -37,4 +34,3 @@ class ConversationMemory:
             readable_items.append(memory_item.to_text())
 
         return "\n".join(readable_items)
-

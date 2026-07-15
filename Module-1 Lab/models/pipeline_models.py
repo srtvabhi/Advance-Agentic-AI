@@ -1,12 +1,10 @@
 from dataclasses import dataclass
 
 
-# Models keep pipeline data organized.
-# For this lab, one simple dataclass is enough.
-
-
 @dataclass
 class PipelineResult:
+    """Stores the output of the planning and execution pipeline."""
+
     problem: str
     plan: str
     execution: str
@@ -19,4 +17,3 @@ class PipelineResult:
             f"Execution:\n{self.execution}\n\n"
             f"Review:\n{self.review}"
         )
-
