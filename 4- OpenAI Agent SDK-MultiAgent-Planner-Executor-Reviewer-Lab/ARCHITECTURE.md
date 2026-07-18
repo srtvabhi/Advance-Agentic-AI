@@ -69,6 +69,32 @@ cd 4- OpenAI Agent SDK-MultiAgent-Planner-Executor-Reviewer-Lab
 ..\.venv\Scripts\python.exe main.py
 ```
 
+## Example Prompts
+
+Use prompts that involve risky enterprise actions so learners can observe the human approval step.
+
+```text
+Create a workflow to delete old customer records from the production database after migration.
+```
+
+```text
+Create a workflow to grant production database access to a new support engineer.
+```
+
+```text
+Plan a process to send a policy-change email to all customers.
+```
+
+```text
+Create a workflow to update payroll rules for all employees in the HR system.
+```
+
+```text
+Design a release workflow for deploying a payment service change to production.
+```
+
+These prompts are useful because they include actions such as production changes, access changes, customer communication, payroll updates, or deletion. Those actions should trigger the human approval check before execution continues.
+
 ## Key Learning Points
 
 - Sequential orchestration
