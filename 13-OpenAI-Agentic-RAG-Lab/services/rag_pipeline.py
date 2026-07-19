@@ -5,10 +5,20 @@ from services.vector_store_service import index_chunks, semantic_search
 from agents.rag_agent import create_retrieval_plan, generate_grounded_answer
 
 
+# This service is the main orchestration layer for Lab 13.
+# It connects PDF creation, PDF reading, chunking, vector indexing, retrieval
+# planning, semantic search, answer generation, and citation formatting.
+
 SOURCE_FILE = SOURCE_DOCS_DIR / "employee_travel_policy.txt"
 PDF_FILE = PDF_DIR / "employee_travel_policy.pdf"
 
 
+# Function: build the ChromaDB index from the travel policy PDF.
+# Logic:
+# 1. Ensure the dummy PDF exists.
+# 2. Read the PDF page by page.
+# 3. Split each page into overlapping chunks.
+# 4. Store chunk embeddings and metadata in ChromaDB.
 def build_index(openai_client) -> None:
     ensure_pdf_exists(SOURCE_FILE, PDF_FILE)
     chunks = []
@@ -24,6 +34,14 @@ def build_index(openai_client) -> None:
     index_chunks(openai_client, chunks)
 
 
+# Function: run the full Agentic RAG workflow for one user question.
+# Logic:
+# 1. Create the Azure OpenAI client.
+# 2. Build or reuse the vector index.
+# 3. Ask the model to create a retrieval plan.
+# 4. Search ChromaDB for relevant document chunks.
+# 5. Generate a grounded answer using only retrieved context.
+# 6. Return the plan, answer, and citations as one formatted string.
 def run_agentic_rag(question: str) -> str:
     client = create_openai_client()
     build_index(client)
