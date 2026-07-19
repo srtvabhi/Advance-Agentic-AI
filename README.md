@@ -70,123 +70,243 @@ Each lab is organized as an enterprise-style project with its own folder, local 
 
 ### Lab 1: Enterprise Tool-Calling Agent
 
-This lab builds an enterprise-style assistant using the OpenAI Agents SDK. It introduces a clean folder structure with `config`, `agent`, `tools`, `services`, and `models`, so learners see how real projects separate responsibilities. The assistant can call multiple tools: calculator, current date/time, OpenWeatherMap weather, and Serper web search. The objective is to design an enterprise-grade agent architecture where the agent does not do everything itself. Instead, the agent decides when a specific tool should be used, and each tool delegates external API or business logic to a service layer. This lab teaches tool-driven systems, external API integration, configuration handling, and response modeling. It is useful for demonstrating how enterprise agents connect to business capabilities while keeping the code understandable and maintainable.
+This lab builds an enterprise-style assistant using the OpenAI Agents SDK. The agent can answer normal questions and call tools for calculator, current date/time, OpenWeatherMap weather, and Serper web search.
+
+The objective is to design an enterprise-grade agent architecture. Learners see how `main.py`, `config`, `agent`, `tools`, `services`, and `models` work together instead of keeping all logic in one file.
+
+Flow: user question -> enterprise agent -> selected tool -> service/API logic -> final response. This teaches separation of concerns, external API integration, tool calling, and maintainable enterprise project structure.
 
 ### Lab 2: Stateful Agent Workflow
 
-This lab builds a stateful workflow using the OpenAI Agents SDK. The focus is short-term memory during a running session. A `Memory.py` file stores previous user and assistant messages, and each new turn sends the conversation history back to the model. This lets the assistant answer follow-up questions without the user repeating context. For example, if the user gives a project name or personal preference, the workflow can remember it later in the same session. The objective is to build a stateful agent workflow design and help learners understand the difference between stateless and stateful behavior. The memory is intentionally simple and in-memory only, so the concept is clear before moving to databases, Redis, vector memory, or long-term storage.
+This lab builds a stateful assistant that remembers earlier messages during the same running session. `Memory.py` stores the conversation history and passes it back to the agent on every turn.
+
+The objective is to build a stateful agent workflow design. Learners understand why a normal stateless prompt forgets earlier details and how short-term memory supports follow-up questions.
+
+Flow: user message -> memory stores message -> agent receives previous context -> agent responds -> memory updates again. This teaches session memory, conversation continuity, memory inspection, and memory clearing.
 
 ### Lab 3: Planning and Execution Pipeline
 
-This lab creates an AI planning and execution pipeline using the OpenAI Agents SDK. It separates work into three responsibilities: a planner creates a structured plan, an executor turns the plan into practical actions, and a reviewer checks risk, missing steps, approval gaps, and execution quality. The workflow uses tools for approval checks and task status simulation. The objective is to show how enterprise workflows can be decomposed into planning, acting, and reviewing stages instead of relying on one assistant response. Learners practice designing a pipeline where each step has a clear owner and output. This is useful for onboarding workflows, process automation, service requests, and business operations where reliability and review matter.
+This lab creates an AI planning and execution pipeline using the OpenAI Agents SDK. A planner creates a structured plan, an executor converts the plan into actions, and a reviewer checks the final output.
+
+The objective is to create an AI planning and execution pipeline. Learners see how enterprise work can be decomposed into planning, execution, and review instead of depending on one large response.
+
+Flow: problem statement -> planner -> executor -> approval/status tools -> reviewer -> final pipeline summary. This teaches decomposition, tool-assisted execution, review gates, and workflow quality control.
 
 ### Lab 4: Planner, Executor, Reviewer with Human Approval
 
-This lab expands the planner-executor-reviewer pattern into a multi-agent orchestration workflow. The planner breaks a risky enterprise request into steps, the executor attempts to carry out the plan, and the reviewer evaluates whether the output is complete and safe. A human approval gate is included for sensitive actions such as deleting production records or granting elevated access. The objective is to build a planner-executor-reviewer workflow and demonstrate human-in-the-loop control. The lab teaches that enterprise automation should pause when an action requires approval, record that decision, and continue only when approval is granted. This makes the design closer to real governance workflows used in production environments.
+This lab builds a multi-agent planner-executor-reviewer workflow with human approval checks. The planner designs the work, the executor attempts controlled execution, and the reviewer validates safety and completeness.
+
+The objective is to build a planner-executor-reviewer workflow. Learners see how multi-agent orchestration supports enterprise governance, especially when tasks include sensitive actions.
+
+Flow: enterprise request -> planner -> executor -> approval tool -> reviewer -> final recommendation. This teaches human-in-the-loop checkpoints, approval-aware execution, and risk-based workflow design.
 
 ### Lab 5: Multi-Agent Collaboration Pipeline
 
-This lab builds a collaboration pipeline where different specialists work on the same business problem. A business agent focuses on value, users, process, and adoption. A technical agent focuses on systems, APIs, data flow, and implementation. A risk agent focuses on security, compliance, privacy, and operational risk. A coordinator combines their outputs into one final recommendation. The objective is to create a multi-agent collaboration pipeline for enterprise workflows. Learners see how multiple viewpoints improve solution quality and reduce blind spots. This lab is valuable for solution design, risk assessment, digital transformation planning, and enterprise architecture discussions where one perspective is not enough.
+This lab creates a collaboration pipeline where specialist agents analyze the same business problem from different angles. Business, technical, and risk agents each contribute their own view.
+
+The objective is to create a multi-agent collaboration pipeline. Learners understand that enterprise design often needs multiple perspectives before a final recommendation is useful.
+
+Flow: business problem -> business agent + technical agent + risk agent -> coordinator -> combined solution. This teaches role-based collaboration, synthesis, and enterprise decision support.
 
 ### Lab 6: Dynamic Routing Between Specialists
 
-This lab implements dynamic routing between multiple specialist agents. A router or supervisor decides which specialist should answer based on the user question. If the question is business-focused, it routes to the business specialist. If it is technical, it routes to the technical specialist. If it involves risk or compliance, it routes to the risk specialist. The objective is to implement dynamic routing between multiple agents. This teaches learners how enterprise assistants can avoid sending every request through every agent. Instead, routing improves relevance, cost, and latency by selecting the right capability for the task. This pattern is common in helpdesks, internal portals, and support automation.
+This lab implements dynamic routing between specialist agents. A router decides whether a request should go to a business, technical, risk, or general specialist.
+
+The objective is to implement dynamic routing between multiple agents. Learners see how routing improves relevance, reduces unnecessary agent calls, and supports scalable enterprise assistants.
+
+Flow: user question -> router -> selected specialist -> final answer. This teaches supervisor-style routing, specialist selection, cost-aware orchestration, and targeted responses.
 
 ### Lab 7: LangGraph Multi-Step Orchestration
 
-This lab introduces LangGraph as a graph-based workflow engine. Instead of a single function call, the application is modeled as connected nodes. Each node performs one step such as intake, planning, execution, or summary. The graph defines the order of execution and passes state between nodes. The objective is to build a multi-step LangGraph orchestration system. Learners understand how graph-based design makes workflow steps explicit and easier to debug. This lab is a foundation for more advanced routing, retries, state management, and production orchestration. It is useful for enterprise workflows where a request must pass through a predictable sequence before final output.
+This lab introduces LangGraph as a graph-based workflow engine. The application is modeled as connected nodes instead of one long function.
+
+The objective is to build a multi-step LangGraph orchestration system. Learners understand how state moves from node to node and why graph structure makes workflow behavior easier to inspect.
+
+Flow: user task -> intake node -> planning node -> execution node -> summary node. This teaches graph orchestration, state passing, node design, and explicit workflow control.
 
 ### Lab 8: LangGraph Conditional Routing
 
-This lab demonstrates conditional routing in LangGraph. The workflow receives a user question, a router node classifies the question, and the graph sends it to the correct branch: business, technical, risk, or general. Each branch produces a specialized response before the final output is returned. The objective is to create conditional agent routing flows. This lab teaches how state and routing functions control graph execution. Learners see that not every request should follow the same path. Conditional routing is important for enterprise systems that handle different categories of work, such as customer support, IT requests, compliance review, and business analysis.
+This lab demonstrates conditional routing in LangGraph. The graph classifies the request and sends it to the right branch.
+
+The objective is to create conditional agent routing flows. Learners see that different business requests should follow different paths based on intent and risk.
+
+Flow: user request -> router node -> business/technical/risk/general branch -> final answer. This teaches conditional edges, branch selection, routing functions, and category-specific handling.
 
 ### Lab 9: LangGraph Resilient Retry Workflow
 
-This lab develops a resilient workflow with retries. It processes a vendor invoice, extracts invoice fields, validates required information, verifies the vendor, retries a temporary vendor API failure, and generates an approval recommendation. If required fields such as `Vendor:` or `Amount:` are missing, the workflow stops early. If validation passes and vendor verification fails temporarily, the graph retries the vendor node up to a configured limit. The objective is to develop a resilient multi-agent workflow with retries. Learners see how production systems should handle recoverable failures without retrying forever. This lab teaches validation, conditional routing, retry limits, failure messages, and clean recovery behavior.
+This lab builds a resilient invoice-processing workflow with validation, retry, and controlled failure handling. It checks required invoice fields, verifies vendor status, and retries a simulated temporary vendor API failure.
+
+The objective is to develop a resilient multi-agent workflow with retries. Learners see when a workflow should stop, when it should retry, and when it should continue.
+
+Flow: invoice input -> field extraction -> validation -> vendor verification -> retry if temporary failure -> approval recommendation. This teaches failure handling, retry limits, conditional recovery, and production reliability.
 
 ### Lab 10: AutoGen Collaborative Workflow
 
-This lab uses AutoGen to build a collaborative group conversation. It creates multiple participants such as business analyst, solution architect, security reviewer, and coordinator. A `RoundRobinGroupChat` lets each participant speak in sequence, and `MaxMessageTermination(5)` stops the discussion after a fixed number of messages. The objective is to build a collaborative multi-agent workflow. Learners see how AutoGen can simulate a structured enterprise design discussion where each role contributes a different perspective. The coordinator then brings the ideas together. This lab is useful for solution planning, business process design, security review, and architecture brainstorming where collaboration matters.
+This lab uses AutoGen to build a collaborative group conversation. Business analyst, solution architect, security reviewer, and coordinator agents contribute in sequence.
+
+The objective is to build an AutoGen collaborative multi-agent workflow. Learners see how `RoundRobinGroupChat` creates a structured discussion and how `MaxMessageTermination` stops the conversation after a fixed number of messages.
+
+Flow: enterprise task -> business analyst -> solution architect -> security reviewer -> coordinator -> final group output. This teaches group chat orchestration, role-based collaboration, and controlled conversation length.
 
 ### Lab 11: Reviewer-Validation Pattern
 
-This lab implements a reviewer-validation pattern using AutoGen. One agent writes a policy draft, another agent reviews it, and a validation service checks whether important enterprise concerns are covered. The workflow returns a structured validation result containing the draft, review, and final status. The objective is to implement a reviewer-validation agent pattern. This teaches learners that generated content should often be reviewed before use, especially in enterprise settings. The pattern is useful for policy writing, compliance checks, customer communication review, legal review, and security documentation. It introduces the idea of separating generation from quality control.
+This lab implements a reviewer-validation pattern using AutoGen. A writer creates a policy draft, a reviewer checks it against a checklist, and the workflow performs one revision cycle when needed.
+
+The objective is to implement a reviewer-validation agent pattern. Learners understand that enterprise AI output should often be reviewed before it is accepted.
+
+Flow: task -> policy writer -> validation reviewer -> revision if required -> final review -> validation result. This teaches quality gates, feedback loops, policy validation, and generation-review separation.
 
 ### Lab 12: Autonomous Task-Solving Ecosystem
 
-This lab creates an autonomous incident-response ecosystem using AutoGen. It includes operations, root cause, communications, and manager roles. The operations role can use tools to check service health, create an incident ticket, and notify the response team. Other roles analyze cause, prepare communication, and summarize next steps. The objective is to create an autonomous task-solving agent ecosystem. Learners see how multiple roles and tools can coordinate around a live business problem such as payment API failure or customer checkout outage. The lab demonstrates autonomous collaboration, tool-enabled execution, incident handling, and enterprise communication flow.
+This lab creates an autonomous incident-response ecosystem using AutoGen. Operations, root cause, communications, and manager agents work together on an enterprise incident.
+
+The objective is to create an autonomous task-solving agent ecosystem. Learners see how multiple agents and tools can coordinate around one business problem without manually running each role.
+
+Flow: incident task -> operations actions -> root cause analysis -> stakeholder communication -> manager summary. This teaches autonomous collaboration, incident response, tool-enabled execution, and coordinated enterprise output.
 
 ### Lab 13: Multi-Domain Enterprise RAG
 
-This lab redesigns RAG as a multi-domain enterprise knowledge workflow. The data folder contains HR, Sales, and Marketing sources. HR stores a travel policy PDF, Sales stores pipeline data in CSV format, and Marketing stores active campaign notes. The workflow first decides which data domain is relevant to the question, then retrieves from HR, Sales, Marketing, or all sources using ChromaDB metadata filtering. The objective is to build a multi-step Agentic RAG workflow, not just simple document search. Learners understand retrieval planning, domain routing, embeddings, vector storage, filtered retrieval, and grounded answers with citations. This mirrors real enterprise knowledge environments where information is spread across departments.
+This lab builds a multi-domain enterprise RAG workflow using OpenAI, embeddings, and ChromaDB. HR, Sales, and Marketing data are stored separately so retrieval can be routed by business domain.
+
+The objective is to build a multi-step Agentic RAG workflow. Learners see that enterprise RAG should plan retrieval before answering, especially when data is spread across departments.
+
+Flow: question -> domain selection -> retrieval plan -> ChromaDB search -> grounded answer with citations. This teaches retrieval planning, metadata filtering, embeddings, vector storage, and domain-aware answers.
 
 ### Lab 14: Query Decomposition RAG
 
-This lab implements query decomposition for retrieval. It uses a security incident runbook and handles complex questions with multiple parts. The model breaks the original question into smaller sub-questions, the system retrieves evidence for each sub-question, and then the final answer is synthesized from all retrieved evidence. The output clearly shows `Decomposed Questions`, `Final Answer`, and `Retrieval Map`. The objective is to implement query decomposition for retrieval. Learners see how multi-hop questions can be answered more reliably when the system searches for each sub-topic separately. This is useful for incident response, compliance investigation, legal research, and operational troubleshooting.
+This lab implements query decomposition for RAG. A complex question is broken into smaller sub-questions before retrieval.
+
+The objective is to implement query decomposition for retrieval. Learners see how multi-part business questions become easier to answer when each part retrieves its own evidence.
+
+Flow: complex question -> decomposed questions -> retrieval per sub-question -> retrieval map -> final answer. This teaches multi-hop retrieval, evidence organization, and grounded synthesis.
 
 ### Lab 15: Hybrid Search RAG
 
-This lab creates a hybrid search-based retrieval pipeline for product support. It uses an existing product support PDF and stores product-aware chunks in ChromaDB. The workflow detects whether the question mentions `AnalyticsPro` or `SecurePay`, applies metadata filtering, runs semantic search, runs keyword search, deduplicates the combined results, and generates a grounded support answer. The objective is to create a hybrid search-based retrieval pipeline. Learners understand why semantic search and keyword search complement each other. Semantic search captures meaning, while keyword search catches exact error terms such as `token expired`, `cache mismatch`, `webhook`, and `settlement`. This pattern is valuable for support knowledge bases and troubleshooting workflows.
+This lab creates a hybrid search RAG pipeline for product support. It combines semantic search, keyword search, and metadata filtering over product support PDF content.
+
+The objective is to create a hybrid search-based retrieval pipeline. Learners understand why semantic meaning and exact keywords both matter in support scenarios.
+
+Flow: support question -> product detection -> semantic search + keyword search -> deduped evidence -> grounded support answer. This teaches hybrid retrieval, exact-term matching, product filtering, and support knowledge base design.
 
 ### Lab 16: Semantic Kernel Plugins with RAG
 
-This lab builds enterprise-style plugins using Semantic Kernel. It creates an HR policy plugin that can search policy context and create an HR ticket. The workflow retrieves relevant hybrid work policy content, uses a prompt function to answer the employee question, and then calls a native plugin function to simulate ticket creation. The objective is to build AI plugins using Semantic Kernel. Learners see how Semantic Kernel separates plugin capabilities from orchestration logic. The lab demonstrates native functions, semantic prompts, RAG-backed answers, and business action simulation. It is useful for enterprise plugin patterns where assistants need to retrieve information and perform controlled actions.
+This lab builds enterprise-style plugins using Semantic Kernel. An HR policy plugin retrieves policy context and creates a simulated HR ticket.
+
+The objective is to build AI plugins using Semantic Kernel. Learners see how native functions and semantic prompts become reusable business capabilities.
+
+Flow: employee question -> HR policy retrieval -> semantic answer -> HR ticket plugin action. This teaches plugins, native functions, semantic functions, RAG-backed answers, and controlled enterprise actions.
 
 ### Lab 17: Semantic Kernel Orchestrated Workflow
 
-This lab creates an orchestrated vendor risk workflow using Semantic Kernel. A vendor request is classified, relevant policy controls are retrieved, a risk assessment is generated, and an approval task is created. The objective is to create an orchestrated AI workflow. Learners see how native plugin functions and prompt-based reasoning can be chained into a clear business process. The scenario is realistic for procurement, third-party risk, security review, and compliance teams. The lab demonstrates how Semantic Kernel can coordinate multiple steps while keeping plugin logic separate from orchestration. It teaches workflow sequencing, risk classification, control retrieval, and approval task generation.
+This lab creates an orchestrated vendor risk workflow using Semantic Kernel. It classifies a vendor request, retrieves policy controls, generates a risk assessment, and creates an approval task.
+
+The objective is to create an orchestrated AI workflow. Learners see how plugin functions and model reasoning can be chained into a business process.
+
+Flow: vendor request -> classify risk -> retrieve controls -> generate assessment -> create approval task. This teaches workflow sequencing, enterprise plugin orchestration, and risk-review automation.
 
 ### Lab 18: Semantic Kernel Automation Pipeline
 
-This lab develops a multi-step IT change automation pipeline using Semantic Kernel. It validates the change type, retrieves the relevant change management standard, generates an implementation plan, creates a change record, and sends a notification. The objective is to develop a multi-step AI automation pipeline. Learners see how enterprise automation can combine policy retrieval, planning, record creation, and communication. The workflow is intentionally practical: it includes approvals, implementation steps, rollback planning, validation, and communication. This lab is useful for IT service management, release operations, infrastructure change review, and automated governance workflows.
+This lab develops a multi-step IT change automation pipeline using Semantic Kernel. It validates a change request, retrieves change standards, creates an implementation plan, opens a simulated change record, and sends a notification.
+
+The objective is to develop a multi-step AI automation pipeline. Learners see how AI can support structured IT operations while keeping governance visible.
+
+Flow: change request -> validate change -> retrieve standard -> generate plan -> create record -> notify stakeholders. This teaches automation pipelines, native plugins, policy-aware planning, and IT change governance.
 
 ### Lab 19: Production-Ready Workflow Architecture
 
-This lab focuses on designing a production-ready AI workflow architecture. A LangGraph workflow takes a business requirement and produces architecture, deployment pattern, reliability plan, cost and latency considerations, and final summary. The objective is to design a production-ready AI workflow architecture. Learners practice thinking beyond a prototype. They consider scalability, deployment style, reliability engineering, failure handling, service dependencies, and operational readiness. This lab is important because enterprise systems need more than a working prompt. They need monitoring, ownership, availability planning, security boundaries, and cost-aware design. The output helps learners understand what must be reviewed before moving to production.
+This lab designs a production-ready AI workflow architecture using LangGraph. It turns a business requirement into architecture, deployment, reliability, cost, latency, and readiness recommendations.
+
+The objective is to design a production-ready AI workflow architecture. Learners move beyond prototype thinking and consider what production ownership really requires.
+
+Flow: requirement -> architecture design -> reliability planning -> cost/latency review -> production readiness summary. This teaches scalability, deployment patterns, dependency management, and operational readiness.
 
 ### Lab 20: Scalable Orchestration Pipeline
 
-This lab builds a scalable orchestration pipeline with LangGraph. It simulates receiving event batches, routing work, planning a worker pool, creating a scaling strategy, and producing a final report. The objective is to build a scalable AI orchestration pipeline. Learners see how enterprise workloads can be processed through event-driven or queue-based patterns rather than one request at a time. The lab teaches queue concepts, routing, worker pools, scaling decisions, and operational reporting. This is useful for high-volume support tickets, claims processing, onboarding requests, monitoring alerts, or invoice workflows where throughput and reliability matter.
+This lab builds a scalable orchestration pipeline using LangGraph. It simulates event intake, queue-based processing, worker planning, scaling strategy, and final reporting.
+
+The objective is to build a scalable AI orchestration pipeline. Learners see how high-volume enterprise requests should be handled through controlled execution patterns.
+
+Flow: event batch -> route work -> plan worker pool -> scaling decision -> final operations report. This teaches queue-based orchestration, event-driven design, throughput planning, and scalable workflow operations.
 
 ### Lab 21: Retry and Fallback Strategies
 
-This lab implements retry and fallback strategies using LangGraph. The workflow attempts to call a primary dependency, checks whether the attempt succeeded, retries when appropriate, and routes to a fallback path when the primary path fails. The objective is to implement retry and fallback strategies. Learners understand that production workflows must expect dependency failures. The design avoids endless retries and provides a controlled fallback path. This lab teaches recoverability, dependency management, conditional routing, retry limits, and graceful degradation. It is useful for workflows that call external services, knowledge bases, APIs, or model endpoints that may temporarily fail.
+This lab implements retry and fallback strategies using LangGraph. It simulates a primary service failure, retries within a limit, and then routes to a fallback path if needed.
+
+The objective is to implement retry and fallback strategies. Learners understand how reliable workflows handle dependency failures without retrying forever.
+
+Flow: request -> primary dependency -> success check -> retry if recoverable -> fallback if failed -> final response. This teaches graceful degradation, retry limits, dependency resilience, and recovery design.
 
 ### Lab 22: Guardrails Agent Workflow
 
-This lab implements guardrails in an AI workflow. A request is classified before execution. Safe requests continue to response generation, unsafe requests are blocked, and every path creates an audit trail. The workflow also reviews the response before final output. The objective is to implement guardrails in an AI agent workflow. Learners see how safety checks can be placed before and after model interaction. The lab covers prompt injection risks, data privacy concerns, blocked responses, safe prompts, response review, and auditability. This is important for enterprise systems that handle sensitive data or need responsible AI controls.
+This lab implements guardrails in a LangGraph AI workflow. It checks a request before execution, blocks unsafe content, reviews generated output, and records audit details.
+
+The objective is to implement guardrails in an AI agent workflow. Learners see where safety controls should be placed before and after model interaction.
+
+Flow: user request -> guardrail classification -> allow/block path -> response review -> audit record. This teaches prompt injection defense, privacy protection, safety routing, and responsible AI auditability.
 
 ### Lab 23: Approval Checkpoint Execution
 
-This lab adds approval checkpoints to AI execution. The workflow accepts a user role and requested action, assesses risk, decides whether approval is required, creates an approval ticket for sensitive actions, executes safe actions, and writes an audit record. The objective is to add approval checkpoints to AI execution. Learners see how human approval can be built into workflow design for high-risk operations such as exporting employee records, granting production admin access, or disabling security controls. The lab teaches role-based access control, approval routing, audit records, and safe execution patterns.
+This lab adds approval checkpoints to AI execution using LangGraph. It evaluates the requested action, checks risk, routes sensitive actions to approval, and records the outcome.
+
+The objective is to add approval checkpoints to AI execution. Learners see how human approval protects high-risk enterprise operations.
+
+Flow: role + action -> risk check -> approval needed? -> approval ticket or direct execution -> audit record. This teaches human approval systems, RBAC thinking, controlled execution, and governance evidence.
 
 ### Lab 24: Unsafe Prompt Testing
 
-This lab tests workflows against unsafe prompt scenarios. It loads a built-in test suite, evaluates each prompt, counts blocked and allowed prompts, creates an improvement plan, and generates a final report. The objective is to test AI agents against unsafe prompt scenarios. Learners see how safety can be tested systematically rather than manually guessing. The lab includes scenarios such as hidden instruction requests, data exfiltration, approval bypass, and safe business questions. It teaches prompt injection awareness, content filtering concepts, safety evaluation, governance reporting, and iterative improvement of controls.
+This lab tests AI workflows against unsafe prompt scenarios. It runs a test suite with safe and unsafe prompts, evaluates the decisions, and produces a governance report.
+
+The objective is to test AI agents against unsafe prompt scenarios. Learners see how safety can be tested systematically instead of relying on manual inspection.
+
+Flow: test prompt suite -> safety evaluation -> blocked/allowed counts -> improvement plan -> final report. This teaches prompt injection testing, unsafe request detection, content governance, and safety regression testing.
 
 ### Lab 25: Workflow Tracing
 
-This lab uses LangSmith observability to trace a multi-step workflow. The scenario is an enterprise incident such as a slow HR chatbot. The graph performs triage, investigation, resolution messaging, trace note creation, and final report generation. The objective is to trace an AI workflow execution. Learners see how observability helps debug multi-step systems by showing what happened at each node. The lab demonstrates traceable model calls, workflow visibility, incident analysis, and operational notes. This is important because production teams need to inspect prompts, responses, latency, failures, and decision paths.
+This lab uses LangSmith with LangGraph to trace a multi-step AI workflow. It follows an enterprise incident through triage, investigation, resolution messaging, trace notes, and final reporting.
+
+The objective is to trace an AI agent workflow execution. Learners see how observability helps teams understand what happened at each node.
+
+Flow: incident input -> triage -> investigation -> resolution message -> trace note -> final report. This teaches tracing, workflow visibility, debugging, prompt/response monitoring, and operational transparency.
 
 ### Lab 26: Token and Latency Monitoring
 
-This lab monitors token usage and latency across a workflow. It drafts a business response, reviews that response, captures telemetry for each step, summarizes usage, and produces a monitoring report. The objective is to monitor token usage and latency. Learners see that production systems must measure cost and performance, not just output quality. The lab teaches how to collect response time, token counts, and step-level metrics. This helps teams optimize prompts, reduce cost, detect slow steps, and set operational expectations. The scenario is practical for customer updates, incident communication, and business response workflows.
+This lab monitors token usage and latency across an AI workflow. It drafts a response, reviews it, captures telemetry, summarizes metrics, and creates a monitoring report.
+
+The objective is to monitor token usage and latency. Learners understand that production systems must measure cost and performance as well as answer quality.
+
+Flow: business task -> draft response -> review response -> collect telemetry -> monitoring report. This teaches latency tracking, token accounting, cost awareness, and performance optimization.
 
 ### Lab 27: RAG Quality Evaluation
 
-This lab evaluates RAG response quality using observability concepts. It retrieves HR policy context, generates an answer, uses an LLM-as-judge step to evaluate grounding and completeness, and produces an observability report. The objective is to evaluate RAG response quality using observability tools. Learners see that retrieval-based systems need quality checks. A RAG answer should be supported by retrieved evidence, not unsupported assumptions. The lab teaches retrieval quality, groundedness, evidence checking, answer evaluation, and reporting. It is useful for policy assistants, HR helpdesks, knowledge portals, and compliance question answering.
+This lab evaluates RAG response quality with observability concepts. It retrieves HR policy context, generates an answer, and uses an LLM-as-judge style step to evaluate grounding and completeness.
+
+The objective is to evaluate RAG response quality using observability tools. Learners see that RAG systems need evidence checks, not just fluent answers.
+
+Flow: question -> retrieve policy context -> generate answer -> judge groundedness -> quality report. This teaches RAG evaluation, groundedness, completeness checks, and evidence-based quality review.
 
 ### Lab 28: End-to-End Enterprise Solution
 
-This capstone lab builds an end-to-end enterprise agentic AI solution design. A LangGraph workflow takes a business problem and produces requirements, architecture, security and compliance review, observability and governance plan, production readiness review, and final solution summary. The objective is to build an end-to-end enterprise Agentic AI solution. Learners bring together concepts from previous labs: planning, orchestration, retrieval, governance, monitoring, and production readiness. The scenario can cover employee services, insurance claims, finance operations, customer service, or IT incident management. It teaches how to structure a complete enterprise solution rather than isolated components.
+This capstone lab builds an end-to-end enterprise agentic AI solution design. It turns a business problem into requirements, architecture, security review, observability plan, governance plan, and readiness summary.
+
+The objective is to build an end-to-end enterprise Agentic AI solution. Learners bring together planning, orchestration, governance, monitoring, and production readiness.
+
+Flow: business problem -> requirements -> architecture -> security/compliance -> observability/governance -> final solution. This teaches complete enterprise solution design rather than isolated agent examples.
 
 ### Lab 29: Multi-Agent RAG and Tools Orchestration
 
-This capstone lab combines RAG, tools, and multiple workflow roles. It retrieves policy context, runs enterprise tool simulations such as ticket creation and approval checks, creates a plan, executes the plan, reviews the result, and produces a final answer. The objective is to implement multi-agent orchestration with RAG and tools. Learners see how knowledge retrieval and action execution can work together. The workflow is useful for requests such as laptop provisioning, temporary production access, remote work approval, invoice system access, or customer escalation. It demonstrates practical enterprise orchestration where context, tools, planning, execution, and review all matter.
+This capstone lab combines multi-agent orchestration, RAG, and tools. It retrieves policy context, creates a plan, runs tool simulations such as ticket creation and approval checks, reviews the result, and produces a final answer.
+
+The objective is to implement multi-agent orchestration with RAG and tools. Learners see how retrieved knowledge and controlled actions work together in enterprise workflows.
+
+Flow: user request -> retrieve context -> plan -> execute tools -> review -> final answer. This teaches policy-grounded execution, tool orchestration, review gates, and enterprise workflow automation.
 
 ### Lab 30: Deploy and Evaluate Enterprise Workflow
 
-This capstone lab focuses on deployment and evaluation planning for an enterprise AI workflow. It creates a deployment plan, evaluation plan, readiness scorecard, cost and performance plan, and final report. The objective is to deploy and evaluate an enterprise AI workflow architecture. Learners think like production owners: how will the workflow run, scale, be monitored, be evaluated, and be improved? The lab covers Azure deployment considerations, readiness checks, cost and latency planning, governance, and evaluation strategy. It is the final bridge from hands-on prototype thinking to operational enterprise architecture.
+This capstone lab focuses on deployment and evaluation planning for an enterprise AI workflow. It creates a deployment plan, evaluation plan, readiness scorecard, cost/performance plan, and final report.
+
+The objective is to deploy and evaluate an enterprise AI workflow architecture. Learners think like production owners who must run, monitor, measure, and improve the system.
+
+Flow: workflow design -> deployment plan -> evaluation strategy -> readiness scorecard -> cost/performance review -> final report. This teaches operationalization, Azure deployment planning, evaluation, governance, and production readiness.
 
 ## Setup
 
