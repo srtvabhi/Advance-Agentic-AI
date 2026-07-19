@@ -41,13 +41,25 @@ Final Node
 9-LangGraph-Resilient-Retry-Lab/
 ├── .env
 ├── .env.example
+├── ARCHITECTURE.md
+├── Reference.md
 ├── requirements.txt
 ├── main.py
 ├── config/
+│   └── settings.py
 ├── graph/
+│   └── resilient_graph.py
 ├── nodes/
+│   ├── extract_node.py
+│   ├── validate_node.py
+│   ├── vendor_node.py
+│   ├── approval_node.py
+│   └── final_node.py
 ├── services/
+│   ├── llm_service.py
+│   └── vendor_service.py
 └── models/
+    └── state_models.py
 ```
 
 ## Tree-Based Call Architecture
@@ -64,7 +76,7 @@ main.py
 |   |
 |   |-- reads invoice text
 |   |-- calls: build_graph()
-|   |-- calls: app.ainvoke({"invoice_text": invoice, "retry_count": 0})
+|   |-- calls: app.ainvoke({"invoice_text": invoice, "retry_count": 0}, config={...})
 |   |-- passes thread_id for checkpointed state
 |   |-- prints result["final_response"]
 |
@@ -111,11 +123,12 @@ Node execution:
 extract_node()
 |
 |-- calls: ask_llm()
+|   from services/llm_service.py
 |-- returns extracted invoice data
 
 validate_node()
 |
-|-- checks invoice contains vendor and amount
+|-- checks invoice text contains required fields such as vendor and amount
 |-- returns valid or invalid status
 
 vendor_node()
@@ -123,16 +136,47 @@ vendor_node()
 |-- calls: verify_vendor()
 |   from services/vendor_service.py
 |
-|-- on temporary failure, increments retry_count
+|-- first vendor API attempt raises a temporary error
+|-- increments retry_count
+|-- graph routes back to vendor_node while retry_count < 2
 
 approval_node()
 |
 |-- calls: ask_llm()
+|   from services/llm_service.py
 |-- returns finance approval recommendation
 
 final_node()
 |
 |-- returns success, validation failure, or retry failure message
+```
+
+Shared LLM and configuration flow:
+
+```text
+services/llm_service.py
+|
+|-- function: ask_llm(system_prompt, user_prompt)
+|   |
+|   |-- calls: create_openai_client()
+|   |   from config/settings.py
+|   |
+|   |-- calls: get_model_name()
+|   |   from config/settings.py
+|   |
+|   |-- calls: client.chat.completions.create()
+|   |-- returns model response text
+|
+|-- config/settings.py
+    |
+    |-- load_environment()
+    |   |-- loads only this lab's local .env file
+    |
+    |-- create_openai_client()
+    |   |-- creates AsyncOpenAI client
+    |
+    |-- get_model_name()
+        |-- reads AZURE_OPENAI_DEPLOYMENT
 ```
 
 ## Key Learning Points
@@ -148,4 +192,28 @@ final_node()
 ```bash
 cd 9-LangGraph-Resilient-Retry-Lab
 ..\.venv\Scripts\python.exe main.py
+```
+
+## Test Prompts
+
+Use these prompts to test the retry, validation, and approval behavior of the lab:
+
+```text
+Vendor: Contoso Cloud Services. Amount: 15000 USD. Due date: 2026-08-15. Purpose: Annual cloud monitoring renewal.
+```
+
+```text
+Vendor: Fabrikam Security. Amount: 42000 USD. Due date: 2026-09-01. Purpose: Emergency production security patching and monitoring.
+```
+
+```text
+Vendor: Northwind Analytics. Amount: 8500 USD. Due date: 2026-08-30. Purpose: Quarterly data quality audit service.
+```
+
+```text
+Amount: 12000 USD. Due date: 2026-08-20. Purpose: Missing vendor field test.
+```
+
+```text
+Vendor: Unknown Vendor Ltd. Amount: 95000 USD. Due date: 2026-08-25. Purpose: New vendor onboarding and urgent infrastructure access.
 ```
