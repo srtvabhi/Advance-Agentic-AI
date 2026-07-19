@@ -5,7 +5,7 @@ This reference explains the Python code used in this lab. It intentionally docum
 ## Lab Summary
 
 Build a multi-step Agentic RAG workflow using OpenAI, Azure AI Foundry models, ChromaDB, and a dummy PDF document.
-This lab answers questions from an enterprise travel policy PDF.
+This lab answers questions from an existing enterprise travel policy PDF.
 User Question
    |
 
@@ -21,7 +21,6 @@ openai-agents==0.18.0
 python-dotenv==1.2.2
 chromadb==1.5.9
 pypdf==6.14.2
-reportlab==5.0.0
 ```
 
 Typical run pattern:
@@ -155,7 +154,6 @@ from openai import OpenAI
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 DATA_DIR = BASE_DIR / "data"
-SOURCE_DOCS_DIR = DATA_DIR / "source_docs"
 PDF_DIR = DATA_DIR / "pdfs"
 VECTOR_STORE_DIR = BASE_DIR / "vector_store"
 
@@ -388,57 +386,31 @@ Role: Service layer. It contains business logic or external API integration used
 Key imports:
 
 - `from pathlib import Path`
-- `from textwrap import wrap`
 - `from pypdf import PdfReader`
-- `from reportlab.lib.pagesizes import letter`
-- `from reportlab.pdfgen import canvas`
 
 Functions:
 
-- `create_pdf_from_text()`: Factory/helper function that creates and returns a configured object used by the lab.
-- `ensure_pdf_exists()`: Encapsulates reusable logic used by this lab.
+- `validate_pdf_exists()`: Confirms the required PDF is available before indexing starts.
 - `read_pdf_pages()`: Encapsulates reusable logic used by this lab.
 
 Code:
 
 ```python
 from pathlib import Path
-from textwrap import wrap
 
 from pypdf import PdfReader
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
 
 
-def create_pdf_from_text(source_path: Path, pdf_path: Path) -> None:
-    pdf_path.parent.mkdir(parents=True, exist_ok=True)
-
-    text = source_path.read_text(encoding="utf-8")
-    pdf = canvas.Canvas(str(pdf_path), pagesize=letter)
-    width, height = letter
-    y = height - 50
-
-    pdf.setFont("Helvetica", 10)
-    for paragraph in text.splitlines():
-        lines = wrap(paragraph, width=95) or [""]
-        for line in lines:
-            if y < 50:
-                pdf.showPage()
-                pdf.setFont("Helvetica", 10)
-                y = height - 50
-            pdf.drawString(50, y, line)
-            y -= 14
-        y -= 6
-
-    pdf.save()
-
-
-def ensure_pdf_exists(source_path: Path, pdf_path: Path) -> None:
+def validate_pdf_exists(pdf_path: Path) -> None:
     if not pdf_path.exists():
-        create_pdf_from_text(source_path, pdf_path)
+        raise FileNotFoundError(
+            f"Required PDF not found: {pdf_path}. "
+            "Place employee_travel_policy.pdf inside data/pdfs before running the lab."
+        )
 
 
 def read_pdf_pages(pdf_path: Path) -> list[tuple[int, str]]:
+    validate_pdf_exists(pdf_path)
     reader = PdfReader(str(pdf_path))
     pages = []
     for index, page in enumerate(reader.pages, start=1):
@@ -454,9 +426,9 @@ Role: Service layer. It contains business logic or external API integration used
 
 Key imports:
 
-- `from config.settings import PDF_DIR, SOURCE_DOCS_DIR, create_openai_client`
+- `from config.settings import PDF_DIR, create_openai_client`
 - `from services.chunking_service import chunk_text`
-- `from services.pdf_service import ensure_pdf_exists, read_pdf_pages`
+- `from services.pdf_service import read_pdf_pages`
 - `from services.vector_store_service import index_chunks, semantic_search`
 - `from agents.rag_agent import create_retrieval_plan, generate_grounded_answer`
 
@@ -468,19 +440,17 @@ Functions:
 Code:
 
 ```python
-from config.settings import PDF_DIR, SOURCE_DOCS_DIR, create_openai_client
+from config.settings import PDF_DIR, create_openai_client
 from services.chunking_service import chunk_text
-from services.pdf_service import ensure_pdf_exists, read_pdf_pages
+from services.pdf_service import read_pdf_pages
 from services.vector_store_service import index_chunks, semantic_search
 from agents.rag_agent import create_retrieval_plan, generate_grounded_answer
 
 
-SOURCE_FILE = SOURCE_DOCS_DIR / "employee_travel_policy.txt"
 PDF_FILE = PDF_DIR / "employee_travel_policy.pdf"
 
 
 def build_index(openai_client) -> None:
-    ensure_pdf_exists(SOURCE_FILE, PDF_FILE)
     chunks = []
     for page, text in read_pdf_pages(PDF_FILE):
         chunks.extend(

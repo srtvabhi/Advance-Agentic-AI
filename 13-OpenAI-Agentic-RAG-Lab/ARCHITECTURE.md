@@ -4,7 +4,7 @@
 
 Build a multi-step Agentic RAG workflow using OpenAI, Azure AI Foundry models, ChromaDB, and a dummy PDF document.
 
-This lab answers questions from an enterprise travel policy PDF.
+This lab answers questions from an existing enterprise travel policy PDF.
 
 ## Problem Statement
 
@@ -51,10 +51,8 @@ Citations
 │   ├── __init__.py
 │   └── settings.py
 ├── data
-│   ├── pdfs
-│   │   └── employee_travel_policy.pdf
-│   └── source_docs
-│       └── employee_travel_policy.txt
+│   └── pdfs
+│       └── employee_travel_policy.pdf
 ├── models
 │   ├── __init__.py
 │   └── rag_models.py
@@ -87,8 +85,7 @@ main.py
 |-- services/embedding_service.py
 |   |-- create_embedding()
 |-- services/pdf_service.py
-|   |-- create_pdf_from_text()
-|   |-- ensure_pdf_exists()
+|   |-- validate_pdf_exists()
 |   |-- read_pdf_pages()
 |-- services/rag_pipeline.py
 |   |-- build_index()
@@ -112,8 +109,7 @@ main.py
 - `ARCHITECTURE.md`: Supports setup, configuration, reference, or documentation for the lab.
 - `config/__init__.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
 - `config/settings.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
-- `data/pdfs/employee_travel_policy.pdf`: Contains local dummy knowledge-base source documents and PDFs.
-- `data/source_docs/employee_travel_policy.txt`: Contains local dummy knowledge-base source documents and PDFs.
+- `data/pdfs/employee_travel_policy.pdf`: Existing PDF document used as the source of truth for retrieval.
 - `main.py`: Entry point that accepts input, runs the workflow, and prints the result.
 - `models/__init__.py`: Defines data models or TypedDict state shared across the workflow.
 - `models/rag_models.py`: Defines data models or TypedDict state shared across the workflow.
