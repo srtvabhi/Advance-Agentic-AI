@@ -67,6 +67,30 @@ cd 5- OpenAI Agent SDK-MultiAgent-Collaboration-Lab
 ..\.venv\Scripts\python.exe main.py
 ```
 
+## Example Prompts
+
+Use prompts that need business, technical, and risk perspectives. This helps learners see why multiple specialist agents are useful.
+
+```text
+Our company receives 2,000 IT support tickets every week. Design a multi-agent solution to classify tickets, suggest resolutions, escalate high-priority issues, and reduce average resolution time.
+```
+
+```text
+A bank wants to automate loan application review. Design a multi-agent workflow where agents analyze customer eligibility, document completeness, fraud risk, and final recommendation.
+```
+
+```text
+A hospital wants to create an AI assistant for patient appointment scheduling. Design a multi-agent solution that handles patient requests, doctor availability, compliance risks, and escalation to staff.
+```
+
+```text
+An ecommerce company has many refund and return requests. Design a multi-agent system to check order history, refund policy, fraud risk, customer sentiment, and final action recommendation.
+```
+
+```text
+A manufacturing company wants to monitor supplier delays. Design a multi-agent workflow where agents analyze supplier performance, business impact, technical integration needs, and operational risk.
+```
+
 ## Key Learning Points
 
 - Concurrent orchestration
