@@ -4,7 +4,7 @@
 
 Create a hybrid search-based retrieval pipeline using OpenAI, Azure AI Foundry, ChromaDB, semantic search, keyword search, and metadata filtering.
 
-This lab answers support questions from a dummy product support PDF.
+This lab answers support questions from an existing product support PDF.
 
 ## Problem Statement
 
@@ -51,10 +51,8 @@ Grounded Support Answer
 │   ├── __init__.py
 │   └── settings.py
 ├── data
-│   ├── pdfs
-│   │   └── product_support_kb.pdf
-│   └── source_docs
-│       └── product_support_kb.txt
+│   └── pdfs
+│       └── product_support_kb.pdf
 ├── models
 │   ├── __init__.py
 │   └── rag_models.py
@@ -91,8 +89,7 @@ main.py
 |   |-- tokenize()
 |   |-- keyword_search()
 |-- services/pdf_service.py
-|   |-- create_pdf_from_text()
-|   |-- ensure_pdf_exists()
+|   |-- validate_pdf_exists()
 |   |-- read_pdf_pages()
 |-- services/rag_pipeline.py
 |   |-- product_section()
@@ -118,8 +115,7 @@ main.py
 - `ARCHITECTURE.md`: Supports setup, configuration, reference, or documentation for the lab.
 - `config/__init__.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
 - `config/settings.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
-- `data/pdfs/product_support_kb.pdf`: Contains local dummy knowledge-base source documents and PDFs.
-- `data/source_docs/product_support_kb.txt`: Contains local dummy knowledge-base source documents and PDFs.
+- `data/pdfs/product_support_kb.pdf`: Existing product support PDF used as the source of truth for retrieval.
 - `main.py`: Entry point that accepts input, runs the workflow, and prints the result.
 - `models/__init__.py`: Defines data models or TypedDict state shared across the workflow.
 - `models/rag_models.py`: Defines data models or TypedDict state shared across the workflow.

@@ -7,7 +7,6 @@ from openai import OpenAI
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 DATA_DIR = BASE_DIR / "data"
-SOURCE_DOCS_DIR = DATA_DIR / "source_docs"
 PDF_DIR = DATA_DIR / "pdfs"
 VECTOR_STORE_DIR = BASE_DIR / "vector_store"
 

@@ -1,12 +1,11 @@
 from agents.hybrid_rag_agent import answer_with_hybrid_context, detect_product_filter
-from config.settings import PDF_DIR, SOURCE_DOCS_DIR, create_openai_client
+from config.settings import PDF_DIR, create_openai_client
 from services.chunking_service import chunk_text
 from services.keyword_service import keyword_search
-from services.pdf_service import ensure_pdf_exists, read_pdf_pages
+from services.pdf_service import read_pdf_pages
 from services.vector_store_service import index_chunks, semantic_search
 
 
-SOURCE_FILE = SOURCE_DOCS_DIR / "product_support_kb.txt"
 PDF_FILE = PDF_DIR / "product_support_kb.pdf"
 
 
@@ -41,12 +40,10 @@ def product_section(text: str, product: str) -> str:
 
 # Function: load product-aware chunks from the PDF.
 # Logic:
-# 1. Ensure the support PDF exists.
-# 2. Read each PDF page.
-# 3. Create AnalyticsPro chunks with product metadata.
-# 4. Create SecurePay chunks with product metadata.
+# 1. Read each page from the existing support PDF.
+# 2. Create AnalyticsPro chunks with product metadata.
+# 3. Create SecurePay chunks with product metadata.
 def load_chunks() -> list:
-    ensure_pdf_exists(SOURCE_FILE, PDF_FILE)
     chunks = []
     for page, text in read_pdf_pages(PDF_FILE):
         chunks.extend(
