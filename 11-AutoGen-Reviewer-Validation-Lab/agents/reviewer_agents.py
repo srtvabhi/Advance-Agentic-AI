@@ -7,7 +7,8 @@ def create_policy_writer(model_client):
         model_client=model_client,
         system_message=(
             "You are a policy writer. Draft a practical enterprise policy. "
-            "Include purpose, scope, controls, approval workflow, audit evidence, and exception handling. "
+            "Include purpose, scope, access control, controls, human approval workflow, "
+            "logging, risk handling, policy owner, audit evidence, and exception handling. "
             "Keep the draft concise and learner friendly."
         ),
     )

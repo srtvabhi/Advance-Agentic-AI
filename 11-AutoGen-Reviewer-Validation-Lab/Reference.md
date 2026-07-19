@@ -6,8 +6,7 @@ This reference explains the Python code used in this lab. It intentionally docum
 
 Implement a reviewer-validation agent pattern using AutoGen.
 Create and validate an enterprise policy for AI agents that can access customer data and send external emails.
-User Task
-   |
+The workflow creates a first draft, asks a reviewer to validate it, and performs one revision cycle when the reviewer returns `REVISION_REQUIRED`.
 
 ## Environment And Setup
 
@@ -59,6 +58,12 @@ Functions:
 - `create_policy_writer()`: Factory/helper function that creates and returns a configured object used by the lab.
 - `create_validation_reviewer()`: Factory/helper function that creates and returns a configured object used by the lab.
 
+Code explanation:
+
+- `create_policy_writer()` creates the drafting agent and tells it which policy sections must be included.
+- `create_validation_reviewer()` creates the reviewer agent and gives it a validation checklist.
+- The reviewer must end with either `APPROVED` or `REVISION_REQUIRED`, so the workflow can make a clear decision.
+
 Code:
 
 ```python
@@ -71,7 +76,8 @@ def create_policy_writer(model_client):
         model_client=model_client,
         system_message=(
             "You are a policy writer. Draft a practical enterprise policy. "
-            "Include purpose, scope, controls, approval workflow, audit evidence, and exception handling. "
+            "Include purpose, scope, access control, controls, human approval workflow, "
+            "logging, risk handling, policy owner, audit evidence, and exception handling. "
             "Keep the draft concise and learner friendly."
         ),
     )
@@ -236,6 +242,14 @@ Classes:
 
 - `ValidationResult`: Defines a structured object, state model, plugin, service, or agent-related class used by the lab.
 
+Code explanation:
+
+- `draft` stores the first policy created by the writer.
+- `review` stores the first reviewer feedback.
+- `status` stores the final validation result.
+- `revised_draft` and `final_review` are populated only when the first review asks for revision.
+- `to_text()` formats the complete result for the terminal.
+
 Code:
 
 ```python
@@ -247,13 +261,24 @@ class ValidationResult:
     draft: str
     review: str
     status: str
+    revised_draft: str = ""
+    final_review: str = ""
+    revision_performed: bool = False
 
     def to_text(self) -> str:
-        return (
+        output = (
             f"Validation Status: {self.status}\n\n"
             f"--- Draft ---\n{self.draft}\n\n"
             f"--- Review ---\n{self.review}"
         )
+
+        if self.revision_performed:
+            output += (
+                f"\n\n--- Revised Draft ---\n{self.revised_draft}\n\n"
+                f"--- Final Review ---\n{self.final_review}"
+            )
+
+        return output
 
 
 ```
@@ -283,6 +308,15 @@ Functions:
 
 - `run_review_workflow()`: Encapsulates reusable logic used by this lab.
 
+Code explanation:
+
+- The writer creates the first draft.
+- The reviewer checks the draft against the checklist.
+- `validate_review()` reads the reviewer decision.
+- If the first draft is approved, the workflow returns immediately.
+- If revision is required, reviewer feedback is sent back to the writer.
+- The reviewer checks the revised draft again, and that becomes the final validation status.
+
 Code:
 
 ```python
@@ -303,7 +337,33 @@ async def run_review_workflow(model_client, task: str) -> ValidationResult:
     review = review_result.messages[-1].content
 
     status = validate_review(str(review))
-    return ValidationResult(draft=str(draft), review=str(review), status=status)
+    if status == "APPROVED":
+        return ValidationResult(draft=str(draft), review=str(review), status=status)
+
+    revision_task = (
+        "Revise the policy draft using the reviewer feedback. "
+        "Make sure the revised policy explicitly includes purpose, scope, access control, "
+        "human approval, logging, risk handling, policy owner, audit evidence, and exception handling.\n\n"
+        f"Original task:\n{task}\n\n"
+        f"Original draft:\n{draft}\n\n"
+        f"Reviewer feedback:\n{review}"
+    )
+    revised_result = await writer.run(task=revision_task)
+    revised_draft = revised_result.messages[-1].content
+
+    final_review_task = f"Review this revised policy draft:\n\n{revised_draft}"
+    final_review_result = await reviewer.run(task=final_review_task)
+    final_review = final_review_result.messages[-1].content
+    final_status = validate_review(str(final_review))
+
+    return ValidationResult(
+        draft=str(draft),
+        review=str(review),
+        status=final_status,
+        revised_draft=str(revised_draft),
+        final_review=str(final_review),
+        revision_performed=True,
+    )
 
 
 ```
@@ -327,14 +387,30 @@ Functions:
 
 - `validate_review()`: Checks, validates, or reviews workflow output before the final response.
 
+Code explanation:
+
+- The reviewer writes a natural-language review, but the application needs a simple status.
+- This function looks for the final decision line.
+- If the final decision contains `APPROVED`, the lab prints approved.
+- If the final decision contains `REVISION_REQUIRED`, the lab triggers or reports revision required.
+
 Code:
 
 ```python
 def validate_review(review_text: str) -> str:
     text = review_text.upper()
-    if "REVISION_REQUIRED" in text:
+
+    # Prefer the reviewer's final decision line instead of any earlier mention.
+    decision_lines = [
+        line.strip()
+        for line in text.splitlines()
+        if "APPROVED" in line or "REVISION_REQUIRED" in line
+    ]
+    final_decision = decision_lines[-1] if decision_lines else text
+
+    if "REVISION_REQUIRED" in final_decision:
         return "REVISION_REQUIRED"
-    if "APPROVED" in text:
+    if "APPROVED" in final_decision:
         return "APPROVED"
     return "REVISION_REQUIRED"
 
