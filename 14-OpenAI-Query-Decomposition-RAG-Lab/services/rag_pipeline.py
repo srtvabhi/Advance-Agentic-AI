@@ -9,6 +9,18 @@ SOURCE_FILE = SOURCE_DOCS_DIR / "security_incident_runbook.txt"
 PDF_FILE = PDF_DIR / "security_incident_runbook.pdf"
 
 
+# This service orchestrates the full query decomposition RAG workflow.
+# It builds the vector index, asks the model to split a complex question into
+# smaller sub-questions, retrieves evidence for each sub-question, and then
+# synthesizes one final answer.
+
+
+# Function: build the vector index from the incident response runbook.
+# Logic:
+# 1. Ensure the PDF exists.
+# 2. Read the PDF page by page.
+# 3. Chunk each page as incident-response content.
+# 4. Store chunk embeddings and metadata in ChromaDB.
 def build_index(client) -> None:
     ensure_pdf_exists(SOURCE_FILE, PDF_FILE)
     chunks = []
@@ -17,6 +29,14 @@ def build_index(client) -> None:
     index_chunks(client, chunks)
 
 
+# Function: run the complete decomposition RAG pipeline.
+# Logic:
+# 1. Create the OpenAI client.
+# 2. Build or reuse the vector index.
+# 3. Decompose the original question into focused sub-questions.
+# 4. Retrieve top chunks for each sub-question.
+# 5. Synthesize the final answer from all retrieved evidence.
+# 6. Return decomposed questions, final answer, and retrieval map.
 def run_decomposition_rag(question: str) -> str:
     client = create_openai_client()
     build_index(client)
