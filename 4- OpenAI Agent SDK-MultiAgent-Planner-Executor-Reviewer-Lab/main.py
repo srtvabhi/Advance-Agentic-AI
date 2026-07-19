@@ -48,8 +48,10 @@ async def main() -> None:
             print("\nWorkflow stopped because human approval was not granted.")
             return
 
-        approval_status = "Human approval granted. Executor may continue."
+        approval_status = "HUMAN_APPROVAL_DECISION: APPROVED"
         print(approval_status)
+    else:
+        approval_status = "HUMAN_APPROVAL_DECISION: NOT_REQUIRED"
 
     execution_prompt = f"""
 Goal:
@@ -61,7 +63,11 @@ Plan:
 Human approval status:
 {approval_status}
 
-Execute this plan. If approval was required but not granted, do not continue.
+Execute this plan as a simulated enterprise workflow.
+If HUMAN_APPROVAL_DECISION is APPROVED or NOT_REQUIRED, do not ask for approval again.
+Do not call the approval tool again after approval is already granted.
+Create practical execution artifacts such as runbook steps, validation checklist, owners, rollback notes, and audit evidence.
+Do not claim that you actually changed production systems.
 """
     execution_result = await Runner.run(executor, execution_prompt)
     print("\n--- Executor Output ---\n")
