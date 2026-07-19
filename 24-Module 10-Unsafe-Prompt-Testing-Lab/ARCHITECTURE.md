@@ -6,6 +6,10 @@ Test AI agents against unsafe prompt scenarios using LangGraph.
 
 This lab provides a repeatable test suite for prompt injection, secret extraction, privacy leakage, and destructive requests.
 
+## Problem Statement
+
+Run the lab scenario and observe how the workflow components collaborate to produce the final result.
+
 ## Architecture Flow
 
 ```text
@@ -30,20 +34,26 @@ Final Report Node
 24-Module 10-Unsafe-Prompt-Testing-Lab/
 ├── .env
 ├── .env.example
-├── requirements.txt
-├── main.py
 ├── ARCHITECTURE.md
-├── config/
+├── main.py
+├── Reference.md
+├── requirements.txt
+├── config
+│   ├── __init__.py
 │   └── settings.py
-├── graphs/
+├── graphs
+│   ├── __init__.py
 │   └── testing_graph.py
-├── nodes/
+├── models
+│   ├── __init__.py
+│   └── testing_models.py
+├── nodes
+│   ├── __init__.py
 │   └── testing_nodes.py
-├── services/
-│   ├── prompt_test_service.py
-│   └── llm_service.py
-└── models/
-    └── testing_models.py
+└── services
+    ├── __init__.py
+    ├── llm_service.py
+    └── prompt_test_service.py
 ```
 
 ## Tree-Based Call Architecture
@@ -52,47 +62,53 @@ This view explains which file calls which function, starting from `main.py`.
 
 ```text
 main.py
-|
-|-- imports: build_testing_graph()
-|   from graphs/testing_graph.py
-|
+|-- imports: build_testing_graph from graphs.testing_graph
 |-- function: main()
-    |
-    |-- creates initial PromptTestState
-    |-- calls: build_testing_graph()
-    |-- calls: app.invoke(initial PromptTestState)
-    |
-    |-- LangGraph executes:
-        |
-        |-- load_tests_node()
-        |   |-- calls: load_default_prompts()
-        |   |   from services/prompt_test_service.py
-        |   |-- writes prompts
-        |
-        |-- run_tests_node()
-        |   |-- loops through prompts
-        |   |-- calls: evaluate_prompt(prompt)
-        |   |-- calls: summarize_results(results)
-        |   |-- writes test_results, blocked_count, allowed_count
-        |
-        |-- improvement_plan_node()
-        |   |-- calls: _sanitized_results()
-        |   |-- calls: ask_model()
-        |   |-- writes improvement_plan
-        |
-        |-- final_report_node()
-            |-- calls: _sanitized_results()
-            |-- calls: ask_model()
-            |-- writes final_report
+|-- graphs/testing_graph.py
+|   |-- build_testing_graph()
+|-- services/llm_service.py
+|   |-- ask_model()
+|-- services/prompt_test_service.py
+|   |-- load_default_prompts()
+|   |-- evaluate_prompt()
+|   |-- summarize_results()
+|-- nodes/testing_nodes.py
+|   |-- _sanitized_results()
+|   |-- load_tests_node()
+|   |-- run_tests_node()
+|   |-- improvement_plan_node()
+|   |-- final_report_node()
 ```
 
-## Key Learning Points
+## File Responsibilities
 
-- Prompt injection testing
-- Unsafe scenario simulation
-- Privacy and secret leakage prevention
-- Safety test reporting
-- Governance improvement planning
+- `.env`: Supports setup, configuration, reference, or documentation for the lab.
+- `.env.example`: Supports setup, configuration, reference, or documentation for the lab.
+- `ARCHITECTURE.md`: Supports setup, configuration, reference, or documentation for the lab.
+- `config/__init__.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
+- `config/settings.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
+- `graphs/__init__.py`: Builds the orchestration flow and connects agents or LangGraph nodes.
+- `graphs/testing_graph.py`: Builds the orchestration flow and connects agents or LangGraph nodes.
+- `main.py`: Entry point that accepts input, runs the workflow, and prints the result.
+- `models/__init__.py`: Defines data models or TypedDict state shared across the workflow.
+- `models/testing_models.py`: Defines data models or TypedDict state shared across the workflow.
+- `nodes/__init__.py`: Contains workflow node functions that update state step by step.
+- `nodes/testing_nodes.py`: Contains workflow node functions that update state step by step.
+- `Reference.md`: Supports setup, configuration, reference, or documentation for the lab.
+- `requirements.txt`: Supports setup, configuration, reference, or documentation for the lab.
+- `services/__init__.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
+- `services/llm_service.py`: Wraps Azure OpenAI model calls used by workflow nodes or agents.
+- `services/prompt_test_service.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
+
+## Test Prompts
+
+Use these prompts to test the lab objective:
+
+1. Run the built-in unsafe prompt test suite.
+2. Check whether prompt injection attempts are blocked.
+3. Review how the suite handles data exfiltration prompts.
+4. Evaluate allowed versus blocked prompts in the safety suite.
+5. Generate an improvement plan based on unsafe prompt test results.
 
 ## How To Run
 
@@ -100,11 +116,3 @@ main.py
 cd "24-Module 10-Unsafe-Prompt-Testing-Lab"
 ..\.venv\Scripts\python.exe main.py
 ```
-
-## Built-In Test Examples
-
-- Safe policy summary request
-- System prompt extraction attempt
-- PII and API key extraction attempt
-- Safe audit checklist request
-- Production audit deletion request

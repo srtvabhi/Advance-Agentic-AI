@@ -38,13 +38,25 @@ Final Summary Node
 19-Module 9-Production-Ready-AI-Workflow-Architecture-Lab/
 ├── .env
 ├── .env.example
-├── requirements.txt
+├── ARCHITECTURE.md
 ├── main.py
-├── config/
-├── graphs/
-├── nodes/
-├── services/
-└── models/
+├── Reference.md
+├── requirements.txt
+├── config
+│   ├── __init__.py
+│   └── settings.py
+├── graphs
+│   ├── __init__.py
+│   └── architecture_graph.py
+├── models
+│   ├── __init__.py
+│   └── architecture_models.py
+├── nodes
+│   ├── __init__.py
+│   └── architecture_nodes.py
+└── services
+    ├── __init__.py
+    └── llm_service.py
 ```
 
 ## Tree-Based Call Architecture
@@ -53,55 +65,49 @@ This view explains which file calls which function, starting from `main.py`.
 
 ```text
 main.py
-|
-|-- imports: build_architecture_graph()
-|   from graphs/architecture_graph.py
-|
+|-- imports: build_architecture_graph from graphs.architecture_graph
 |-- function: main()
-    |
-    |-- reads architecture problem
-    |-- calls: build_architecture_graph()
-    |-- calls: app.invoke(initial ArchitectureState)
-    |
-    |-- LangGraph executes:
-        |
-        |-- intake_node()
-        |   |-- calls: ask_model()
-        |   |-- writes: intake_summary
-        |
-        |-- architecture_node()
-        |   |-- reads: intake_summary
-        |   |-- calls: ask_model()
-        |   |-- writes: architecture_design
-        |
-        |-- deployment_node()
-        |   |-- reads: architecture_design
-        |   |-- calls: ask_model()
-        |   |-- writes: deployment_pattern
-        |
-        |-- reliability_node()
-        |   |-- reads: deployment_pattern
-        |   |-- calls: ask_model()
-        |   |-- writes: reliability_plan
-        |
-        |-- cost_latency_node()
-        |   |-- reads: reliability_plan
-        |   |-- calls: ask_model()
-        |   |-- writes: cost_latency_plan
-        |
-        |-- summary_node()
-            |-- combines architecture, deployment, reliability, and cost plans
-            |-- calls: ask_model()
-            |-- writes: final_summary
+|-- graphs/architecture_graph.py
+|   |-- build_architecture_graph()
+|-- services/llm_service.py
+|   |-- ask_model()
+|-- nodes/architecture_nodes.py
+|   |-- intake_node()
+|   |-- architecture_node()
+|   |-- deployment_node()
+|   |-- reliability_node()
+|   |-- cost_latency_node()
+|   |-- summary_node()
 ```
 
-## Key Learning Points
+## File Responsibilities
 
-- Enterprise-grade AI architecture principles
-- Stateless vs stateful deployment patterns
-- Reliability engineering for AI agents
-- Cost and latency optimization
-- LangGraph sequential production workflow design
+- `.env`: Supports setup, configuration, reference, or documentation for the lab.
+- `.env.example`: Supports setup, configuration, reference, or documentation for the lab.
+- `ARCHITECTURE.md`: Supports setup, configuration, reference, or documentation for the lab.
+- `config/__init__.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
+- `config/settings.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
+- `graphs/__init__.py`: Builds the orchestration flow and connects agents or LangGraph nodes.
+- `graphs/architecture_graph.py`: Builds the orchestration flow and connects agents or LangGraph nodes.
+- `main.py`: Entry point that accepts input, runs the workflow, and prints the result.
+- `models/__init__.py`: Defines data models or TypedDict state shared across the workflow.
+- `models/architecture_models.py`: Defines data models or TypedDict state shared across the workflow.
+- `nodes/__init__.py`: Contains workflow node functions that update state step by step.
+- `nodes/architecture_nodes.py`: Contains workflow node functions that update state step by step.
+- `Reference.md`: Supports setup, configuration, reference, or documentation for the lab.
+- `requirements.txt`: Supports setup, configuration, reference, or documentation for the lab.
+- `services/__init__.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
+- `services/llm_service.py`: Wraps Azure OpenAI model calls used by workflow nodes or agents.
+
+## Test Prompts
+
+Use these prompts to test the lab objective:
+
+1. Design a production-ready AI workflow for an enterprise HR helpdesk with policy retrieval, ticket creation, and manager escalation.
+2. Design a scalable AI architecture for insurance claim triage with audit logging and fallback handling.
+3. Create a production architecture for a finance invoice assistant that needs approvals and monitoring.
+4. Design an enterprise customer support agent architecture with RAG, tools, and observability.
+5. Create a production AI workflow architecture for IT incident triage across multiple regions.
 
 ## How To Run
 

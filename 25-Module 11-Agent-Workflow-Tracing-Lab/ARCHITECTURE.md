@@ -6,6 +6,10 @@ Trace an AI agent workflow execution using LangGraph and LangSmith.
 
 LangSmith has a free Developer plan for individual builders, and it can trace workflows that call Azure OpenAI because tracing observes your Python functions and model calls.
 
+## Problem Statement
+
+Run the lab scenario and observe how the workflow components collaborate to produce the final result.
+
 ## Architecture Flow
 
 ```text
@@ -33,19 +37,25 @@ Final Report Node
 25-Module 11-Agent-Workflow-Tracing-Lab/
 ├── .env
 ├── .env.example
-├── requirements.txt
-├── main.py
 ├── ARCHITECTURE.md
-├── config/
+├── main.py
+├── Reference.md
+├── requirements.txt
+├── config
+│   ├── __init__.py
 │   └── settings.py
-├── graphs/
+├── graphs
+│   ├── __init__.py
 │   └── tracing_graph.py
-├── nodes/
+├── models
+│   ├── __init__.py
+│   └── tracing_models.py
+├── nodes
+│   ├── __init__.py
 │   └── tracing_nodes.py
-├── services/
-│   └── llm_service.py
-└── models/
-    └── tracing_models.py
+└── services
+    ├── __init__.py
+    └── llm_service.py
 ```
 
 ## Tree-Based Call Architecture
@@ -54,56 +64,49 @@ This view explains which file calls which function, starting from `main.py`.
 
 ```text
 main.py
-|
-|-- imports: configure_langsmith()
-|   from config/settings.py
-|
-|-- imports: build_tracing_graph()
-|   from graphs/tracing_graph.py
-|
+|-- imports: configure_langsmith from config.settings
+|-- imports: build_tracing_graph from graphs.tracing_graph
 |-- function: main()
-    |
-    |-- calls: configure_langsmith()
-    |-- reads incident description
-    |-- calls: build_tracing_graph()
-    |-- calls: app.invoke(initial TracingState)
-    |
-    |-- LangGraph executes traced nodes:
-        |
-        |-- triage_node()
-        |   |-- calls traced ask_model()
-        |   |-- writes triage_summary
-        |
-        |-- investigation_node()
-        |   |-- reads triage_summary
-        |   |-- calls traced ask_model()
-        |   |-- writes investigation_plan
-        |
-        |-- resolution_node()
-        |   |-- reads investigation_plan
-        |   |-- calls traced ask_model()
-        |   |-- writes resolution_message
-        |
-        |-- trace_notes_node()
-        |   |-- writes expected LangSmith trace notes
-        |
-        |-- final_report_node()
-            |-- combines prior outputs
-            |-- calls traced ask_model()
-            |-- writes final_report
+|-- graphs/tracing_graph.py
+|   |-- build_tracing_graph()
+|-- services/llm_service.py
+|   |-- ask_model()
+|-- nodes/tracing_nodes.py
+|   |-- triage_node()
+|   |-- investigation_node()
+|   |-- resolution_node()
+|   |-- trace_notes_node()
+|   |-- final_report_node()
 ```
 
-## LangSmith Setup
+## File Responsibilities
 
-Students can create their own LangSmith key and update `.env`:
+- `.env`: Supports setup, configuration, reference, or documentation for the lab.
+- `.env.example`: Supports setup, configuration, reference, or documentation for the lab.
+- `ARCHITECTURE.md`: Supports setup, configuration, reference, or documentation for the lab.
+- `config/__init__.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
+- `config/settings.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
+- `graphs/__init__.py`: Builds the orchestration flow and connects agents or LangGraph nodes.
+- `graphs/tracing_graph.py`: Builds the orchestration flow and connects agents or LangGraph nodes.
+- `main.py`: Entry point that accepts input, runs the workflow, and prints the result.
+- `models/__init__.py`: Defines data models or TypedDict state shared across the workflow.
+- `models/tracing_models.py`: Defines data models or TypedDict state shared across the workflow.
+- `nodes/__init__.py`: Contains workflow node functions that update state step by step.
+- `nodes/tracing_nodes.py`: Contains workflow node functions that update state step by step.
+- `Reference.md`: Supports setup, configuration, reference, or documentation for the lab.
+- `requirements.txt`: Supports setup, configuration, reference, or documentation for the lab.
+- `services/__init__.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
+- `services/llm_service.py`: Wraps Azure OpenAI model calls used by workflow nodes or agents.
 
-```env
-LANGSMITH_TRACING=true
-LANGSMITH_API_KEY=your_langsmith_key
-LANGSMITH_PROJECT=module-11-agent-tracing-lab
-```
+## Test Prompts
 
-Without a key, the lab still runs locally and prints `LangSmith tracing enabled: False`.
+Use these prompts to test the lab objective:
+
+1. The enterprise HR chatbot is returning slow answers for payroll questions. Support tickets increased by 40 percent in the last hour.
+2. Trace an incident where the IT support agent gives inconsistent VPN troubleshooting answers.
+3. Trace a customer service agent workflow where refund responses are delayed.
+4. Trace an AI workflow for invoice approval questions that are timing out.
+5. Trace a multi-step HR case workflow from triage to resolution message.
 
 ## How To Run
 
@@ -111,11 +114,3 @@ Without a key, the lab still runs locally and prints `LangSmith tracing enabled:
 cd "25-Module 11-Agent-Workflow-Tracing-Lab"
 ..\.venv\Scripts\python.exe main.py
 ```
-
-## Key Learning Points
-
-- Workflow tracing
-- Agent execution tracking
-- Debugging node-by-node execution
-- Observing model calls
-- Using LangSmith with Azure OpenAI model calls

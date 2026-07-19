@@ -45,20 +45,26 @@ Final Report Node
 20-Module 9-Scalable-AI-Orchestration-Pipeline-Lab/
 ├── .env
 ├── .env.example
-├── requirements.txt
-├── main.py
 ├── ARCHITECTURE.md
-├── config/
+├── main.py
+├── Reference.md
+├── requirements.txt
+├── config
+│   ├── __init__.py
 │   └── settings.py
-├── graphs/
+├── graphs
+│   ├── __init__.py
 │   └── pipeline_graph.py
-├── nodes/
+├── models
+│   ├── __init__.py
+│   └── pipeline_models.py
+├── nodes
+│   ├── __init__.py
 │   └── pipeline_nodes.py
-├── services/
-│   ├── llm_service.py
-│   └── queue_service.py
-└── models/
-    └── pipeline_models.py
+└── services
+    ├── __init__.py
+    ├── llm_service.py
+    └── queue_service.py
 ```
 
 ## Tree-Based Call Architecture
@@ -67,53 +73,52 @@ This view explains which file calls which function, starting from `main.py`.
 
 ```text
 main.py
-|
-|-- imports: build_pipeline_graph()
-|   from graphs/pipeline_graph.py
-|
+|-- imports: build_pipeline_graph from graphs.pipeline_graph
 |-- function: main()
-    |
-    |-- reads pipeline objective
-    |-- calls: build_pipeline_graph()
-    |-- calls: app.invoke(initial PipelineState)
-    |
-    |-- LangGraph executes:
-        |
-        |-- receive_events_node()
-        |   |-- calls: load_sample_events()
-        |   |-- calls: summarize_events()
-        |   |   from services/queue_service.py
-        |   |-- writes: events, queue_summary
-        |
-        |-- routing_node()
-        |   |-- reads: objective, queue_summary, events
-        |   |-- calls: ask_model()
-        |   |-- writes: routing_plan
-        |
-        |-- worker_pool_node()
-        |   |-- reads: routing_plan
-        |   |-- calls: ask_model()
-        |   |-- writes: worker_pool_plan
-        |
-        |-- scaling_node()
-        |   |-- reads: worker_pool_plan
-        |   |-- calls: ask_model()
-        |   |-- writes: scaling_plan
-        |
-        |-- final_report_node()
-            |-- combines queue, routing, worker, and scaling outputs
-            |-- calls: ask_model()
-            |-- writes: final_report
+|-- graphs/pipeline_graph.py
+|   |-- build_pipeline_graph()
+|-- services/llm_service.py
+|   |-- ask_model()
+|-- services/queue_service.py
+|   |-- load_sample_events()
+|   |-- summarize_events()
+|-- nodes/pipeline_nodes.py
+|   |-- receive_events_node()
+|   |-- routing_node()
+|   |-- worker_pool_node()
+|   |-- scaling_node()
+|   |-- final_report_node()
 ```
 
-## Key Learning Points
+## File Responsibilities
 
-- Queue-based AI orchestration
-- Event-driven execution pipelines
-- Stateless worker pool design
-- Back-pressure handling
-- Latency and cost optimization
-- LangGraph node and edge design
+- `.env`: Supports setup, configuration, reference, or documentation for the lab.
+- `.env.example`: Supports setup, configuration, reference, or documentation for the lab.
+- `ARCHITECTURE.md`: Supports setup, configuration, reference, or documentation for the lab.
+- `config/__init__.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
+- `config/settings.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
+- `graphs/__init__.py`: Builds the orchestration flow and connects agents or LangGraph nodes.
+- `graphs/pipeline_graph.py`: Builds the orchestration flow and connects agents or LangGraph nodes.
+- `main.py`: Entry point that accepts input, runs the workflow, and prints the result.
+- `models/__init__.py`: Defines data models or TypedDict state shared across the workflow.
+- `models/pipeline_models.py`: Defines data models or TypedDict state shared across the workflow.
+- `nodes/__init__.py`: Contains workflow node functions that update state step by step.
+- `nodes/pipeline_nodes.py`: Contains workflow node functions that update state step by step.
+- `Reference.md`: Supports setup, configuration, reference, or documentation for the lab.
+- `requirements.txt`: Supports setup, configuration, reference, or documentation for the lab.
+- `services/__init__.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
+- `services/llm_service.py`: Wraps Azure OpenAI model calls used by workflow nodes or agents.
+- `services/queue_service.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
+
+## Test Prompts
+
+Use these prompts to test the lab objective:
+
+1. Build a scalable orchestration pipeline for 10,000 customer support tickets per day.
+2. Design a queue-based AI pipeline for insurance claim events across multiple priority levels.
+3. Create a scalable workflow for HR onboarding requests during a large hiring wave.
+4. Build an event-driven orchestration pipeline for IT incidents from monitoring alerts.
+5. Design a worker-pool pipeline for finance invoice processing with surge handling.
 
 ## How To Run
 
@@ -121,7 +126,3 @@ main.py
 cd "20-Module 9-Scalable-AI-Orchestration-Pipeline-Lab"
 ..\.venv\Scripts\python.exe main.py
 ```
-
-## Why This Is Production Grade
-
-This lab separates orchestration, nodes, services, models, and configuration. That mirrors how enterprise teams design AI systems that need to scale beyond a simple local script.

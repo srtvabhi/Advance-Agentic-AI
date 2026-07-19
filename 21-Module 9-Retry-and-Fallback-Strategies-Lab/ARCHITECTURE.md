@@ -40,39 +40,27 @@ Final Report Node
 21-Module 9-Retry-and-Fallback-Strategies-Lab/
 ├── .env
 ├── .env.example
-├── requirements.txt
-├── main.py
 ├── ARCHITECTURE.md
-├── config/
+├── main.py
+├── Reference.md
+├── requirements.txt
+├── config
+│   ├── __init__.py
 │   └── settings.py
-├── graphs/
+├── graphs
+│   ├── __init__.py
 │   └── resiliency_graph.py
-├── nodes/
+├── models
+│   ├── __init__.py
+│   └── resiliency_models.py
+├── nodes
+│   ├── __init__.py
 │   └── resiliency_nodes.py
-├── services/
-│   ├── dependency_service.py
-│   └── llm_service.py
-└── models/
-    └── resiliency_models.py
+└── services
+    ├── __init__.py
+    ├── dependency_service.py
+    └── llm_service.py
 ```
-
-## Conditional Routing
-
-The graph uses conditional edges after the primary dependency node:
-
-- `retry` returns to the primary node
-- `fallback` goes to the fallback node
-- `final` goes to the final report node
-
-## How To Test Fallback
-
-When running the lab, include this phrase in the task:
-
-```text
-force fallback
-```
-
-That makes the simulated primary dependency fail on every attempt so participants can observe fallback behavior.
 
 ## Tree-Based Call Architecture
 
@@ -80,55 +68,50 @@ This view explains which file calls which function, starting from `main.py`.
 
 ```text
 main.py
-|
-|-- imports: build_resiliency_graph()
-|   from graphs/resiliency_graph.py
-|
+|-- imports: build_resiliency_graph from graphs.resiliency_graph
 |-- function: main()
-    |
-    |-- reads production task
-    |-- calls: build_resiliency_graph()
-    |-- calls: app.invoke(initial ResiliencyState)
-    |
-    |-- LangGraph starts at primary_node()
-        |
-        |-- primary_node()
-        |   |
-        |   |-- increments attempt
-        |   |-- calls: call_primary_dependency(task, attempt)
-        |   |   from services/dependency_service.py
-        |   |
-        |   |-- on success:
-        |   |   |-- calls: ask_model()
-        |   |   |-- writes primary_result and status=primary_success
-        |   |
-        |   |-- on failure:
-        |       |-- appends error_log
-        |       |-- writes status=retry_needed or fallback_needed
-        |
-        |-- route_after_primary()
-        |   |
-        |   |-- retry -> primary_node()
-        |   |-- fallback -> fallback_node()
-        |   |-- final -> final_node()
-        |
-        |-- fallback_node()
-        |   |-- calls: ask_model()
-        |   |-- writes fallback_result and status=fallback_success
-        |
-        |-- final_node()
-            |-- calls: ask_model()
-            |-- writes final_answer
+|-- graphs/resiliency_graph.py
+|   |-- build_resiliency_graph()
+|-- services/dependency_service.py
+|   |-- call_primary_dependency()
+|-- services/llm_service.py
+|   |-- ask_model()
+|-- nodes/resiliency_nodes.py
+|   |-- primary_node()
+|   |-- route_after_primary()
+|   |-- fallback_node()
+|   |-- final_node()
 ```
 
-## Key Learning Points
+## File Responsibilities
 
-- Retry design
-- Fallback handling
-- Conditional routing in LangGraph
-- Circuit breaker style thinking
-- AI service dependency management
-- Reliability engineering for AI systems
+- `.env`: Supports setup, configuration, reference, or documentation for the lab.
+- `.env.example`: Supports setup, configuration, reference, or documentation for the lab.
+- `ARCHITECTURE.md`: Supports setup, configuration, reference, or documentation for the lab.
+- `config/__init__.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
+- `config/settings.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
+- `graphs/__init__.py`: Builds the orchestration flow and connects agents or LangGraph nodes.
+- `graphs/resiliency_graph.py`: Builds the orchestration flow and connects agents or LangGraph nodes.
+- `main.py`: Entry point that accepts input, runs the workflow, and prints the result.
+- `models/__init__.py`: Defines data models or TypedDict state shared across the workflow.
+- `models/resiliency_models.py`: Defines data models or TypedDict state shared across the workflow.
+- `nodes/__init__.py`: Contains workflow node functions that update state step by step.
+- `nodes/resiliency_nodes.py`: Contains workflow node functions that update state step by step.
+- `Reference.md`: Supports setup, configuration, reference, or documentation for the lab.
+- `requirements.txt`: Supports setup, configuration, reference, or documentation for the lab.
+- `services/__init__.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
+- `services/dependency_service.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
+- `services/llm_service.py`: Wraps Azure OpenAI model calls used by workflow nodes or agents.
+
+## Test Prompts
+
+Use these prompts to test the lab objective:
+
+1. Process a payment approval task where the primary dependency may fail and fallback is required.
+2. Create a retry and fallback workflow for customer support ticket classification.
+3. Design resiliency handling for an invoice validation service with temporary outages.
+4. Handle HR policy lookup when the primary knowledge service is unavailable.
+5. Create a fallback plan for IT incident summarization when the main model call fails.
 
 ## How To Run
 
@@ -136,7 +119,3 @@ main.py
 cd "21-Module 9-Retry-and-Fallback-Strategies-Lab"
 ..\.venv\Scripts\python.exe main.py
 ```
-
-## Why This Is Production Grade
-
-Production AI systems must expect dependency failures. This lab shows a simple, readable pattern for retrying temporary failures and using a fallback path when the primary dependency is unavailable.

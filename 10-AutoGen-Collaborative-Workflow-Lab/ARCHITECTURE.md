@@ -14,15 +14,31 @@ Design a collaborative AutoGen solution for enterprise loan application processi
 User Task
    |
    v
-RoundRobinGroupChat
-   |
-   +--> Business Analyst Agent
-   +--> Solution Architect Agent
-   +--> Security Reviewer Agent
-   +--> Coordinator Agent
+main.py
    |
    v
-Final Group Recommendation
+create_model_client()
+   |
+   v
+create_group_chat()
+   |
+   v
+RoundRobinGroupChat
+   |
+   v
+Business Agent
+   |
+   v
+Architect Agent
+   |
+   v
+Security Agent
+   |
+   v
+Coordinator Agent
+   |
+   v
+Formatted Group Conversation
 ```
 
 ## Folder Structure
@@ -31,13 +47,25 @@ Final Group Recommendation
 10-AutoGen-Collaborative-Workflow-Lab/
 ├── .env
 ├── .env.example
-├── requirements.txt
+├── ARCHITECTURE.md
 ├── main.py
-├── config/
-├── agents/
-├── orchestration/
-├── services/
-└── models/
+├── Reference.md
+├── requirements.txt
+├── agents
+│   ├── __init__.py
+│   └── team_agents.py
+├── config
+│   ├── __init__.py
+│   └── settings.py
+├── models
+│   ├── __init__.py
+│   └── conversation_models.py
+├── orchestration
+│   ├── __init__.py
+│   └── group_chat.py
+└── services
+    ├── __init__.py
+    └── output_service.py
 ```
 
 ## Tree-Based Call Architecture
@@ -46,66 +74,53 @@ This view explains which file calls which function, starting from `main.py`.
 
 ```text
 main.py
-|
-|-- imports: create_model_client()
-|   from config/settings.py
-|
-|-- imports: create_group_chat()
-|   from orchestration/group_chat.py
-|
-|-- imports: format_team_messages()
-|   from services/output_service.py
-|
+|-- imports: create_model_client from config.settings
+|-- imports: create_group_chat from orchestration.group_chat
+|-- imports: format_team_messages from services.output_service
 |-- function: main()
-|   |
-|   |-- reads user task
-|   |-- calls: create_model_client()
-|   |   |
-|   |   |-- config/settings.py
-|   |       |
-|   |       |-- loads local .env
-|   |       |-- creates AutoGen OpenAIChatCompletionClient
-|   |
-|   |-- calls: create_group_chat(model_client)
-|   |   |
-|   |   |-- orchestration/group_chat.py
-|   |       |
-|   |       |-- calls create_business_agent(model_client)
-|   |       |-- calls create_architect_agent(model_client)
-|   |       |-- calls create_security_agent(model_client)
-|   |       |-- calls create_coordinator_agent(model_client)
-|   |       |   from agents/team_agents.py
-|   |       |
-|   |       |-- creates RoundRobinGroupChat()
-|   |       |-- uses MaxMessageTermination(5)
-|   |
-|   |-- calls: team.run(task=task)
-|   |   |
-|   |   |-- AutoGen runs agents in round-robin order
-|   |   |-- each agent adds a message to the group conversation
-|   |
-|   |-- calls: format_team_messages(result.messages)
-|   |   |
-|   |   |-- services/output_service.py
-|   |       |
-|   |       |-- skips ThoughtEvent messages
-|   |       |-- maps each message to AgentMessage
-|   |           from models/conversation_models.py
-|   |
-|   |-- prints formatted group conversation
-|   |-- closes model_client
+|-- orchestration/group_chat.py
+|   |-- create_group_chat()
+|-- services/output_service.py
+|   |-- format_team_messages()
+|-- agents/team_agents.py
+|   |-- create_business_agent()
+|   |-- create_architect_agent()
+|   |-- create_security_agent()
+|   |-- create_coordinator_agent()
 ```
 
-## Key Learning Points
+## File Responsibilities
 
-- AutoGen assistant agents
-- Group conversation orchestration
-- Enterprise collaboration workflow
-- Coordinator/synthesizer agent pattern
+- `.env`: Supports setup, configuration, reference, or documentation for the lab.
+- `.env.example`: Supports setup, configuration, reference, or documentation for the lab.
+- `agents/__init__.py`: Defines agent creation functions and role instructions.
+- `agents/team_agents.py`: Defines agent creation functions and role instructions.
+- `ARCHITECTURE.md`: Supports setup, configuration, reference, or documentation for the lab.
+- `config/__init__.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
+- `config/settings.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
+- `main.py`: Entry point that accepts input, runs the workflow, and prints the result.
+- `models/__init__.py`: Defines data models or TypedDict state shared across the workflow.
+- `models/conversation_models.py`: Defines data models or TypedDict state shared across the workflow.
+- `orchestration/__init__.py`: Builds the orchestration flow and connects agents or LangGraph nodes.
+- `orchestration/group_chat.py`: Builds the orchestration flow and connects agents or LangGraph nodes.
+- `Reference.md`: Supports setup, configuration, reference, or documentation for the lab.
+- `requirements.txt`: Supports setup, configuration, reference, or documentation for the lab.
+- `services/__init__.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
+- `services/output_service.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
+
+## Test Prompts
+
+Use these prompts to test the lab objective:
+
+1. Design a collaborative AutoGen solution for enterprise loan application processing.
+2. Create a multi-agent hospital appointment scheduling solution with privacy controls.
+3. Design an insurance claim processing workflow with business, technical, security, and coordinator agents.
+4. Create a procurement vendor onboarding workflow with security review.
+5. Design a retail complaint resolution workflow across support, operations, and compliance.
 
 ## How To Run
 
 ```bash
-cd 10-AutoGen-Collaborative-Workflow-Lab
+cd "10-AutoGen-Collaborative-Workflow-Lab"
 ..\.venv\Scripts\python.exe main.py
 ```

@@ -6,6 +6,10 @@ Build an end-to-end enterprise Agentic AI solution using LangGraph.
 
 This capstone lab connects business planning, architecture, security review, observability, governance, and production readiness into one workflow.
 
+## Problem Statement
+
+Run the lab scenario and observe how the workflow components collaborate to produce the final result.
+
 ## Architecture Flow
 
 ```text
@@ -36,19 +40,25 @@ Final Solution Node
 28-Module 12-End-to-End-Enterprise-Agentic-AI-Solution-Lab/
 ├── .env
 ├── .env.example
-├── requirements.txt
-├── main.py
 ├── ARCHITECTURE.md
-├── config/
+├── main.py
+├── Reference.md
+├── requirements.txt
+├── config
+│   ├── __init__.py
 │   └── settings.py
-├── graphs/
+├── graphs
+│   ├── __init__.py
 │   └── solution_graph.py
-├── nodes/
+├── models
+│   ├── __init__.py
+│   └── solution_models.py
+├── nodes
+│   ├── __init__.py
 │   └── solution_nodes.py
-├── services/
-│   └── llm_service.py
-└── models/
-    └── solution_models.py
+└── services
+    ├── __init__.py
+    └── llm_service.py
 ```
 
 ## Tree-Based Call Architecture
@@ -57,60 +67,50 @@ This view explains which file calls which function, starting from `main.py`.
 
 ```text
 main.py
-|
-|-- imports: configure_langsmith()
-|   from config/settings.py
-|
-|-- imports: build_solution_graph()
-|   from graphs/solution_graph.py
-|
+|-- imports: configure_langsmith from config.settings
+|-- imports: build_solution_graph from graphs.solution_graph
 |-- function: main()
-    |
-    |-- calls: configure_langsmith()
-    |-- reads business problem
-    |-- calls: build_solution_graph()
-    |-- calls: app.invoke(initial EnterpriseSolutionState)
-    |
-    |-- LangGraph executes:
-        |
-        |-- requirements_node()
-        |   |-- calls: ask_model()
-        |   |-- writes requirements
-        |
-        |-- architecture_node()
-        |   |-- reads requirements
-        |   |-- calls: ask_model()
-        |   |-- writes architecture
-        |
-        |-- security_compliance_node()
-        |   |-- reads architecture
-        |   |-- calls: ask_model()
-        |   |-- writes security_compliance
-        |
-        |-- observability_governance_node()
-        |   |-- reads architecture and security review
-        |   |-- calls: ask_model()
-        |   |-- writes observability_governance
-        |
-        |-- production_readiness_node()
-        |   |-- reads architecture, security, and observability
-        |   |-- calls: ask_model()
-        |   |-- writes production_readiness
-        |
-        |-- final_solution_node()
-            |-- combines all sections
-            |-- writes final_solution
+|-- graphs/solution_graph.py
+|   |-- build_solution_graph()
+|-- services/llm_service.py
+|   |-- ask_model()
+|-- nodes/solution_nodes.py
+|   |-- requirements_node()
+|   |-- architecture_node()
+|   |-- security_compliance_node()
+|   |-- observability_governance_node()
+|   |-- production_readiness_node()
+|   |-- final_solution_node()
 ```
 
-## LangSmith Setup
+## File Responsibilities
 
-LangSmith offers a free Developer plan for individual use, and LangSmith tracing can observe Python workflows that call Azure OpenAI models.
+- `.env`: Supports setup, configuration, reference, or documentation for the lab.
+- `.env.example`: Supports setup, configuration, reference, or documentation for the lab.
+- `ARCHITECTURE.md`: Supports setup, configuration, reference, or documentation for the lab.
+- `config/__init__.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
+- `config/settings.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
+- `graphs/__init__.py`: Builds the orchestration flow and connects agents or LangGraph nodes.
+- `graphs/solution_graph.py`: Builds the orchestration flow and connects agents or LangGraph nodes.
+- `main.py`: Entry point that accepts input, runs the workflow, and prints the result.
+- `models/__init__.py`: Defines data models or TypedDict state shared across the workflow.
+- `models/solution_models.py`: Defines data models or TypedDict state shared across the workflow.
+- `nodes/__init__.py`: Contains workflow node functions that update state step by step.
+- `nodes/solution_nodes.py`: Contains workflow node functions that update state step by step.
+- `Reference.md`: Supports setup, configuration, reference, or documentation for the lab.
+- `requirements.txt`: Supports setup, configuration, reference, or documentation for the lab.
+- `services/__init__.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
+- `services/llm_service.py`: Wraps Azure OpenAI model calls used by workflow nodes or agents.
 
-```env
-LANGSMITH_TRACING=true
-LANGSMITH_API_KEY=your_langsmith_key
-LANGSMITH_PROJECT=module-12-enterprise-solution-lab
-```
+## Test Prompts
+
+Use these prompts to test the lab objective:
+
+1. Design an enterprise Agentic AI assistant for employee services with HR, IT, ticketing, escalation, and observability.
+2. Create an end-to-end enterprise agent solution for insurance claims with RAG, approvals, monitoring, and governance.
+3. Design a production AI assistant for finance operations that handles invoices, exceptions, and audits.
+4. Build a capstone architecture for customer service automation with security and compliance controls.
+5. Design an enterprise agentic platform for IT incident management with cost and readiness planning.
 
 ## How To Run
 
@@ -118,11 +118,3 @@ LANGSMITH_PROJECT=module-12-enterprise-solution-lab
 cd "28-Module 12-End-to-End-Enterprise-Agentic-AI-Solution-Lab"
 ..\.venv\Scripts\python.exe main.py
 ```
-
-## Key Learning Points
-
-- Enterprise Agentic AI solution design
-- Azure deployment and scalability planning
-- Security and compliance review
-- Observability and governance integration
-- Production readiness checklist

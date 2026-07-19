@@ -4,23 +4,74 @@
 
 Develop a multi-step AI automation pipeline using Semantic Kernel plugins and RAG.
 
+## Problem Statement
+
+Run the lab scenario and observe how the workflow components collaborate to produce the final result.
+
 ## Architecture Flow
 
 ```text
-IT Change Request
+Change Request
    |
    v
-Semantic Kernel
+run_change_pipeline()
    |
-   +--> ChangeAutomationPlugin.validate_change_type
-   +--> ChangeAutomationPlugin.retrieve_standard
-   |       |
-   |       v
-   |   PDF -> ChromaDB -> text-embedding-3-large
+   v
+validate_change_type
    |
-   +--> Semantic Automation Plan using gpt-oss-120b
-   +--> ChangeAutomationPlugin.create_change_record
-   +--> ChangeAutomationPlugin.send_notification
+   v
+retrieve_standard
+   |
+   v
+kernel.invoke_prompt()
+   |
+   v
+create_change_record
+   |
+   v
+send_notification
+   |
+   v
+Final Pipeline Output
+```
+
+## Folder Structure
+
+```text
+18-SemanticKernel-Automation-Pipeline-Lab/
+├── .env
+├── .env.example
+├── ARCHITECTURE.md
+├── main.py
+├── Reference.md
+├── requirements.txt
+├── config
+│   ├── __init__.py
+│   └── settings.py
+├── data
+│   ├── pdfs
+│   │   └── change_management_standard.pdf
+│   └── source_docs
+│       └── change_management_standard.txt
+├── models
+│   ├── __init__.py
+│   └── rag_models.py
+├── plugins
+│   ├── __init__.py
+│   └── change_automation_plugin.py
+├── services
+│   ├── __init__.py
+│   ├── automation_pipeline.py
+│   ├── chunking_service.py
+│   ├── pdf_service.py
+│   └── vector_store_service.py
+└── vector_store
+    ├── chroma.sqlite3
+    └── a736dbe8-99a7-473b-93d6-79c7de28ae30
+        ├── data_level0.bin
+        ├── header.bin
+        ├── length.bin
+        └── link_lists.bin
 ```
 
 ## Tree-Based Call Architecture
@@ -29,51 +80,60 @@ This view explains which file calls which function, starting from `main.py`.
 
 ```text
 main.py
-|
-|-- imports: run_change_pipeline()
-|   from services/automation_pipeline.py
-|
+|-- imports: run_change_pipeline from services.automation_pipeline
 |-- function: main()
-    |
-    |-- reads IT change request
-    |-- calls: run_change_pipeline(change)
-    |   |
-    |   |-- calls: create_kernel()
-    |   |   from config/settings.py
-    |   |
-    |   |-- creates: ChangeAutomationPlugin()
-    |   |   from plugins/change_automation_plugin.py
-    |   |   |
-    |   |   |-- calls: _ensure_index()
-    |   |       |
-    |   |       |-- ensure_pdf_exists()
-    |   |       |-- read_pdf_pages()
-    |   |       |-- chunk_text()
-    |   |       |-- index_chunks()
-    |   |
-    |   |-- invokes: ChangeAutomation.validate_change_type()
-    |   |-- invokes: ChangeAutomation.retrieve_standard()
-    |   |   |
-    |   |   |-- calls: semantic_search()
-    |   |
-    |   |-- invokes semantic automation-plan prompt
-    |   |-- invokes: ChangeAutomation.create_change_record()
-    |   |-- invokes: ChangeAutomation.send_notification()
-    |
-    |-- prints change type, standard, plan, record, and notification
+|-- services/automation_pipeline.py
+|   |-- run_change_pipeline()
+|-- services/chunking_service.py
+|   |-- chunk_text()
+|-- services/pdf_service.py
+|   |-- ensure_pdf_exists()
+|   |-- read_pdf_pages()
+|-- services/vector_store_service.py
+|   |-- create_embedding()
+|   |-- get_collection()
+|   |-- index_chunks()
+|   |-- semantic_search()
+|-- plugins/change_automation_plugin.py
+|   |-- ChangeAutomationPlugin()
 ```
 
-## Key Learning Points
+## File Responsibilities
 
-- Multi-step Semantic Kernel automation
-- Native plugin actions
-- Semantic functions for planning
-- RAG over change management standards
-- Cross-system orchestration simulation
+- `.env`: Supports setup, configuration, reference, or documentation for the lab.
+- `.env.example`: Supports setup, configuration, reference, or documentation for the lab.
+- `ARCHITECTURE.md`: Supports setup, configuration, reference, or documentation for the lab.
+- `config/__init__.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
+- `config/settings.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
+- `data/pdfs/change_management_standard.pdf`: Contains local dummy knowledge-base source documents and PDFs.
+- `data/source_docs/change_management_standard.txt`: Contains local dummy knowledge-base source documents and PDFs.
+- `main.py`: Entry point that accepts input, runs the workflow, and prints the result.
+- `models/__init__.py`: Defines data models or TypedDict state shared across the workflow.
+- `models/rag_models.py`: Defines data models or TypedDict state shared across the workflow.
+- `plugins/__init__.py`: Defines Semantic Kernel native plugin functions used by the workflow.
+- `plugins/change_automation_plugin.py`: Defines Semantic Kernel native plugin functions used by the workflow.
+- `Reference.md`: Supports setup, configuration, reference, or documentation for the lab.
+- `requirements.txt`: Supports setup, configuration, reference, or documentation for the lab.
+- `services/__init__.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
+- `services/automation_pipeline.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
+- `services/chunking_service.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
+- `services/pdf_service.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
+- `services/vector_store_service.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
+- `vector_store/`: Stores persisted ChromaDB vector index files.
+
+## Test Prompts
+
+Use these prompts to test the lab objective:
+
+1. Deploy a production firewall rule change for the payment API during the weekend maintenance window.
+2. Apply an emergency database index change to reduce checkout latency.
+3. Update a non-production feature flag for the HR portal.
+4. Patch a production Kubernetes cluster node pool during maintenance.
+5. Rollback a failed release that caused customer login errors.
 
 ## How To Run
 
 ```bash
-cd 18-SemanticKernel-Automation-Pipeline-Lab
+cd "18-SemanticKernel-Automation-Pipeline-Lab"
 ..\.venv\Scripts\python.exe main.py
 ```
