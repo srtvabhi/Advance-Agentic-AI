@@ -29,11 +29,24 @@ Final Node
 ├── .env.example
 ├── requirements.txt
 ├── main.py
+├── ARCHITECTURE.md
+├── Reference.md
 ├── config/
+│   └── settings.py
 ├── graph/
+│   └── routing_graph.py
 ├── nodes/
+│   ├── router_node.py
+│   ├── business_node.py
+│   ├── technical_node.py
+│   ├── risk_node.py
+│   ├── general_node.py
+│   └── final_node.py
 ├── services/
+│   ├── llm_service.py
+│   └── routing_service.py
 └── models/
+    └── state_models.py
 ```
 
 ## Tree-Based Call Architecture
@@ -106,6 +119,41 @@ final_node()
 |
 |-- combines state["route"] and state["answer"]
 |-- returns: {"final_response": final_response}
+```
+
+Every LLM-powered node uses the same shared LLM service:
+
+```text
+services/llm_service.py
+|
+|-- function: ask_llm(system_prompt, user_prompt)
+    |
+    |-- calls: create_openai_client()
+    |   from config/settings.py
+    |
+    |-- calls: get_model_name()
+    |   from config/settings.py
+    |
+    |-- calls: client.chat.completions.create()
+    |-- returns: model response text
+```
+
+Configuration is loaded from this lab's local `.env` file:
+
+```text
+config/settings.py
+|
+|-- function: load_environment()
+|   |
+|   |-- loads local .env file
+|
+|-- function: create_openai_client()
+|   |
+|   |-- creates AsyncOpenAI client
+|
+|-- function: get_model_name()
+    |
+    |-- returns AZURE_OPENAI_DEPLOYMENT
 ```
 
 ## Key Learning Points
