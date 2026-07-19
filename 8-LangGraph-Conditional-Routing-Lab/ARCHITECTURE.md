@@ -163,6 +163,30 @@ config/settings.py
 - Specialist node design
 - Supervisor/router pattern in LangGraph
 
+## Example Prompts
+
+Use prompts that clearly belong to different routes so learners can see conditional routing in action.
+
+```text
+How do we measure ROI for an AI-powered HR helpdesk agent?
+```
+
+```text
+What APIs and data sources are needed to build an enterprise IT support agent?
+```
+
+```text
+What security controls are required for a payroll automation agent?
+```
+
+```text
+How should we encourage employees to adopt a new internal AI assistant?
+```
+
+```text
+Explain what an AI agent is in simple language for a non-technical manager.
+```
+
 ## How To Run
 
 ```bash
