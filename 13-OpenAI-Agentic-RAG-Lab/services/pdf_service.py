@@ -10,14 +10,14 @@ from pypdf import PdfReader
 
 # Function: confirm the required PDF file exists before indexing starts.
 # Logic:
-# 1. Check whether the PDF exists at data/pdfs/.
+# 1. Check whether the PDF exists in the expected department folder.
 # 2. Raise a clear error if the file is missing.
 # 3. Continue only when the real PDF is available.
 def validate_pdf_exists(pdf_path: Path) -> None:
     if not pdf_path.exists():
         raise FileNotFoundError(
             f"Required PDF not found: {pdf_path}. "
-            "Place employee_travel_policy.pdf inside data/pdfs before running the lab."
+            "Place employee_travel_policy.pdf inside data/HR before running the lab."
         )
 
 

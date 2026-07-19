@@ -1,0 +1,6 @@
+region,quarter,product,revenue_usd,pipeline_usd,win_rate_percent,key_risk,next_action
+North America,Q3,AnalyticsPro,420000,680000,34,Enterprise renewals delayed by procurement,Schedule executive sponsor calls for top five renewals
+Europe,Q3,SecurePay,310000,540000,29,Payment compliance review slowing deals,Prepare compliance FAQ and customer evidence pack
+Asia Pacific,Q3,AnalyticsPro,260000,390000,31,Partner enablement gaps in two markets,Run partner training and weekly pipeline review
+Middle East,Q3,SecurePay,190000,330000,27,Long security questionnaire cycle,Create standard security response library
+Latin America,Q3,AnalyticsPro,145000,260000,25,Discount pressure from competitors,Review pricing guardrails and value messaging

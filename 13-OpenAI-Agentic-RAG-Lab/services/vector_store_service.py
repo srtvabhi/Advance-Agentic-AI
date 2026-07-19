@@ -6,10 +6,11 @@ from services.embedding_service import create_embedding
 
 
 # This service manages ChromaDB, the local vector store for Lab 13.
-# It stores embedded document chunks and retrieves the chunks that are closest
-# in meaning to the user's question.
+# It stores embedded chunks from HR, Sales, and Marketing sources, then retrieves
+# chunks that are closest in meaning to the user's question. Retrieval can also
+# filter by business domain using chunk metadata.
 
-COLLECTION_NAME = "agentic_rag_travel_policy"
+COLLECTION_NAME = "agentic_rag_enterprise_knowledge"
 
 
 # Function: get or create the ChromaDB collection.
@@ -64,17 +65,22 @@ def index_chunks(openai_client, chunks: list[DocumentChunk]) -> None:
 # Function: find the most relevant chunks for a user question.
 # Logic:
 # 1. Convert the user question into an embedding.
-# 2. Query ChromaDB for the nearest document chunks.
-# 3. Convert raw ChromaDB results into RetrievedChunk objects.
-# 4. Return those chunks to the RAG pipeline for answer generation.
-def semantic_search(openai_client, query: str, top_k: int = 4) -> list[RetrievedChunk]:
+# 2. If a specific domain is selected, add a metadata filter.
+# 3. Query ChromaDB for the nearest document chunks.
+# 4. Convert raw ChromaDB results into RetrievedChunk objects.
+# 5. Return those chunks to the RAG pipeline for answer generation.
+def semantic_search(openai_client, query: str, category_filter: str = "All", top_k: int = 4) -> list[RetrievedChunk]:
     collection = get_collection()
     query_embedding = create_embedding(openai_client, query)
-    results = collection.query(
-        query_embeddings=[query_embedding],
-        n_results=top_k,
-        include=["documents", "metadatas", "distances"],
-    )
+    query_arguments = {
+        "query_embeddings": [query_embedding],
+        "n_results": top_k,
+        "include": ["documents", "metadatas", "distances"],
+    }
+    if category_filter != "All":
+        query_arguments["where"] = {"category": category_filter}
+
+    results = collection.query(**query_arguments)
 
     retrieved = []
     for text, metadata, distance in zip(

@@ -7,7 +7,9 @@ from openai import OpenAI
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 DATA_DIR = BASE_DIR / "data"
-PDF_DIR = DATA_DIR / "pdfs"
+HR_DIR = DATA_DIR / "HR"
+SALES_DIR = DATA_DIR / "Sales"
+MARKETING_DIR = DATA_DIR / "Marketing"
 VECTOR_STORE_DIR = BASE_DIR / "vector_store"
 
 
