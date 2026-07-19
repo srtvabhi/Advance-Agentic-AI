@@ -22,6 +22,45 @@ Semantic Kernel
    +--> VendorRiskPlugin.create_approval_task
 ```
 
+## Tree-Based Call Architecture
+
+This view explains which file calls which function, starting from `main.py`.
+
+```text
+main.py
+|
+|-- imports: run_vendor_workflow()
+|   from services/orchestrated_workflow.py
+|
+|-- function: main()
+    |
+    |-- reads vendor request
+    |-- calls: run_vendor_workflow(request)
+    |   |
+    |   |-- calls: create_kernel()
+    |   |   from config/settings.py
+    |   |
+    |   |-- creates: VendorRiskPlugin()
+    |   |   from plugins/vendor_risk_plugin.py
+    |   |   |
+    |   |   |-- calls: _ensure_index()
+    |   |       |
+    |   |       |-- ensure_pdf_exists()
+    |   |       |-- read_pdf_pages()
+    |   |       |-- chunk_text()
+    |   |       |-- index_chunks()
+    |   |
+    |   |-- invokes: VendorRisk.classify_vendor()
+    |   |-- invokes: VendorRisk.retrieve_controls()
+    |   |   |
+    |   |   |-- calls: semantic_search()
+    |   |
+    |   |-- invokes semantic assessment prompt
+    |   |-- invokes: VendorRisk.create_approval_task()
+    |
+    |-- prints risk, controls, assessment, and task
+```
+
 ## Key Learning Points
 
 - Semantic Kernel workflow orchestration

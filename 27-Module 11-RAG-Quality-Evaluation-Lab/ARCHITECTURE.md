@@ -46,6 +46,47 @@ Observability Report Node
     └── rag_eval_models.py
 ```
 
+## Tree-Based Call Architecture
+
+This view explains which file calls which function, starting from `main.py`.
+
+```text
+main.py
+|
+|-- imports: configure_langsmith()
+|   from config/settings.py
+|
+|-- imports: build_rag_eval_graph()
+|   from graphs/rag_eval_graph.py
+|
+|-- function: main()
+    |
+    |-- calls: configure_langsmith()
+    |-- reads RAG question
+    |-- calls: build_rag_eval_graph()
+    |-- calls: app.invoke(initial RAGEvaluationState)
+    |
+    |-- LangGraph executes:
+        |
+        |-- retrieve_context_node()
+        |   |-- calls: retrieve_context()
+        |   |   from services/retrieval_service.py
+        |   |-- writes retrieved_context
+        |
+        |-- generate_answer_node()
+        |   |-- reads question and retrieved_context
+        |   |-- calls: ask_model()
+        |   |-- writes answer
+        |
+        |-- llm_as_judge_node()
+        |   |-- reads question, context, and answer
+        |   |-- calls: ask_model()
+        |   |-- writes evaluation
+        |
+        |-- observability_report_node()
+            |-- writes observability_report
+```
+
 ## LangSmith Setup
 
 ```env

@@ -47,6 +47,50 @@ Final Explanation Node
     └── approval_models.py
 ```
 
+## Tree-Based Call Architecture
+
+This view explains which file calls which function, starting from `main.py`.
+
+```text
+main.py
+|
+|-- imports: build_approval_graph()
+|   from graphs/approval_graph.py
+|
+|-- function: main()
+    |
+    |-- reads user role and requested action
+    |-- calls: build_approval_graph()
+    |-- calls: app.invoke(initial ApprovalState)
+    |
+    |-- LangGraph starts at risk_assessment_node()
+        |
+        |-- risk_assessment_node()
+        |   |-- calls: evaluate_approval()
+        |   |   from services/approval_service.py
+        |   |-- writes risk_level, approval_required, approval_reason
+        |
+        |-- route_after_risk()
+        |   |
+        |   |-- approval -> approval_checkpoint_node()
+        |   |-- execute -> execution_node()
+        |
+        |-- approval_checkpoint_node()
+        |   |-- calls: create_approval_ticket()
+        |   |-- writes approval_ticket and paused execution_result
+        |
+        |-- execution_node()
+        |   |-- calls: execute_action()
+        |   |-- writes execution_result
+        |
+        |-- audit_node()
+        |   |-- writes audit_record
+        |
+        |-- final_node()
+            |-- calls: ask_model()
+            |-- writes final_output
+```
+
 ## Key Learning Points
 
 - Role-based access control

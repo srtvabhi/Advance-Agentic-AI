@@ -56,6 +56,50 @@ Grounded Answer Agent using gpt-oss-120b
 └── vector_store/
 ```
 
+## Tree-Based Call Architecture
+
+This view explains which file calls which function, starting from `main.py`.
+
+```text
+main.py
+|
+|-- imports: run_agentic_rag()
+|   from services/rag_pipeline.py
+|
+|-- function: main()
+    |
+    |-- reads user question
+    |-- calls: run_agentic_rag(question)
+    |   |
+    |   |-- calls: create_openai_client()
+    |   |   from config/settings.py
+    |   |
+    |   |-- calls: build_index(client)
+    |   |   |
+    |   |   |-- ensure_pdf_exists()
+    |   |   |   from services/pdf_service.py
+    |   |   |
+    |   |   |-- read_pdf_pages()
+    |   |   |   from services/pdf_service.py
+    |   |   |
+    |   |   |-- chunk_text()
+    |   |   |   from services/chunking_service.py
+    |   |   |
+    |   |   |-- index_chunks()
+    |   |       from services/vector_store_service.py
+    |   |
+    |   |-- calls: create_retrieval_plan(client, question)
+    |   |   from agents/rag_agent.py
+    |   |
+    |   |-- calls: semantic_search(client, question)
+    |   |   from services/vector_store_service.py
+    |   |
+    |   |-- calls: generate_grounded_answer(client, question, plan, retrieved_chunks)
+    |       from agents/rag_agent.py
+    |
+    |-- prints retrieval plan, grounded answer, and citations
+```
+
 ## Key Learning Points
 
 - Agentic RAG planning before retrieval

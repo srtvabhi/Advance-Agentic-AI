@@ -45,6 +45,45 @@ Synthesis Agent using gpt-oss-120b
 └── vector_store/
 ```
 
+## Tree-Based Call Architecture
+
+This view explains which file calls which function, starting from `main.py`.
+
+```text
+main.py
+|
+|-- imports: run_decomposition_rag()
+|   from services/rag_pipeline.py
+|
+|-- function: main()
+    |
+    |-- reads complex user question
+    |-- calls: run_decomposition_rag(question)
+    |   |
+    |   |-- calls: create_openai_client()
+    |   |   from config/settings.py
+    |   |
+    |   |-- calls: build_index(client)
+    |   |   |
+    |   |   |-- ensure_pdf_exists()
+    |   |   |-- read_pdf_pages()
+    |   |   |-- chunk_text()
+    |   |   |-- index_chunks()
+    |   |
+    |   |-- calls: decompose_question(client, question)
+    |   |   from agents/decomposition_agent.py
+    |   |
+    |   |-- loops over sub_questions
+    |   |   |
+    |   |   |-- calls: search_for_sub_question(client, sub_question)
+    |   |       from services/vector_store_service.py
+    |   |
+    |   |-- calls: synthesize_answer(client, question, sub_questions, retrieved)
+    |       from agents/decomposition_agent.py
+    |
+    |-- prints decomposed questions, answer, and retrieval map
+```
+
 ## Key Learning Points
 
 - Query decomposition strategies

@@ -47,6 +47,54 @@ Final Summary Node
 └── models/
 ```
 
+## Tree-Based Call Architecture
+
+This view explains which file calls which function, starting from `main.py`.
+
+```text
+main.py
+|
+|-- imports: build_architecture_graph()
+|   from graphs/architecture_graph.py
+|
+|-- function: main()
+    |
+    |-- reads architecture problem
+    |-- calls: build_architecture_graph()
+    |-- calls: app.invoke(initial ArchitectureState)
+    |
+    |-- LangGraph executes:
+        |
+        |-- intake_node()
+        |   |-- calls: ask_model()
+        |   |-- writes: intake_summary
+        |
+        |-- architecture_node()
+        |   |-- reads: intake_summary
+        |   |-- calls: ask_model()
+        |   |-- writes: architecture_design
+        |
+        |-- deployment_node()
+        |   |-- reads: architecture_design
+        |   |-- calls: ask_model()
+        |   |-- writes: deployment_pattern
+        |
+        |-- reliability_node()
+        |   |-- reads: deployment_pattern
+        |   |-- calls: ask_model()
+        |   |-- writes: reliability_plan
+        |
+        |-- cost_latency_node()
+        |   |-- reads: reliability_plan
+        |   |-- calls: ask_model()
+        |   |-- writes: cost_latency_plan
+        |
+        |-- summary_node()
+            |-- combines architecture, deployment, reliability, and cost plans
+            |-- calls: ask_model()
+            |-- writes: final_summary
+```
+
 ## Key Learning Points
 
 - Enterprise-grade AI architecture principles

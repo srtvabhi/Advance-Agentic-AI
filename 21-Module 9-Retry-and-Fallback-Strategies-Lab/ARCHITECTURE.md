@@ -74,6 +74,53 @@ force fallback
 
 That makes the simulated primary dependency fail on every attempt so participants can observe fallback behavior.
 
+## Tree-Based Call Architecture
+
+This view explains which file calls which function, starting from `main.py`.
+
+```text
+main.py
+|
+|-- imports: build_resiliency_graph()
+|   from graphs/resiliency_graph.py
+|
+|-- function: main()
+    |
+    |-- reads production task
+    |-- calls: build_resiliency_graph()
+    |-- calls: app.invoke(initial ResiliencyState)
+    |
+    |-- LangGraph starts at primary_node()
+        |
+        |-- primary_node()
+        |   |
+        |   |-- increments attempt
+        |   |-- calls: call_primary_dependency(task, attempt)
+        |   |   from services/dependency_service.py
+        |   |
+        |   |-- on success:
+        |   |   |-- calls: ask_model()
+        |   |   |-- writes primary_result and status=primary_success
+        |   |
+        |   |-- on failure:
+        |       |-- appends error_log
+        |       |-- writes status=retry_needed or fallback_needed
+        |
+        |-- route_after_primary()
+        |   |
+        |   |-- retry -> primary_node()
+        |   |-- fallback -> fallback_node()
+        |   |-- final -> final_node()
+        |
+        |-- fallback_node()
+        |   |-- calls: ask_model()
+        |   |-- writes fallback_result and status=fallback_success
+        |
+        |-- final_node()
+            |-- calls: ask_model()
+            |-- writes final_answer
+```
+
 ## Key Learning Points
 
 - Retry design

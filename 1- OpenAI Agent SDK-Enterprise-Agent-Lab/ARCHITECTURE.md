@@ -68,6 +68,65 @@ Enterprise Agent
     └── response_models.py
 ```
 
+## Tree-Based Call Architecture
+
+This view explains which file calls which function, starting from `main.py`.
+
+```text
+main.py
+|
+|-- imports: configure_openai_client()
+|   from config/settings.py
+|
+|-- imports: create_enterprise_agent()
+|   from agent/enterprise_agent.py
+|
+|-- function: main()
+|   |
+|   |-- calls: configure_openai_client()
+|   |   |
+|   |   |-- config/settings.py
+|   |       |
+|   |       |-- loads local .env
+|   |       |-- creates AsyncOpenAI client
+|   |       |-- configures OpenAI Agents SDK defaults
+|   |
+|   |-- calls: create_enterprise_agent()
+|   |   |
+|   |   |-- agent/enterprise_agent.py
+|   |       |
+|   |       |-- creates Agent(name="Enterprise Tool Agent")
+|   |       |-- attaches tools:
+|   |           |
+|   |           |-- get_current_time()
+|   |           |   from tools/datetime_tool.py
+|   |           |
+|   |           |-- calculate()
+|   |           |   from tools/calculator.py
+|   |           |
+|   |           |-- get_weather()
+|   |           |   from tools/weather.py
+|   |           |   |
+|   |           |   |-- calls: fetch_current_weather()
+|   |           |       from services/weather_service.py
+|   |           |       |
+|   |           |       |-- calls OpenWeatherMap API
+|   |           |       |-- maps response to WeatherResponse
+|   |           |
+|   |           |-- web_search()
+|   |               from tools/search.py
+|   |               |
+|   |               |-- calls: search_web()
+|   |                   from services/search_service.py
+|   |                   |
+|   |                   |-- calls Serper API
+|   |                   |-- maps response to SearchResult
+|   |
+|   |-- reads user question in a loop
+|   |-- calls: Runner.run(agent, question)
+|   |-- prints agent final output
+```
+
 ## File Responsibilities
 
 ### main.py

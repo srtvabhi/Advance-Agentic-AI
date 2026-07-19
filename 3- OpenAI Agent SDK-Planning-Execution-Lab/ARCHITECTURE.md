@@ -56,6 +56,75 @@ Final Pipeline Summary
     └── pipeline_models.py
 ```
 
+## Tree-Based Call Architecture
+
+This view explains which file calls which function, starting from `main.py`.
+
+```text
+main.py
+|
+|-- imports: configure_openai_client()
+|   from config/settings.py
+|
+|-- imports agent factory functions:
+|   |
+|   |-- create_planner_agent()
+|   |   from agent/planner_agent.py
+|   |
+|   |-- create_executor_agent()
+|   |   from agent/executor_agent.py
+|   |
+|   |-- create_reviewer_agent()
+|       from agent/reviewer_agent.py
+|
+|-- function: main()
+|   |
+|   |-- calls: configure_openai_client()
+|   |
+|   |-- creates:
+|   |   |
+|   |   |-- planner_agent
+|   |   |-- executor_agent
+|   |   |   |
+|   |   |   |-- executor has tools:
+|   |   |       |
+|   |   |       |-- check_approval_required()
+|   |   |       |   from tools/approval_tool.py
+|   |   |       |   |
+|   |   |       |   |-- calls services/approval_service.py
+|   |   |       |
+|   |   |       |-- get_task_status()
+|   |   |           from tools/task_tool.py
+|   |   |           |
+|   |   |           |-- calls services/task_service.py
+|   |   |
+|   |   |-- reviewer_agent
+|   |
+|   |-- reads problem statement
+|   |
+|   |-- Step 1:
+|   |   |
+|   |   |-- calls: Runner.run(planner_agent, problem_statement)
+|   |   |-- stores: plan_result
+|   |
+|   |-- Step 2:
+|   |   |
+|   |   |-- builds execution_prompt using problem + plan
+|   |   |-- calls: Runner.run(executor_agent, execution_prompt)
+|   |   |-- stores: execution_result
+|   |
+|   |-- Step 3:
+|   |   |
+|   |   |-- builds review_prompt using problem + plan + execution
+|   |   |-- calls: Runner.run(reviewer_agent, review_prompt)
+|   |   |-- stores: review_result
+|   |
+|   |-- creates: PipelineResult()
+|       from models/pipeline_models.py
+|
+|-- prints final pipeline summary
+```
+
 ## File Responsibilities
 
 ### main.py

@@ -46,6 +46,50 @@ Final Report Node
     └── monitoring_models.py
 ```
 
+## Tree-Based Call Architecture
+
+This view explains which file calls which function, starting from `main.py`.
+
+```text
+main.py
+|
+|-- imports: configure_langsmith()
+|   from config/settings.py
+|
+|-- imports: build_monitoring_graph()
+|   from graphs/monitoring_graph.py
+|
+|-- function: main()
+    |
+    |-- calls: configure_langsmith()
+    |-- reads business request
+    |-- calls: build_monitoring_graph()
+    |-- calls: app.invoke(initial MonitoringState)
+    |
+    |-- LangGraph executes:
+        |
+        |-- draft_response_node()
+        |   |-- calls: ask_model_with_metrics()
+        |   |   from services/llm_service.py
+        |   |-- writes draft_response
+        |   |-- appends telemetry metrics
+        |
+        |-- review_response_node()
+        |   |-- reads draft_response
+        |   |-- calls: ask_model_with_metrics()
+        |   |-- writes reviewed_response
+        |   |-- appends telemetry metrics
+        |
+        |-- telemetry_summary_node()
+        |   |-- calls: summarize_telemetry()
+        |   |   from services/telemetry_service.py
+        |   |-- writes monitoring_summary
+        |
+        |-- final_report_node()
+            |-- combines request, reviewed response, and telemetry
+            |-- writes final_report
+```
+
 ## LangSmith Setup
 
 ```env

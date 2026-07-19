@@ -22,6 +22,46 @@ Semantic Kernel
    +--> HRPolicyPlugin.create_hr_ticket
 ```
 
+## Tree-Based Call Architecture
+
+This view explains which file calls which function, starting from `main.py`.
+
+```text
+main.py
+|
+|-- imports: run_plugin_lab()
+|   from services/plugin_workflow.py
+|
+|-- function: main()
+    |
+    |-- reads HR policy question
+    |-- calls: run_plugin_lab(question)
+    |   |
+    |   |-- calls: create_kernel()
+    |   |   from config/settings.py
+    |   |
+    |   |-- creates: HRPolicyPlugin()
+    |   |   from plugins/hr_policy_plugin.py
+    |   |   |
+    |   |   |-- calls: create_openai_client()
+    |   |   |-- calls: _ensure_index()
+    |   |       |
+    |   |       |-- ensure_pdf_exists()
+    |   |       |-- read_pdf_pages()
+    |   |       |-- chunk_text()
+    |   |       |-- index_chunks()
+    |   |
+    |   |-- calls: kernel.add_plugin()
+    |   |-- invokes: HRPolicy.search_policy()
+    |   |   |
+    |   |   |-- calls: semantic_search()
+    |   |
+    |   |-- invokes semantic prompt with retrieved context
+    |   |-- invokes: HRPolicy.create_hr_ticket()
+    |
+    |-- prints context, answer, and ticket
+```
+
 ## Key Learning Points
 
 - Semantic Kernel native plugins

@@ -49,6 +49,52 @@ Final Report Node
     └── deployment_models.py
 ```
 
+## Tree-Based Call Architecture
+
+This view explains which file calls which function, starting from `main.py`.
+
+```text
+main.py
+|
+|-- imports: configure_langsmith()
+|   from config/settings.py
+|
+|-- imports: build_deployment_graph()
+|   from graphs/deployment_graph.py
+|
+|-- function: main()
+    |
+    |-- calls: configure_langsmith()
+    |-- reads workflow description
+    |-- calls: build_deployment_graph()
+    |-- calls: app.invoke(initial DeploymentEvaluationState)
+    |
+    |-- LangGraph executes:
+        |
+        |-- deployment_plan_node()
+        |   |-- calls: ask_model()
+        |   |-- writes deployment_plan
+        |
+        |-- evaluation_plan_node()
+        |   |-- reads workflow and deployment plan
+        |   |-- calls: ask_model()
+        |   |-- writes evaluation_plan
+        |
+        |-- readiness_scorecard_node()
+        |   |-- calls: calculate_readiness_score()
+        |   |   from services/readiness_service.py
+        |   |-- writes readiness_scorecard
+        |
+        |-- cost_performance_node()
+        |   |-- reads deployment, evaluation, and scorecard
+        |   |-- calls: ask_model()
+        |   |-- writes cost_performance_plan
+        |
+        |-- final_report_node()
+            |-- combines deployment, evaluation, readiness, and cost plans
+            |-- writes final_report
+```
+
 ## LangSmith Setup
 
 ```env

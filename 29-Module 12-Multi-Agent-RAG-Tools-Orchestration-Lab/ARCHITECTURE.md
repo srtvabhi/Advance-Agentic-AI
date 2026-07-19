@@ -55,6 +55,58 @@ Final Answer Node
     └── orchestration_models.py
 ```
 
+## Tree-Based Call Architecture
+
+This view explains which file calls which function, starting from `main.py`.
+
+```text
+main.py
+|
+|-- imports: configure_langsmith()
+|   from config/settings.py
+|
+|-- imports: build_orchestration_graph()
+|   from graphs/orchestration_graph.py
+|
+|-- function: main()
+    |
+    |-- calls: configure_langsmith()
+    |-- reads enterprise request
+    |-- calls: build_orchestration_graph()
+    |-- calls: app.invoke(initial OrchestrationState)
+    |
+    |-- LangGraph executes:
+        |
+        |-- rag_retrieval_node()
+        |   |-- calls: retrieve_policy_context()
+        |   |   from services/retrieval_service.py
+        |   |-- writes retrieved_context
+        |
+        |-- tool_execution_node()
+        |   |-- calls: run_enterprise_tools()
+        |   |   from services/tool_service.py
+        |   |-- writes tool_results
+        |
+        |-- planner_agent_node()
+        |   |-- reads request, context, and tool results
+        |   |-- calls: ask_model()
+        |   |-- writes planner_output
+        |
+        |-- executor_agent_node()
+        |   |-- reads planner_output
+        |   |-- calls: ask_model()
+        |   |-- writes executor_output
+        |
+        |-- reviewer_agent_node()
+        |   |-- reads executor_output
+        |   |-- calls: ask_model()
+        |   |-- writes reviewer_output
+        |
+        |-- final_answer_node()
+            |-- combines RAG, tools, planner, executor, and reviewer outputs
+            |-- writes final_answer
+```
+
 ## Tools Used
 
 - `create_ticket`

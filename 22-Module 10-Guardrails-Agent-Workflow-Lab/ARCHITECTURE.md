@@ -49,6 +49,53 @@ Final Explanation Node
     └── guardrail_models.py
 ```
 
+## Tree-Based Call Architecture
+
+This view explains which file calls which function, starting from `main.py`.
+
+```text
+main.py
+|
+|-- imports: build_guardrail_graph()
+|   from graphs/guardrail_graph.py
+|
+|-- function: main()
+    |
+    |-- reads user request
+    |-- calls: build_guardrail_graph()
+    |-- calls: app.invoke(initial GuardrailState)
+    |
+    |-- LangGraph starts at input_guardrail_node()
+        |
+        |-- input_guardrail_node()
+        |   |-- calls: classify_request()
+        |   |-- calls: build_safe_prompt()
+        |   |   from services/guardrail_service.py
+        |   |-- writes classification, risk_reason, safe_prompt
+        |
+        |-- route_after_guardrail()
+        |   |
+        |   |-- safe -> safe_agent_node()
+        |   |-- blocked -> blocked_response_node()
+        |   |-- review -> review_response_node()
+        |
+        |-- safe_agent_node()
+        |   |-- calls: ask_model()
+        |   |-- writes agent_answer
+        |
+        |-- blocked_response_node()
+        |   |-- writes controlled refusal
+        |
+        |-- review_response_node()
+        |   |-- writes human-review response
+        |
+        |-- audit_node()
+        |   |-- writes audit_record
+        |
+        |-- final_node()
+            |-- writes final_output
+```
+
 ## Key Learning Points
 
 - Pre-model input guardrails

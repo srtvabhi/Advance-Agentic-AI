@@ -52,6 +52,68 @@ Next user message continues with memory
     └── conversation_models.py
 ```
 
+## Tree-Based Call Architecture
+
+This view explains which file calls which function, starting from `main.py`.
+
+```text
+main.py
+|
+|-- imports: configure_openai_client()
+|   from config/settings.py
+|
+|-- imports: create_stateful_agent()
+|   from agent/stateful_agent.py
+|
+|-- imports: ConversationMemory
+|   from Memory.py
+|
+|-- function: main()
+|   |
+|   |-- calls: configure_openai_client()
+|   |   |
+|   |   |-- config/settings.py
+|   |       |
+|   |       |-- loads local .env
+|   |       |-- creates AsyncOpenAI client
+|   |       |-- configures OpenAI Agents SDK defaults
+|   |
+|   |-- calls: create_stateful_agent()
+|   |   |
+|   |   |-- agent/stateful_agent.py
+|   |       |
+|   |       |-- creates Agent(name="Stateful Workflow Agent")
+|   |
+|   |-- creates: ConversationMemory()
+|   |   |
+|   |   |-- Memory.py
+|   |       |
+|   |       |-- stores messages in self.input_items
+|   |
+|   |-- reads user message in a loop
+|   |
+|   |-- if user types "memory":
+|   |   |
+|   |   |-- calls: memory.show_memory()
+|   |       |
+|   |       |-- models/conversation_models.py
+|   |           |
+|   |           |-- MemoryItem.from_agent_item()
+|   |           |-- MemoryItem.to_text()
+|   |
+|   |-- if user types "clear":
+|   |   |
+|   |   |-- calls: memory.clear()
+|   |
+|   |-- otherwise:
+|       |
+|       |-- calls: memory.add_user_message(user_message)
+|       |-- calls: memory.get_items()
+|       |-- calls: Runner.run(agent, memory.get_items())
+|       |-- prints agent response
+|       |-- calls: memory.update_from_result(result)
+```
+
 ## File Responsibilities
 
 ### main.py

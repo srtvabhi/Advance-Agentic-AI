@@ -50,6 +50,60 @@ Final Collaboration Summary
     └── collaboration_models.py
 ```
 
+## Tree-Based Call Architecture
+
+This view explains which file calls which function, starting from `main.py`.
+
+```text
+main.py
+|
+|-- imports: configure_openai_client()
+|   from config/settings.py
+|
+|-- imports specialist agent factories:
+|   |
+|   |-- create_business_agent()
+|   |   from agent/business_agent.py
+|   |
+|   |-- create_technical_agent()
+|   |   from agent/technical_agent.py
+|   |
+|   |-- create_risk_agent()
+|   |   from agent/risk_agent.py
+|   |
+|   |-- create_coordinator_agent()
+|       from agent/coordinator_agent.py
+|
+|-- function: main()
+|   |
+|   |-- calls: configure_openai_client()
+|   |-- creates business, technical, risk, and coordinator agents
+|   |-- reads user scenario
+|   |
+|   |-- starts three specialist tasks at the same time:
+|   |   |
+|   |   |-- Runner.run(business_agent, scenario)
+|   |   |-- Runner.run(technical_agent, scenario)
+|   |   |-- Runner.run(risk_agent, scenario)
+|   |
+|   |-- calls: asyncio.gather()
+|   |   |
+|   |   |-- waits for all specialist outputs
+|   |
+|   |-- builds coordinator_prompt using:
+|   |   |
+|   |   |-- business_result.final_output
+|   |   |-- technical_result.final_output
+|   |   |-- risk_result.final_output
+|   |
+|   |-- calls: Runner.run(coordinator_agent, coordinator_prompt)
+|   |
+|   |-- creates: CollaborationResult()
+|       from models/collaboration_models.py
+|
+|-- prints final collaboration summary
+```
+
 ## File Responsibilities
 
 - `main.py` runs the concurrent orchestration.

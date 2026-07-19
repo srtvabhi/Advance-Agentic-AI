@@ -46,6 +46,46 @@ Final Report Node
     └── testing_models.py
 ```
 
+## Tree-Based Call Architecture
+
+This view explains which file calls which function, starting from `main.py`.
+
+```text
+main.py
+|
+|-- imports: build_testing_graph()
+|   from graphs/testing_graph.py
+|
+|-- function: main()
+    |
+    |-- creates initial PromptTestState
+    |-- calls: build_testing_graph()
+    |-- calls: app.invoke(initial PromptTestState)
+    |
+    |-- LangGraph executes:
+        |
+        |-- load_tests_node()
+        |   |-- calls: load_default_prompts()
+        |   |   from services/prompt_test_service.py
+        |   |-- writes prompts
+        |
+        |-- run_tests_node()
+        |   |-- loops through prompts
+        |   |-- calls: evaluate_prompt(prompt)
+        |   |-- calls: summarize_results(results)
+        |   |-- writes test_results, blocked_count, allowed_count
+        |
+        |-- improvement_plan_node()
+        |   |-- calls: _sanitized_results()
+        |   |-- calls: ask_model()
+        |   |-- writes improvement_plan
+        |
+        |-- final_report_node()
+            |-- calls: _sanitized_results()
+            |-- calls: ask_model()
+            |-- writes final_report
+```
+
 ## Key Learning Points
 
 - Prompt injection testing

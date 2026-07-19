@@ -43,6 +43,49 @@ Answer Agent using gpt-oss-120b
 └── vector_store/
 ```
 
+## Tree-Based Call Architecture
+
+This view explains which file calls which function, starting from `main.py`.
+
+```text
+main.py
+|
+|-- imports: run_hybrid_rag()
+|   from services/rag_pipeline.py
+|
+|-- function: main()
+    |
+    |-- reads support question
+    |-- calls: run_hybrid_rag(question)
+    |   |
+    |   |-- calls: create_openai_client()
+    |   |-- calls: load_chunks()
+    |   |   |
+    |   |   |-- ensure_pdf_exists()
+    |   |   |-- read_pdf_pages()
+    |   |   |-- product_section()
+    |   |   |-- chunk_text()
+    |   |
+    |   |-- calls: build_index(client, chunks)
+    |   |   |
+    |   |   |-- index_chunks()
+    |   |
+    |   |-- calls: detect_product_filter(question)
+    |   |   from agents/hybrid_rag_agent.py
+    |   |
+    |   |-- calls: semantic_search(client, question, product_filter)
+    |   |   from services/vector_store_service.py
+    |   |
+    |   |-- calls: keyword_search(question, chunks, product_filter)
+    |   |   from services/keyword_service.py
+    |   |
+    |   |-- calls: deduplicate_results()
+    |   |-- calls: answer_with_hybrid_context(client, question, final_results)
+    |       from agents/hybrid_rag_agent.py
+    |
+    |-- prints metadata filter, hybrid results, and answer
+```
+
 ## Key Learning Points
 
 - Hybrid retrieval pattern

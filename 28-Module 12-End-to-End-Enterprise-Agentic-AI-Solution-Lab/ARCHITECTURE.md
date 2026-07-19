@@ -51,6 +51,57 @@ Final Solution Node
     └── solution_models.py
 ```
 
+## Tree-Based Call Architecture
+
+This view explains which file calls which function, starting from `main.py`.
+
+```text
+main.py
+|
+|-- imports: configure_langsmith()
+|   from config/settings.py
+|
+|-- imports: build_solution_graph()
+|   from graphs/solution_graph.py
+|
+|-- function: main()
+    |
+    |-- calls: configure_langsmith()
+    |-- reads business problem
+    |-- calls: build_solution_graph()
+    |-- calls: app.invoke(initial EnterpriseSolutionState)
+    |
+    |-- LangGraph executes:
+        |
+        |-- requirements_node()
+        |   |-- calls: ask_model()
+        |   |-- writes requirements
+        |
+        |-- architecture_node()
+        |   |-- reads requirements
+        |   |-- calls: ask_model()
+        |   |-- writes architecture
+        |
+        |-- security_compliance_node()
+        |   |-- reads architecture
+        |   |-- calls: ask_model()
+        |   |-- writes security_compliance
+        |
+        |-- observability_governance_node()
+        |   |-- reads architecture and security review
+        |   |-- calls: ask_model()
+        |   |-- writes observability_governance
+        |
+        |-- production_readiness_node()
+        |   |-- reads architecture, security, and observability
+        |   |-- calls: ask_model()
+        |   |-- writes production_readiness
+        |
+        |-- final_solution_node()
+            |-- combines all sections
+            |-- writes final_solution
+```
+
 ## LangSmith Setup
 
 LangSmith offers a free Developer plan for individual use, and LangSmith tracing can observe Python workflows that call Azure OpenAI models.

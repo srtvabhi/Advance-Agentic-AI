@@ -51,6 +51,69 @@ Final Workflow Summary
     └── workflow_models.py
 ```
 
+## Tree-Based Call Architecture
+
+This view explains which file calls which function, starting from `main.py`.
+
+```text
+main.py
+|
+|-- imports: configure_openai_client()
+|   from config/settings.py
+|
+|-- imports agent factory functions:
+|   |
+|   |-- create_planner_agent()
+|   |   from agent/planner_agent.py
+|   |
+|   |-- create_executor_agent()
+|   |   from agent/executor_agent.py
+|   |
+|   |-- create_reviewer_agent()
+|       from agent/reviewer_agent.py
+|
+|-- imports: approval_message()
+|   from services/approval_service.py
+|
+|-- function: main()
+|   |
+|   |-- calls: configure_openai_client()
+|   |-- creates planner, executor, and reviewer agents
+|   |
+|   |-- reads user goal
+|   |
+|   |-- Step 1: planning
+|   |   |
+|   |   |-- calls: Runner.run(planner, goal)
+|   |   |-- stores: plan_result
+|   |
+|   |-- Step 2: human approval gate
+|   |   |
+|   |   |-- calls: approval_message(goal)
+|   |   |-- if risky, asks user to approve
+|   |   |-- stores approval status:
+|   |       |
+|   |       |-- HUMAN_APPROVAL_DECISION: APPROVED
+|   |       |-- HUMAN_APPROVAL_DECISION: NOT_REQUIRED
+|   |
+|   |-- Step 3: execution
+|   |   |
+|   |   |-- builds execution_prompt using goal + plan + approval status
+|   |   |-- calls: Runner.run(executor, execution_prompt)
+|   |   |-- executor can use check_human_approval()
+|   |       from tools/approval_tool.py
+|   |
+|   |-- Step 4: review
+|   |   |
+|   |   |-- builds review_prompt using goal + plan + execution
+|   |   |-- calls: Runner.run(reviewer, review_prompt)
+|   |
+|   |-- creates: WorkflowResult()
+|       from models/workflow_models.py
+|
+|-- prints final workflow summary
+```
+
 ## File Responsibilities
 
 - `main.py` orchestrates the full workflow.

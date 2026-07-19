@@ -61,6 +61,51 @@ Final Report Node
     └── pipeline_models.py
 ```
 
+## Tree-Based Call Architecture
+
+This view explains which file calls which function, starting from `main.py`.
+
+```text
+main.py
+|
+|-- imports: build_pipeline_graph()
+|   from graphs/pipeline_graph.py
+|
+|-- function: main()
+    |
+    |-- reads pipeline objective
+    |-- calls: build_pipeline_graph()
+    |-- calls: app.invoke(initial PipelineState)
+    |
+    |-- LangGraph executes:
+        |
+        |-- receive_events_node()
+        |   |-- calls: load_sample_events()
+        |   |-- calls: summarize_events()
+        |   |   from services/queue_service.py
+        |   |-- writes: events, queue_summary
+        |
+        |-- routing_node()
+        |   |-- reads: objective, queue_summary, events
+        |   |-- calls: ask_model()
+        |   |-- writes: routing_plan
+        |
+        |-- worker_pool_node()
+        |   |-- reads: routing_plan
+        |   |-- calls: ask_model()
+        |   |-- writes: worker_pool_plan
+        |
+        |-- scaling_node()
+        |   |-- reads: worker_pool_plan
+        |   |-- calls: ask_model()
+        |   |-- writes: scaling_plan
+        |
+        |-- final_report_node()
+            |-- combines queue, routing, worker, and scaling outputs
+            |-- calls: ask_model()
+            |-- writes: final_report
+```
+
 ## Key Learning Points
 
 - Queue-based AI orchestration
