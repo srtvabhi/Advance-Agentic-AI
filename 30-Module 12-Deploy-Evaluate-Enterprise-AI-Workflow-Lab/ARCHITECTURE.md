@@ -106,11 +106,11 @@ main.py
 
 Use these prompts to test the lab objective:
 
-1. Deploy a production enterprise agent workflow on Azure with LangGraph, RAG, tools, approvals, RBAC, observability, and scaling.
-2. Create a deployment and evaluation plan for an enterprise HR support AI workflow.
-3. Evaluate readiness for a finance invoice assistant before production release.
-4. Design cost, latency, and monitoring plans for a customer support agent workflow.
-5. Create a production readiness scorecard for an AI workflow that uses RAG and approval checkpoints.
+1. Deploy a production enterprise workflow on Azure with knowledge lookup, ticket creation, approvals, role-based access, monitoring, and scaling.
+2. Create a deployment and evaluation plan for an enterprise HR support workflow.
+3. Evaluate readiness for a finance invoice review process before production release.
+4. Design cost, latency, and monitoring plans for a customer support workflow.
+5. Create a production readiness scorecard for a workflow that uses policy lookup and approval checkpoints.
 
 ## How To Run
 

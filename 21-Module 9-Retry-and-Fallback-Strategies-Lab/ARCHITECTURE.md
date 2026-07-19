@@ -107,11 +107,11 @@ main.py
 
 Use these prompts to test the lab objective:
 
-1. Process a payment approval task where the primary dependency may fail and fallback is required.
+1. Process a payment approval task where the primary payment dependency may fail and fallback is required.
 2. Create a retry and fallback workflow for customer support ticket classification.
 3. Design resiliency handling for an invoice validation service with temporary outages.
 4. Handle HR policy lookup when the primary knowledge service is unavailable.
-5. Create a fallback plan for IT incident summarization when the main model call fails.
+5. Create a fallback plan for IT incident summarization when the main summarization service fails.
 
 ## How To Run
 

@@ -106,11 +106,11 @@ main.py
 
 Use these prompts to test the lab objective:
 
-1. Design an enterprise Agentic AI assistant for employee services with HR, IT, ticketing, escalation, and observability.
-2. Create an end-to-end enterprise agent solution for insurance claims with RAG, approvals, monitoring, and governance.
-3. Design a production AI assistant for finance operations that handles invoices, exceptions, and audits.
+1. Design an enterprise employee services solution with HR, IT, ticketing, escalation, monitoring, and governance.
+2. Create an end-to-end insurance claims solution with knowledge lookup, approvals, monitoring, and governance.
+3. Design a production finance operations assistant for invoices, exceptions, audits, and reporting.
 4. Build a capstone architecture for customer service automation with security and compliance controls.
-5. Design an enterprise agentic platform for IT incident management with cost and readiness planning.
+5. Design an enterprise IT incident management platform with cost and readiness planning.
 
 ## How To Run
 

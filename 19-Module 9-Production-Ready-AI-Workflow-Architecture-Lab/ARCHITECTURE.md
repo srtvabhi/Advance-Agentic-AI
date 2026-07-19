@@ -103,11 +103,11 @@ main.py
 
 Use these prompts to test the lab objective:
 
-1. Design a production-ready AI workflow for an enterprise HR helpdesk with policy retrieval, ticket creation, and manager escalation.
-2. Design a scalable AI architecture for insurance claim triage with audit logging and fallback handling.
-3. Create a production architecture for a finance invoice assistant that needs approvals and monitoring.
-4. Design an enterprise customer support agent architecture with RAG, tools, and observability.
-5. Create a production AI workflow architecture for IT incident triage across multiple regions.
+1. Design a production-ready workflow for an enterprise HR helpdesk with policy lookup, ticket creation, and manager escalation.
+2. Design a scalable architecture for insurance claim triage with audit logging and fallback handling.
+3. Create a production architecture for a finance invoice review process that needs approvals and monitoring.
+4. Design an enterprise customer support workflow with knowledge lookup, ticket creation, and operational reporting.
+5. Create a production workflow architecture for IT incident triage across multiple regions.
 
 ## How To Run
 

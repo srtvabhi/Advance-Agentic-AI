@@ -106,9 +106,9 @@ Use these prompts to test the lab objective:
 
 1. How quickly should payroll questions be handled, and when should HR requests be escalated?
 2. What does the HR knowledge base say about escalation for urgent employee cases?
-3. Answer a payroll support question and evaluate whether the answer is grounded.
+3. Answer a payroll support question and check whether the answer is supported by policy content.
 4. Retrieve HR policy context for benefits questions and judge response quality.
-5. Evaluate whether a RAG answer includes enough evidence from the HR policy knowledge base.
+5. Evaluate whether an HR policy answer includes enough supporting evidence.
 
 ## How To Run
 

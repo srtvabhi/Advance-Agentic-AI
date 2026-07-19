@@ -104,9 +104,9 @@ Use these prompts to test the lab objective:
 
 1. Write a short customer update explaining a delay in insurance claim processing.
 2. Draft and review a status update for a delayed payroll ticket.
-3. Create a customer-facing outage update and monitor token and latency usage.
-4. Generate a short executive update for an IT incident and summarize telemetry.
-5. Write and review a vendor delay notification while tracking model metrics.
+3. Create a customer-facing outage update and measure response time and usage.
+4. Generate a short executive update for an IT incident and summarize processing metrics.
+5. Write and review a vendor delay notification while tracking response quality and timing.
 
 ## How To Run
 

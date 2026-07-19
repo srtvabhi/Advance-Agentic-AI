@@ -112,11 +112,11 @@ main.py
 
 Use these prompts to test the lab objective:
 
-1. Design a collaborative AutoGen solution for enterprise loan application processing.
-2. Create a multi-agent hospital appointment scheduling solution with privacy controls.
-3. Design an insurance claim processing workflow with business, technical, security, and coordinator agents.
-4. Create a procurement vendor onboarding workflow with security review.
-5. Design a retail complaint resolution workflow across support, operations, and compliance.
+1. Design a loan application processing workflow that includes customer intake, document verification, risk review, approval recommendation, and customer communication.
+2. Create a hospital appointment scheduling workflow that protects patient privacy and coordinates front desk, doctor, and billing teams.
+3. Design an insurance claim processing workflow that covers intake, fraud review, settlement recommendation, and customer updates.
+4. Create a vendor onboarding workflow for procurement, security review, legal approval, and finance setup.
+5. Design a retail complaint resolution workflow that coordinates store operations, customer support, refund approval, and compliance review.
 
 ## How To Run
 

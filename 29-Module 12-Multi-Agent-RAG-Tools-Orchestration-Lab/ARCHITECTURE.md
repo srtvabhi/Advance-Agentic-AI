@@ -123,7 +123,7 @@ Use these prompts to test the lab objective:
 2. An employee asks for remote work policy guidance and a ticket for manager approval.
 3. A finance analyst needs access to a vendor invoice system and approval routing.
 4. A support lead needs policy context and a ticket for urgent customer escalation.
-5. Create a workflow that combines policy retrieval, tool actions, planning, execution, and review.
+5. Create a workflow that combines policy lookup, ticket creation, planning, execution, and review.
 
 ## How To Run
 

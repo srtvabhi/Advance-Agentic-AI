@@ -130,11 +130,11 @@ main.py
 
 Use these prompts to test the lab objective:
 
-1. A suspicious login was followed by data export from a finance system. What should the team do first, how should severity be assigned, and what evidence must be preserved?
-2. A privileged user downloaded many HR files after failed MFA. What steps should responders take?
+1. A suspicious login was followed by data export from a finance system. What should the response team do first, how should severity be assigned, and what evidence must be preserved?
+2. A privileged user downloaded many HR files after a failed MFA challenge. What steps should responders take?
 3. A malware alert appeared on a server that hosts customer exports. What should be contained and preserved?
 4. A vendor VPN login from an unusual country accessed payroll records. What should be investigated?
-5. A DLP alert fired after finance reports were emailed externally. What response workflow should be followed?
+5. A data loss alert fired after finance reports were emailed externally. What response workflow should be followed?
 
 ## How To Run
 

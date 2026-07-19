@@ -103,9 +103,9 @@ main.py
 Use these prompts to test the lab objective:
 
 1. The enterprise HR chatbot is returning slow answers for payroll questions. Support tickets increased by 40 percent in the last hour.
-2. Trace an incident where the IT support agent gives inconsistent VPN troubleshooting answers.
-3. Trace a customer service agent workflow where refund responses are delayed.
-4. Trace an AI workflow for invoice approval questions that are timing out.
+2. Trace an incident where the IT support workflow gives inconsistent VPN troubleshooting answers.
+3. Trace a customer service workflow where refund responses are delayed.
+4. Trace an invoice approval question workflow that is timing out.
 5. Trace a multi-step HR case workflow from triage to resolution message.
 
 ## How To Run

@@ -116,10 +116,10 @@ main.py
 Use these prompts to test the lab objective:
 
 1. The payment API is slow and customers are reporting checkout failures. Investigate, open an incident, notify the team, analyze cause, and prepare an update.
-2. The HR portal login is failing for employees in one region. Coordinate investigation and communication.
-3. Finance dashboards are stale after a delayed data pipeline. Run an incident workflow.
-4. Customer support chat is timing out after a new release. Investigate and update stakeholders.
-5. Inventory sync is failing between ecommerce and warehouse systems. Analyze and prepare summary.
+2. The HR portal login is failing for employees in one region. Coordinate investigation, support response, and stakeholder communication.
+3. Finance dashboards are stale after a delayed data pipeline. Investigate the issue and prepare an operations update.
+4. Customer support chat is timing out after a new release. Investigate the impact and prepare a recovery update.
+5. Inventory sync is failing between ecommerce and warehouse systems. Analyze the issue and prepare an executive summary.
 
 ## How To Run
 

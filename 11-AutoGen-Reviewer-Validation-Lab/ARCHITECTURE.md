@@ -100,11 +100,11 @@ main.py
 
 Use these prompts to test the lab objective:
 
-1. Create a one-page enterprise policy for AI agents that can access customer data and send external emails.
-2. Draft and validate an HR agent policy for case management.
-3. Create a finance agent policy for invoice summaries and payment recommendations.
-4. Draft a policy for agents that call external APIs and create tickets.
-5. Create a customer support AI policy with escalation and audit rules.
+1. Create a one-page enterprise policy for employees who access customer data and send external emails.
+2. Draft a policy for HR case management that covers privacy, approvals, and escalation.
+3. Create a finance policy for invoice review, payment recommendation, exception handling, and audit records.
+4. Draft a security policy for teams that use external APIs and create support tickets.
+5. Create a customer support policy with escalation rules, quality review, and audit requirements.
 
 ## How To Run
 

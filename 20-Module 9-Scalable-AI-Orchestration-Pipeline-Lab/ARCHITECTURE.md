@@ -115,9 +115,9 @@ main.py
 Use these prompts to test the lab objective:
 
 1. Build a scalable orchestration pipeline for 10,000 customer support tickets per day.
-2. Design a queue-based AI pipeline for insurance claim events across multiple priority levels.
+2. Design a queue-based processing pipeline for insurance claim events across multiple priority levels.
 3. Create a scalable workflow for HR onboarding requests during a large hiring wave.
-4. Build an event-driven orchestration pipeline for IT incidents from monitoring alerts.
+4. Build an event-driven pipeline for IT incidents from monitoring alerts.
 5. Design a worker-pool pipeline for finance invoice processing with surge handling.
 
 ## How To Run
