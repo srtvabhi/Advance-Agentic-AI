@@ -52,6 +52,135 @@ Final Workflow Output
     └── state_models.py
 ```
 
+## Tree-Based Call Architecture
+
+This view explains which file calls which function, starting from `main.py`.
+
+```text
+main.py
+|
+|-- imports: build_graph()
+|   from graph/orchestration_graph.py
+|
+|-- function: main()
+|   |
+|   |-- reads user problem from terminal
+|   |
+|   |-- calls: build_graph()
+|   |   |
+|   |   |-- graph/orchestration_graph.py
+|   |       |
+|   |       |-- imports: WorkflowState
+|   |       |   from models/state_models.py
+|   |       |
+|   |       |-- imports: intake_node()
+|   |       |   from nodes/intake_node.py
+|   |       |
+|   |       |-- imports: planning_node()
+|   |       |   from nodes/planning_node.py
+|   |       |
+|   |       |-- imports: execution_node()
+|   |       |   from nodes/execution_node.py
+|   |       |
+|   |       |-- imports: summary_node()
+|   |       |   from nodes/summary_node.py
+|   |       |
+|   |       |-- function: build_graph()
+|   |           |
+|   |           |-- creates: StateGraph(WorkflowState)
+|   |           |-- adds node: "intake" -> intake_node()
+|   |           |-- adds node: "planning" -> planning_node()
+|   |           |-- adds node: "execution" -> execution_node()
+|   |           |-- adds node: "summary" -> summary_node()
+|   |           |
+|   |           |-- adds edge: START -> intake
+|   |           |-- adds edge: intake -> planning
+|   |           |-- adds edge: planning -> execution
+|   |           |-- adds edge: execution -> summary
+|   |           |-- adds edge: summary -> END
+|   |           |
+|   |           |-- returns: graph.compile()
+|   |
+|   |-- calls: app.ainvoke({"problem": problem})
+|       |
+|       |-- LangGraph executes: intake_node(state)
+|       |   |
+|       |   |-- nodes/intake_node.py
+|       |       |
+|       |       |-- calls: ask_llm()
+|       |       |   from services/llm_service.py
+|       |       |
+|       |       |-- returns: {"requirements": requirements}
+|       |
+|       |-- LangGraph executes: planning_node(state)
+|       |   |
+|       |   |-- nodes/planning_node.py
+|       |       |
+|       |       |-- reads: state["requirements"]
+|       |       |-- calls: ask_llm()
+|       |       |-- returns: {"plan": plan}
+|       |
+|       |-- LangGraph executes: execution_node(state)
+|       |   |
+|       |   |-- nodes/execution_node.py
+|       |       |
+|       |       |-- reads: state["plan"]
+|       |       |-- calls: ask_llm()
+|       |       |-- returns: {"execution": execution}
+|       |
+|       |-- LangGraph executes: summary_node(state)
+|           |
+|           |-- nodes/summary_node.py
+|               |
+|               |-- reads: state["requirements"]
+|               |-- reads: state["plan"]
+|               |-- reads: state["execution"]
+|               |-- calls: ask_llm()
+|               |-- returns: {"summary": summary}
+|
+|-- prints final result:
+    |
+    |-- result["requirements"]
+    |-- result["plan"]
+    |-- result["execution"]
+    |-- result["summary"]
+```
+
+Every node uses the same LLM service:
+
+```text
+services/llm_service.py
+|
+|-- function: ask_llm(system_prompt, user_prompt)
+    |
+    |-- calls: create_openai_client()
+    |   from config/settings.py
+    |
+    |-- calls: get_model_name()
+    |   from config/settings.py
+    |
+    |-- calls: client.chat.completions.create()
+    |-- returns: model response text
+```
+
+Configuration is loaded from this lab's local `.env` file:
+
+```text
+config/settings.py
+|
+|-- function: load_environment()
+|   |
+|   |-- loads local .env file
+|
+|-- function: create_openai_client()
+|   |
+|   |-- creates AsyncOpenAI client
+|
+|-- function: get_model_name()
+    |
+    |-- returns AZURE_OPENAI_DEPLOYMENT
+```
+
 ## Key Learning Points
 
 - Graph-based orchestration
