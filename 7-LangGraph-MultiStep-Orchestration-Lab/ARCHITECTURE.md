@@ -60,10 +60,33 @@ Final Workflow Output
 - Enterprise workflow decomposition
 - LangGraph `StateGraph`, `START`, and `END`
 
+## Example Prompts
+
+Use prompts that require multiple workflow stages so learners can see how state moves from one LangGraph node to the next.
+
+```text
+Design an enterprise IT service desk workflow that classifies tickets, routes incidents, escalates urgent issues, and creates a final resolution summary.
+```
+
+```text
+Create a workflow to onboard a new enterprise customer into a SaaS platform, including account setup, security review, integration planning, testing, and handover.
+```
+
+```text
+Design a workflow for handling a production application outage, including incident intake, severity classification, escalation, recovery steps, and final post-incident summary.
+```
+
+```text
+Create a multi-step workflow for processing vendor onboarding requests, including document collection, compliance review, approval routing, system setup, and final confirmation.
+```
+
+```text
+Design a workflow for employee laptop replacement, including request intake, eligibility check, inventory validation, approval, shipping, and closure summary.
+```
+
 ## How To Run
 
 ```bash
 cd 7-LangGraph-MultiStep-Orchestration-Lab
 ..\.venv\Scripts\python.exe main.py
 ```
-
