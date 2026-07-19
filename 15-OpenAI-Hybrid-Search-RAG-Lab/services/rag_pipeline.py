@@ -10,6 +10,17 @@ SOURCE_FILE = SOURCE_DOCS_DIR / "product_support_kb.txt"
 PDF_FILE = PDF_DIR / "product_support_kb.pdf"
 
 
+# This service orchestrates the full hybrid search RAG workflow.
+# It combines semantic search, keyword search, product metadata filtering,
+# result deduplication, and grounded answer generation.
+
+
+# Function: extract the section of the support document for one product.
+# Logic:
+# 1. Find the product start marker.
+# 2. For AnalyticsPro, stop before the SecurePay section.
+# 3. For SecurePay, read from SecurePay marker to the end.
+# 4. Return the original text if the marker is not found.
 def product_section(text: str, product: str) -> str:
     if product == "AnalyticsPro":
         start_marker = "AnalyticsPro overview:"
@@ -28,6 +39,12 @@ def product_section(text: str, product: str) -> str:
     return text[start:end]
 
 
+# Function: load product-aware chunks from the PDF.
+# Logic:
+# 1. Ensure the support PDF exists.
+# 2. Read each PDF page.
+# 3. Create AnalyticsPro chunks with product metadata.
+# 4. Create SecurePay chunks with product metadata.
 def load_chunks() -> list:
     ensure_pdf_exists(SOURCE_FILE, PDF_FILE)
     chunks = []
@@ -53,10 +70,19 @@ def load_chunks() -> list:
     return chunks
 
 
+# Function: build or reuse the ChromaDB vector index.
+# Logic:
+# Pass prepared chunks to the vector store service for embedding and indexing.
 def build_index(client, chunks) -> None:
     index_chunks(client, chunks)
 
 
+# Function: remove duplicate or near-duplicate search results.
+# Logic:
+# 1. Sort semantic and keyword results by score.
+# 2. Use search type, source, page, product, and text prefix as a uniqueness key.
+# 3. Keep the best unique results.
+# 4. Return the top 5 results for final answer generation.
 def deduplicate_results(results) -> list:
     seen = set()
     unique = []
@@ -69,6 +95,15 @@ def deduplicate_results(results) -> list:
     return unique[:5]
 
 
+# Function: run the complete hybrid search RAG pipeline.
+# Logic:
+# 1. Create the OpenAI client.
+# 2. Load product-aware chunks and build the vector index.
+# 3. Detect product filter from the question.
+# 4. Run semantic search against ChromaDB.
+# 5. Run keyword search over chunks.
+# 6. Merge and deduplicate both result sets.
+# 7. Generate a grounded support answer.
 def run_hybrid_rag(question: str) -> str:
     client = create_openai_client()
     chunks = load_chunks()
