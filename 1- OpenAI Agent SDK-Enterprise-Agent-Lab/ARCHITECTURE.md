@@ -101,6 +101,38 @@ It also stores external API keys used by tools:
 
 Finally, it creates the OpenAI client used by the OpenAI Agents SDK.
 
+## External API Key Setup
+
+This lab already contains demo API keys in `config/settings.py` so participants can run the lab quickly. In a real project, each learner should create their own keys and store them safely.
+
+### OpenWeatherMap API Key
+
+Used by:
+
+```text
+https://api.openweathermap.org/data/2.5/weather
+```
+
+Steps:
+
+1. Go to `https://openweathermap.org/api`.
+2. Create a free OpenWeatherMap account or sign in.
+3. Open the API keys section, create/copy your API key, and use it as `OPENWEATHER_API_KEY` in `config/settings.py` or move it to `.env` for production use.
+
+### Serper API Key
+
+Used by:
+
+```text
+https://google.serper.dev/search
+```
+
+Steps:
+
+1. Go to `https://serper.dev/api-keys`.
+2. Create a Serper account or sign in.
+3. Create/copy your API key and use it as `SERPER_API_KEY` in `config/settings.py` or move it to `.env` for production use.
+
 ### agent/enterprise_agent.py
 
 This file creates the Enterprise Tool Agent.

@@ -31,6 +31,43 @@ python -m pip install -r requirements.txt
 python main.py
 ```
 
+## External API Key Setup
+
+This lab uses two external APIs:
+
+- OpenWeatherMap for live weather
+- Serper for web search
+
+The demo keys are currently stored in `config/settings.py` for classroom simplicity. In production, store API keys in `.env` or a secure secret store.
+
+### OpenWeatherMap Key
+
+API URL used by this lab:
+
+```text
+https://api.openweathermap.org/data/2.5/weather
+```
+
+Steps to create a key:
+
+1. Open `https://openweathermap.org/api`.
+2. Sign up or log in to OpenWeatherMap.
+3. Go to the API keys section, copy your key, and update `OPENWEATHER_API_KEY` in `config/settings.py`.
+
+### Serper Key
+
+API URL used by this lab:
+
+```text
+https://google.serper.dev/search
+```
+
+Steps to create a key:
+
+1. Open `https://serper.dev/api-keys`.
+2. Sign up or log in to Serper.
+3. Copy your API key and update `SERPER_API_KEY` in `config/settings.py`.
+
 ## Python Files
 
 ### `agent/enterprise_agent.py`
