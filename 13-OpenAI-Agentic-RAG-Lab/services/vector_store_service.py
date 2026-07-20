@@ -13,22 +13,44 @@ from services.embedding_service import create_embedding
 COLLECTION_NAME = "agentic_rag_enterprise_knowledge"
 
 
+# Function: create a ChromaDB client for this lab's local vector_store folder.
+# Logic:
+# 1. Ensure the vector_store folder exists.
+# 2. Return a persistent ChromaDB client pointing to this lab folder only.
+def get_chroma_client():
+    VECTOR_STORE_DIR.mkdir(parents=True, exist_ok=True)
+    return chromadb.PersistentClient(path=str(VECTOR_STORE_DIR))
+
+
 # Function: get or create the ChromaDB collection.
 # Logic:
 # 1. Ensure the vector_store folder exists.
 # 2. Open a persistent ChromaDB client.
 # 3. Return the collection used by this lab.
 def get_collection():
-    VECTOR_STORE_DIR.mkdir(parents=True, exist_ok=True)
-    client = chromadb.PersistentClient(path=str(VECTOR_STORE_DIR))
+    client = get_chroma_client()
     return client.get_or_create_collection(name=COLLECTION_NAME)
+
+
+# Function: check whether the vector store already contains indexed chunks.
+# Logic:
+# 1. Open the existing ChromaDB collection if it exists.
+# 2. Return True when documents are already stored.
+# 3. Return False when the collection is missing or empty.
+def has_existing_index() -> bool:
+    try:
+        client = get_chroma_client()
+        collection = client.get_collection(name=COLLECTION_NAME)
+        return collection.count() > 0
+    except Exception:
+        return False
 
 
 # Function: delete the collection if a clean re-index is needed.
 # Logic:
 # Try to delete the collection, but ignore errors if it does not exist.
 def reset_collection() -> None:
-    client = chromadb.PersistentClient(path=str(VECTOR_STORE_DIR))
+    client = get_chroma_client()
     try:
         client.delete_collection(COLLECTION_NAME)
     except Exception:
@@ -42,9 +64,11 @@ def reset_collection() -> None:
 # 3. Create embeddings for each chunk.
 # 4. Add chunk ids, text, embeddings, and metadata to ChromaDB.
 def index_chunks(openai_client, chunks: list[DocumentChunk]) -> None:
-    collection = get_collection()
-    if collection.count() > 0:
+    if has_existing_index():
+        print("Using existing ChromaDB vector store. Skipping re-indexing.")
         return
+
+    collection = get_collection()
 
     embeddings = [create_embedding(openai_client, chunk.text) for chunk in chunks]
     collection.add(

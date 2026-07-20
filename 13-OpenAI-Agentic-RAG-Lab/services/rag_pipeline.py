@@ -1,6 +1,6 @@
 from config.settings import create_openai_client
 from services.document_loader_service import load_enterprise_documents
-from services.vector_store_service import index_chunks, semantic_search
+from services.vector_store_service import has_existing_index, index_chunks, semantic_search
 from agents.rag_agent import create_retrieval_plan, generate_grounded_answer, select_data_domain
 
 
@@ -9,14 +9,28 @@ from agents.rag_agent import create_retrieval_plan, generate_grounded_answer, se
 # planning, filtered semantic search, answer generation, and citation formatting.
 
 
+INDEX_READY = False
+
+
 # Function: build the ChromaDB index from HR, Sales, and Marketing data.
 # Logic:
 # 1. Load HR PDFs, Sales CSV rows, and Marketing campaign notes.
 # 2. Convert each source into searchable chunks.
 # 3. Store chunk embeddings and metadata in ChromaDB.
 def build_index(openai_client) -> None:
+    global INDEX_READY
+
+    if INDEX_READY:
+        return
+
+    if has_existing_index():
+        print("Using existing ChromaDB vector store. Skipping index build.")
+        INDEX_READY = True
+        return
+
     chunks = load_enterprise_documents()
     index_chunks(openai_client, chunks)
+    INDEX_READY = True
 
 
 # Function: run the full Agentic RAG workflow for one user question.

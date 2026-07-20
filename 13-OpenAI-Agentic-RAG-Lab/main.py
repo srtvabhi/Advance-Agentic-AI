@@ -13,11 +13,19 @@ if hasattr(sys.stdout, "reconfigure"):
 
 def main() -> None:
     print("Lab 13: OpenAI Multi-Domain Enterprise RAG Workflow\n")
-    question = input(f"Enter question, or press Enter for default:\n{DEFAULT_QUESTION}\n\nQuestion: ").strip()
-    question = question or DEFAULT_QUESTION
+    print("Type 'quit' or 'exit' to stop.")
+    print(f"Press Enter to use the default question:\n{DEFAULT_QUESTION}\n")
 
-    result = run_agentic_rag(question)
-    print("\n" + result)
+    while True:
+        question = input("Question: ").strip()
+
+        if question.lower() in {"quit", "exit"}:
+            print("Stopping Lab 13.")
+            break
+
+        question = question or DEFAULT_QUESTION
+        result = run_agentic_rag(question)
+        print("\n" + result + "\n")
 
 
 if __name__ == "__main__":
