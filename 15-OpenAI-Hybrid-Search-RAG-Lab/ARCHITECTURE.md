@@ -2,7 +2,7 @@
 
 ## Objective
 
-Create a hybrid search-based retrieval pipeline using OpenAI, Azure AI Foundry, ChromaDB, semantic search, keyword search, and metadata filtering.
+Create a hybrid search-based retrieval pipeline using the OpenAI Agents SDK, Azure AI Foundry, ChromaDB, semantic search, keyword search, and metadata filtering.
 
 This lab answers support questions from an existing product support PDF.
 
@@ -44,7 +44,7 @@ Grounded Support Answer
 ├── main.py
 ├── Reference.md
 ├── requirements.txt
-├── agents
+├── lab_agents
 │   ├── __init__.py
 │   └── hybrid_rag_agent.py
 ├── config
@@ -101,7 +101,7 @@ main.py
 |   |-- get_collection()
 |   |-- index_chunks()
 |   |-- semantic_search()
-|-- agents/hybrid_rag_agent.py
+|-- lab_agents/hybrid_rag_agent.py
 |   |-- detect_product_filter()
 |   |-- answer_with_hybrid_context()
 ```
@@ -110,11 +110,11 @@ main.py
 
 - `.env`: Supports setup, configuration, reference, or documentation for the lab.
 - `.env.example`: Supports setup, configuration, reference, or documentation for the lab.
-- `agents/__init__.py`: Defines agent creation functions and role instructions.
-- `agents/hybrid_rag_agent.py`: Defines agent creation functions and role instructions.
+- `lab_agents/__init__.py`: Keeps lab code separate from the installed `agents` SDK package.
+- `lab_agents/hybrid_rag_agent.py`: Defines and runs the SDK support-answer agent with `Agent` and `Runner`; it also keeps deterministic product detection close to the agent workflow.
 - `ARCHITECTURE.md`: Supports setup, configuration, reference, or documentation for the lab.
 - `config/__init__.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
-- `config/settings.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
+- `config/settings.py`: Loads this lab's local `.env`, creates the embedding client, and configures an Azure-backed Agents SDK `RunConfig`.
 - `data/pdfs/product_support_kb.pdf`: Existing product support PDF used as the source of truth for retrieval.
 - `main.py`: Entry point that accepts input, runs the workflow, and prints the result.
 - `models/__init__.py`: Defines data models or TypedDict state shared across the workflow.

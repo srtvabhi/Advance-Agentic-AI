@@ -75,10 +75,13 @@ Important functions:
 - `get_embedding_model()`: returns the embedding model.
 - `get_chat_model()`: returns the chat deployment name.
 - `create_openai_client()`: creates the Azure OpenAI client.
+- `create_agents_run_config()`: connects the OpenAI Agents SDK to the Azure-compatible endpoint and disables OpenAI-platform tracing for this Azure lab.
 
-## `agents/hybrid_rag_agent.py`
+## `lab_agents/hybrid_rag_agent.py`
 
-Purpose: detect product filter and generate final answer.
+Purpose: detect the product filter and run the real OpenAI Agents SDK support-answer agent. It imports `Agent`, `Runner`, and `RunConfig` from the installed `agents` package.
+
+The local package is named `lab_agents` so it does not shadow the SDK's own `agents` package.
 
 ### `detect_product_filter(question)`
 
@@ -91,9 +94,9 @@ SecurePay
 
 If found, that product is used as metadata filter.
 
-### `answer_with_hybrid_context(client, question, results)`
+### `answer_with_hybrid_context(question, results, run_config)`
 
-Uses the merged hybrid search results to create a grounded support answer with citations.
+Runs the `Hybrid Search Support Agent` through `Runner.run_sync()` using the merged hybrid search results to create a grounded answer with citations.
 
 ## `services/pdf_service.py`
 

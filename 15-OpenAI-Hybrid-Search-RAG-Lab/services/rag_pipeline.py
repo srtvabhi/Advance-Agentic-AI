@@ -1,5 +1,5 @@
-from agents.hybrid_rag_agent import answer_with_hybrid_context, detect_product_filter
-from config.settings import PDF_DIR, create_openai_client
+from config.settings import PDF_DIR, create_agents_run_config, create_openai_client
+from lab_agents.hybrid_rag_agent import answer_with_hybrid_context, detect_product_filter
 from services.chunking_service import chunk_text
 from services.keyword_service import keyword_search
 from services.pdf_service import read_pdf_pages
@@ -103,6 +103,7 @@ def deduplicate_results(results) -> list:
 # 7. Generate a grounded support answer.
 def run_hybrid_rag(question: str) -> str:
     client = create_openai_client()
+    run_config = create_agents_run_config("Lab 15 - Hybrid Search RAG")
     chunks = load_chunks()
     build_index(client, chunks)
 
@@ -110,7 +111,7 @@ def run_hybrid_rag(question: str) -> str:
     semantic_results = semantic_search(client, question, product_filter=product_filter, top_k=4)
     keyword_results = keyword_search(question, chunks, product_filter=product_filter)
     final_results = deduplicate_results(semantic_results + keyword_results)
-    answer = answer_with_hybrid_context(client, question, final_results)
+    answer = answer_with_hybrid_context(question, final_results, run_config)
 
     filter_text = product_filter or "No product metadata filter"
     result_map = "\n".join(
