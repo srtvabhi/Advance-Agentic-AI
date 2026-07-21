@@ -15,10 +15,17 @@ if hasattr(sys.stdout, "reconfigure"):
 
 def main() -> None:
     print("Lab 14: OpenAI Query Decomposition RAG\n")
-    question = input(f"Enter question, or press Enter for default:\n{DEFAULT_QUESTION}\n\nQuestion: ").strip()
-    question = question or DEFAULT_QUESTION
+    print("Enter a question, press Enter for the default question, or type 'quit' to exit.")
 
-    print("\n" + run_decomposition_rag(question))
+    while True:
+        question = input(f"\nDefault question:\n{DEFAULT_QUESTION}\n\nQuestion: ").strip()
+
+        if question.casefold() == "quit":
+            print("Exiting Lab 14.")
+            break
+
+        question = question or DEFAULT_QUESTION
+        print("\n" + run_decomposition_rag(question))
 
 
 if __name__ == "__main__":

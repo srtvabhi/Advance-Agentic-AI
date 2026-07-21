@@ -35,82 +35,25 @@ python main.py
 
 ## Python Files
 
-### `agents/__init__.py`
+### `lab_agents/__init__.py`
 
-Role: Agent layer. It defines one or more AI agents and their instructions or orchestration behavior.
+Role: Separates lab-specific agent workflows from the installed OpenAI Agents SDK package named `agents`.
 
-Code:
+### `lab_agents/decomposition_agent.py`
 
-```python
-
-
-```
-
-### `agents/decomposition_agent.py`
-
-Role: Agent layer. It defines one or more AI agents and their instructions or orchestration behavior.
+Role: Defines and runs two real OpenAI Agents SDK agents.
 
 Key imports:
 
-- `from config.settings import get_chat_model`
+- `from agents import Agent, RunConfig, Runner`
+- `from pydantic import BaseModel, Field`
 
 Functions:
 
-- `decompose_question()`: Encapsulates reusable logic used by this lab.
-- `synthesize_answer()`: Encapsulates reusable logic used by this lab.
+- `decompose_question(question, run_config)`: runs the `Query Decomposition Agent` and returns exactly three sub-questions through the structured `DecomposedQuestions` output model.
+- `synthesize_answer(question, sub_questions, retrieved_chunks, run_config)`: runs the synthesis agent through `Runner.run_sync()` using retrieved PDF evidence.
 
-Code:
-
-```python
-from config.settings import get_chat_model
-
-
-def decompose_question(client, question: str) -> list[str]:
-    response = client.chat.completions.create(
-        model=get_chat_model(),
-        messages=[
-            {
-                "role": "system",
-                "content": (
-                    "Break the user question into 3 focused retrieval sub-questions. "
-                    "Return only the sub-questions, one per line, without numbering."
-                ),
-            },
-            {"role": "user", "content": question},
-        ],
-    )
-    content = response.choices[0].message.content or ""
-    return [line.strip(" -1234567890.") for line in content.splitlines() if line.strip()]
-
-
-def synthesize_answer(client, question: str, sub_questions: list[str], retrieved_chunks) -> str:
-    context = "\n\n".join(
-        f"Sub-question: {chunk.sub_question}\nSource: {chunk.citation()}\nContent: {chunk.text}"
-        for chunk in retrieved_chunks
-    )
-
-    response = client.chat.completions.create(
-        model=get_chat_model(),
-        messages=[
-            {
-                "role": "system",
-                "content": (
-                    "You are a RAG synthesis agent. Combine evidence from multiple "
-                    "retrieval sub-questions. Cite the PDF sources."
-                ),
-            },
-            {
-                "role": "user",
-                "content": (
-                    f"Original question:\n{question}\n\nSub-questions:\n{sub_questions}\n\n"
-                    f"Retrieved evidence:\n{context}\n\nFinal answer:"
-                ),
-            },
-        ],
-    )
-    return response.choices[0].message.content or ""
-
-```
+The configured Azure deployment remains the model, while `RunConfig` supplies the Azure-compatible `OpenAIProvider`.
 
 ### `config/__init__.py`
 
@@ -141,6 +84,7 @@ Functions:
 - `get_embedding_model()`: Retrieves information and returns it in a simple format for the agent or workflow.
 - `get_chat_model()`: Retrieves information and returns it in a simple format for the agent or workflow.
 - `create_openai_client()`: Factory/helper function that creates and returns a configured object used by the lab.
+- `create_agents_run_config()`: Connects the OpenAI Agents SDK to the Azure-compatible endpoint using `OpenAIProvider` and disables OpenAI-platform tracing for this Azure lab.
 
 Code:
 
@@ -445,8 +389,8 @@ Role: Service layer. It contains business logic or external API integration used
 
 Key imports:
 
-- `from agents.decomposition_agent import decompose_question, synthesize_answer`
-- `from config.settings import PDF_DIR, SOURCE_DOCS_DIR, create_openai_client`
+- `from lab_agents.decomposition_agent import decompose_question, synthesize_answer`
+- `from config.settings import PDF_DIR, SOURCE_DOCS_DIR, create_agents_run_config, create_openai_client`
 - `from services.chunking_service import chunk_text`
 - `from services.pdf_service import ensure_pdf_exists, read_pdf_pages`
 - `from services.vector_store_service import index_chunks, search_for_sub_question`
@@ -459,44 +403,24 @@ Functions:
 Code:
 
 ```python
-from agents.decomposition_agent import decompose_question, synthesize_answer
-from config.settings import PDF_DIR, SOURCE_DOCS_DIR, create_openai_client
-from services.chunking_service import chunk_text
-from services.pdf_service import ensure_pdf_exists, read_pdf_pages
-from services.vector_store_service import index_chunks, search_for_sub_question
+client = create_openai_client()
+build_index(client)
 
+sub_questions = decompose_question(
+    question,
+    create_agents_run_config("Lab 14 - Query Decomposition"),
+)
 
-SOURCE_FILE = SOURCE_DOCS_DIR / "security_incident_runbook.txt"
-PDF_FILE = PDF_DIR / "security_incident_runbook.pdf"
+retrieved = []
+for sub_question in sub_questions:
+    retrieved.extend(search_for_sub_question(client, sub_question, top_k=2))
 
-
-def build_index(client) -> None:
-    ensure_pdf_exists(SOURCE_FILE, PDF_FILE)
-    chunks = []
-    for page, text in read_pdf_pages(PDF_FILE):
-        chunks.extend(chunk_text(text, PDF_FILE.name, page, "incident-response"))
-    index_chunks(client, chunks)
-
-
-def run_decomposition_rag(question: str) -> str:
-    client = create_openai_client()
-    build_index(client)
-
-    sub_questions = decompose_question(client, question)
-    retrieved = []
-    for sub_question in sub_questions:
-        retrieved.extend(search_for_sub_question(client, sub_question, top_k=2))
-
-    answer = synthesize_answer(client, question, sub_questions, retrieved)
-    sub_question_text = "\n".join(f"- {item}" for item in sub_questions)
-    citations = "\n".join(f"- {chunk.sub_question}: {chunk.citation()}" for chunk in retrieved)
-
-    return (
-        f"--- Decomposed Questions ---\n{sub_question_text}\n\n"
-        f"--- Final Answer ---\n{answer}\n\n"
-        f"--- Retrieval Map ---\n{citations}"
-    )
-
+answer = synthesize_answer(
+    question,
+    sub_questions,
+    retrieved,
+    create_agents_run_config("Lab 14 - Evidence Synthesis"),
+)
 ```
 
 

@@ -1,8 +1,9 @@
 import os
 from pathlib import Path
 
+from agents import OpenAIProvider, RunConfig
 from dotenv import load_dotenv
-from openai import OpenAI
+from openai import AsyncOpenAI, OpenAI
 
 
 BASE_DIR = Path(__file__).resolve().parents[1]
@@ -42,4 +43,19 @@ def create_openai_client() -> OpenAI:
     return OpenAI(
         base_url=get_required_setting("AZURE_OPENAI_ENDPOINT"),
         api_key=get_required_setting("AZURE_OPENAI_API_KEY"),
+    )
+
+
+def create_agents_run_config(workflow_name: str) -> RunConfig:
+    """Configure the OpenAI Agents SDK to use this lab's Azure endpoint."""
+    load_environment()
+    async_client = AsyncOpenAI(
+        base_url=get_required_setting("AZURE_OPENAI_ENDPOINT"),
+        api_key=get_required_setting("AZURE_OPENAI_API_KEY"),
+    )
+    provider = OpenAIProvider(openai_client=async_client, use_responses=False)
+    return RunConfig(
+        model_provider=provider,
+        workflow_name=workflow_name,
+        tracing_disabled=True,
     )

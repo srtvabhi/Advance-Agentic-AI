@@ -2,7 +2,7 @@
 
 ## Objective
 
-Implement query decomposition for retrieval using OpenAI, Azure AI Foundry, ChromaDB, and a dummy security runbook PDF.
+Implement query decomposition for retrieval using the OpenAI Agents SDK, Azure AI Foundry, ChromaDB, and a dummy security runbook PDF.
 
 This lab shows how a complex question can be split into smaller retrieval questions before synthesis.
 
@@ -44,7 +44,7 @@ Retrieval Map
 ├── main.py
 ├── Reference.md
 ├── requirements.txt
-├── agents
+├── lab_agents
 │   ├── __init__.py
 │   └── decomposition_agent.py
 ├── config
@@ -97,7 +97,7 @@ main.py
 |   |-- get_collection()
 |   |-- index_chunks()
 |   |-- search_for_sub_question()
-|-- agents/decomposition_agent.py
+|-- lab_agents/decomposition_agent.py
 |   |-- decompose_question()
 |   |-- synthesize_answer()
 ```
@@ -106,11 +106,11 @@ main.py
 
 - `.env`: Supports setup, configuration, reference, or documentation for the lab.
 - `.env.example`: Supports setup, configuration, reference, or documentation for the lab.
-- `agents/__init__.py`: Defines agent creation functions and role instructions.
-- `agents/decomposition_agent.py`: Defines agent creation functions and role instructions.
+- `lab_agents/__init__.py`: Keeps lab code separate from the installed `agents` SDK package.
+- `lab_agents/decomposition_agent.py`: Defines and runs the SDK decomposition and synthesis agents with `Agent`, `Runner`, and structured output.
 - `ARCHITECTURE.md`: Supports setup, configuration, reference, or documentation for the lab.
 - `config/__init__.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
-- `config/settings.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
+- `config/settings.py`: Loads this lab's local `.env`, creates the embedding client, and configures an Azure-backed Agents SDK `RunConfig`.
 - `data/pdfs/security_incident_runbook.pdf`: Contains local dummy knowledge-base source documents and PDFs.
 - `data/source_docs/security_incident_runbook.txt`: Contains local dummy knowledge-base source documents and PDFs.
 - `main.py`: Entry point that accepts input, runs the workflow, and prints the result.

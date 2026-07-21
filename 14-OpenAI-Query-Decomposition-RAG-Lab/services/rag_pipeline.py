@@ -1,5 +1,5 @@
-from agents.decomposition_agent import decompose_question, synthesize_answer
-from config.settings import PDF_DIR, SOURCE_DOCS_DIR, create_openai_client
+from config.settings import PDF_DIR, SOURCE_DOCS_DIR, create_agents_run_config, create_openai_client
+from lab_agents.decomposition_agent import decompose_question, synthesize_answer
 from services.chunking_service import chunk_text
 from services.pdf_service import ensure_pdf_exists, read_pdf_pages
 from services.vector_store_service import index_chunks, search_for_sub_question
@@ -41,12 +41,20 @@ def run_decomposition_rag(question: str) -> str:
     client = create_openai_client()
     build_index(client)
 
-    sub_questions = decompose_question(client, question)
+    sub_questions = decompose_question(
+        question,
+        create_agents_run_config("Lab 14 - Query Decomposition"),
+    )
     retrieved = []
     for sub_question in sub_questions:
         retrieved.extend(search_for_sub_question(client, sub_question, top_k=2))
 
-    answer = synthesize_answer(client, question, sub_questions, retrieved)
+    answer = synthesize_answer(
+        question,
+        sub_questions,
+        retrieved,
+        create_agents_run_config("Lab 14 - Evidence Synthesis"),
+    )
     sub_question_text = "\n".join(f"- {item}" for item in sub_questions)
     citations = "\n".join(f"- {chunk.sub_question}: {chunk.citation()}" for chunk in retrieved)
 
