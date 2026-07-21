@@ -2,7 +2,7 @@
 
 ## Objective
 
-Build a multi-step Agentic RAG workflow using OpenAI, Azure AI Foundry models, ChromaDB, and multiple enterprise data sources.
+Build a multi-step Agentic RAG workflow using the OpenAI Agents SDK, Azure AI Foundry models, ChromaDB, and multiple enterprise data sources.
 
 This lab demonstrates a more realistic retrieval pattern:
 
@@ -84,7 +84,7 @@ Answer With Citations
 ├── main.py
 ├── Reference.md
 ├── requirements.txt
-├── agents/
+├── lab_agents/
 │   ├── __init__.py
 │   └── rag_agent.py
 ├── config/
@@ -208,8 +208,8 @@ services/vector_store_service.py
 - `.env`: Stores Azure OpenAI endpoint, key, deployment, and embedding model for this lab.
 - `.env.example`: Shows required environment variable names without real secrets.
 - `main.py`: Command-line entry point that accepts a business question and prints the RAG result.
-- `config/settings.py`: Loads this lab's local `.env` file and creates the OpenAI client.
-- `agents/rag_agent.py`: Selects the best data domain, creates a retrieval plan, and generates the grounded answer.
+- `config/settings.py`: Loads this lab's local `.env`, creates the embedding client, and configures an Azure-backed Agents SDK `RunConfig`.
+- `lab_agents/rag_agent.py`: Defines and runs the SDK domain-router, retrieval-planner, and grounded-answer agents with `Agent` and `Runner`.
 - `services/document_loader_service.py`: Loads HR PDFs, Sales CSV rows, and Marketing campaign notes.
 - `services/pdf_service.py`: Validates and reads existing PDF files.
 - `services/chunking_service.py`: Splits long text into overlapping chunks.

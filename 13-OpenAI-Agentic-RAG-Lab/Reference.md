@@ -78,12 +78,15 @@ Important functions:
 - `get_embedding_model()`: returns `Embedding_Model` or `EMBEDDING_MODEL`.
 - `get_chat_model()`: returns `AZURE_OPENAI_DEPLOYMENT`.
 - `create_openai_client()`: creates the OpenAI client for Azure OpenAI.
+- `create_agents_run_config()`: connects the OpenAI Agents SDK to the Azure-compatible endpoint and disables OpenAI-platform tracing for this Azure lab.
 
-## `agents/rag_agent.py`
+## `lab_agents/rag_agent.py`
 
-Purpose: contains the model-powered reasoning steps.
+Purpose: contains the real OpenAI Agents SDK reasoning steps. It imports `Agent`, `Runner`, and `RunConfig` from the installed `agents` package.
 
-### `select_data_domain(client, question)`
+The local package is named `lab_agents` so it does not shadow the SDK's own `agents` package.
+
+### `select_data_domain(question, run_config)`
 
 Chooses which domain should be searched:
 
@@ -100,11 +103,13 @@ Question about campaign budget -> Marketing
 Question comparing sales and campaigns -> All
 ```
 
-### `create_retrieval_plan(client, question, selected_domain)`
+The router uses the structured `DomainSelection` output model so the result must be `HR`, `Sales`, `Marketing`, or `All`.
+
+### `create_retrieval_plan(question, selected_domain, run_config)`
 
 Creates a short retrieval plan explaining what evidence should be retrieved from the selected domain.
 
-### `generate_grounded_answer(client, question, selected_domain, plan, retrieved_chunks)`
+### `generate_grounded_answer(question, selected_domain, plan, retrieved_chunks, run_config)`
 
 Creates the final answer from retrieved context only and includes citations.
 

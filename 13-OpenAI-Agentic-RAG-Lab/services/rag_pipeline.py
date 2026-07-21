@@ -1,7 +1,7 @@
-from config.settings import create_openai_client
+from config.settings import create_agents_run_config, create_openai_client
+from lab_agents.rag_agent import create_retrieval_plan, generate_grounded_answer, select_data_domain
 from services.document_loader_service import load_enterprise_documents
 from services.vector_store_service import has_existing_index, index_chunks, semantic_search
-from agents.rag_agent import create_retrieval_plan, generate_grounded_answer, select_data_domain
 
 
 # This service is the main orchestration layer for Lab 13.
@@ -46,10 +46,23 @@ def run_agentic_rag(question: str) -> str:
     client = create_openai_client()
     build_index(client)
 
-    selected_domain = select_data_domain(client, question)
-    plan = create_retrieval_plan(client, question, selected_domain)
+    selected_domain = select_data_domain(
+        question,
+        create_agents_run_config("Lab 13 - Domain Routing"),
+    )
+    plan = create_retrieval_plan(
+        question,
+        selected_domain,
+        create_agents_run_config("Lab 13 - Retrieval Planning"),
+    )
     retrieved_chunks = semantic_search(client, question, category_filter=selected_domain, top_k=4)
-    answer = generate_grounded_answer(client, question, selected_domain, plan, retrieved_chunks)
+    answer = generate_grounded_answer(
+        question,
+        selected_domain,
+        plan,
+        retrieved_chunks,
+        create_agents_run_config("Lab 13 - Grounded Answer"),
+    )
 
     citations = "\n".join(f"- {chunk.citation()}" for chunk in retrieved_chunks)
     return (
