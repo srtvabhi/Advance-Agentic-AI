@@ -163,10 +163,17 @@ if hasattr(sys.stdout, "reconfigure"):
 
 async def main() -> None:
     print("Lab 16: Build AI Plugins Using Semantic Kernel\n")
-    question = input(f"Enter question, or press Enter for default:\n{DEFAULT_QUESTION}\n\nQuestion: ").strip()
-    question = question or DEFAULT_QUESTION
+    print("Enter a question, press Enter for the default question, or type 'quit' to exit.")
 
-    print("\n" + await run_plugin_lab(question))
+    while True:
+        question = input(f"\nDefault question:\n{DEFAULT_QUESTION}\n\nQuestion: ").strip()
+
+        if question.casefold() == "quit":
+            print("Exiting Lab 16.")
+            break
+
+        question = question or DEFAULT_QUESTION
+        print("\n" + await run_plugin_lab(question))
 
 
 if __name__ == "__main__":
@@ -247,7 +254,7 @@ Key imports:
 - `from config.settings import PDF_DIR, SOURCE_DOCS_DIR, create_openai_client`
 - `from services.chunking_service import chunk_text`
 - `from services.pdf_service import ensure_pdf_exists, read_pdf_pages`
-- `from services.vector_store_service import index_chunks, semantic_search`
+- `from services.vector_store_service import has_existing_index, index_chunks, semantic_search`
 
 Classes:
 
@@ -261,7 +268,7 @@ from semantic_kernel.functions import kernel_function
 from config.settings import PDF_DIR, SOURCE_DOCS_DIR, create_openai_client
 from services.chunking_service import chunk_text
 from services.pdf_service import ensure_pdf_exists, read_pdf_pages
-from services.vector_store_service import index_chunks, semantic_search
+from services.vector_store_service import has_existing_index, index_chunks, semantic_search
 
 
 class HRPolicyPlugin:
@@ -274,6 +281,10 @@ class HRPolicyPlugin:
         self._ensure_index()
 
     def _ensure_index(self) -> None:
+        if has_existing_index():
+            print("Using existing ChromaDB vector store. Skipping index build.")
+            return
+
         ensure_pdf_exists(self.source_file, self.pdf_file)
         chunks = []
         for page, text in read_pdf_pages(self.pdf_file):

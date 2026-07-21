@@ -79,6 +79,7 @@ This view explains which file calls which function, starting from `main.py`.
 main.py
 |-- imports: run_plugin_lab from services.plugin_workflow
 |-- function: main()
+|   |-- repeatedly accepts questions until the user types quit
 |-- services/chunking_service.py
 |   |-- chunk_text()
 |-- services/pdf_service.py
@@ -89,6 +90,7 @@ main.py
 |-- services/vector_store_service.py
 |   |-- create_embedding()
 |   |-- get_collection()
+|   |-- has_existing_index()
 |   |-- index_chunks()
 |   |-- semantic_search()
 |-- plugins/hr_policy_plugin.py
@@ -104,7 +106,7 @@ main.py
 - `config/settings.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
 - `data/pdfs/hybrid_work_policy.pdf`: Contains local dummy knowledge-base source documents and PDFs.
 - `data/source_docs/hybrid_work_policy.txt`: Contains local dummy knowledge-base source documents and PDFs.
-- `main.py`: Entry point that accepts input, runs the workflow, and prints the result.
+- `main.py`: Entry point that repeatedly accepts questions, runs the workflow, and exits when the user types `quit`.
 - `models/__init__.py`: Defines data models or TypedDict state shared across the workflow.
 - `models/rag_models.py`: Defines data models or TypedDict state shared across the workflow.
 - `plugins/__init__.py`: Defines Semantic Kernel native plugin functions used by the workflow.
@@ -115,7 +117,7 @@ main.py
 - `services/chunking_service.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
 - `services/pdf_service.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
 - `services/plugin_workflow.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
-- `services/vector_store_service.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
+- `services/vector_store_service.py`: Reuses a populated persistent ChromaDB collection and only indexes the HR policy when the collection is missing or empty.
 - `vector_store/`: Stores persisted ChromaDB vector index files.
 
 ## Test Prompts

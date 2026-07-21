@@ -12,10 +12,17 @@ if hasattr(sys.stdout, "reconfigure"):
 
 async def main() -> None:
     print("Lab 16: Build AI Plugins Using Semantic Kernel\n")
-    question = input(f"Enter question, or press Enter for default:\n{DEFAULT_QUESTION}\n\nQuestion: ").strip()
-    question = question or DEFAULT_QUESTION
+    print("Enter a question, press Enter for the default question, or type 'quit' to exit.")
 
-    print("\n" + await run_plugin_lab(question))
+    while True:
+        question = input(f"\nDefault question:\n{DEFAULT_QUESTION}\n\nQuestion: ").strip()
+
+        if question.casefold() == "quit":
+            print("Exiting Lab 16.")
+            break
+
+        question = question or DEFAULT_QUESTION
+        print("\n" + await run_plugin_lab(question))
 
 
 if __name__ == "__main__":
