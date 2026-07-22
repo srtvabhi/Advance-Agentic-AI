@@ -2,6 +2,27 @@
 
 This reference explains the important code pattern used in Lab 13A.
 
+## Setup
+
+Install dependencies:
+
+```txt
+openai==2.44.0
+openai-agents==0.18.0
+python-dotenv==1.2.2
+chromadb==1.5.9
+pypdf==6.14.2
+```
+
+Run:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate
+python -m pip install -r requirements.txt
+python main.py
+```
+
 ## Main Difference
 
 Lab 13A uses **different vector stores for different data stores**.
