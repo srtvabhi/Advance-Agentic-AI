@@ -3,7 +3,7 @@ from semantic_kernel.functions import kernel_function
 from config.settings import PDF_DIR, SOURCE_DOCS_DIR, create_openai_client
 from services.chunking_service import chunk_text
 from services.pdf_service import ensure_pdf_exists, read_pdf_pages
-from services.vector_store_service import index_chunks, semantic_search
+from services.vector_store_service import has_existing_index, index_chunks, semantic_search
 
 
 class ChangeAutomationPlugin:
@@ -16,6 +16,10 @@ class ChangeAutomationPlugin:
         self._ensure_index()
 
     def _ensure_index(self) -> None:
+        if has_existing_index():
+            print("Using existing ChromaDB vector store. Skipping index build.")
+            return
+
         ensure_pdf_exists(self.source_file, self.pdf_file)
         chunks = []
         for page, text in read_pdf_pages(self.pdf_file):

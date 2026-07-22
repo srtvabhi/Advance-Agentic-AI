@@ -82,6 +82,7 @@ This view explains which file calls which function, starting from `main.py`.
 main.py
 |-- imports: run_change_pipeline from services.automation_pipeline
 |-- function: main()
+|   |-- repeatedly accepts change requests until the user types quit or exit
 |-- services/automation_pipeline.py
 |   |-- run_change_pipeline()
 |-- services/chunking_service.py
@@ -92,10 +93,16 @@ main.py
 |-- services/vector_store_service.py
 |   |-- create_embedding()
 |   |-- get_collection()
+|   |-- has_existing_index()
 |   |-- index_chunks()
 |   |-- semantic_search()
 |-- plugins/change_automation_plugin.py
 |   |-- ChangeAutomationPlugin()
+|   |-- _ensure_index()
+|   |-- validate_change_type()
+|   |-- retrieve_standard()
+|   |-- create_change_record()
+|   |-- send_notification()
 ```
 
 ## File Responsibilities
@@ -107,7 +114,7 @@ main.py
 - `config/settings.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
 - `data/pdfs/change_management_standard.pdf`: Contains local dummy knowledge-base source documents and PDFs.
 - `data/source_docs/change_management_standard.txt`: Contains local dummy knowledge-base source documents and PDFs.
-- `main.py`: Entry point that accepts input, runs the workflow, and prints the result.
+- `main.py`: Entry point that repeatedly accepts change requests, runs the workflow, and exits when the user types `quit` or `exit`.
 - `models/__init__.py`: Defines data models or TypedDict state shared across the workflow.
 - `models/rag_models.py`: Defines data models or TypedDict state shared across the workflow.
 - `plugins/__init__.py`: Defines Semantic Kernel native plugin functions used by the workflow.
@@ -118,7 +125,7 @@ main.py
 - `services/automation_pipeline.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
 - `services/chunking_service.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
 - `services/pdf_service.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
-- `services/vector_store_service.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
+- `services/vector_store_service.py`: Stores and searches change management standard embeddings in ChromaDB. It reuses the persistent vector store when documents are already indexed and skips re-indexing.
 - `vector_store/`: Stores persisted ChromaDB vector index files.
 
 ## Test Prompts

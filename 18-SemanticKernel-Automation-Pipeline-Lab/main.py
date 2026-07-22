@@ -15,9 +15,17 @@ if hasattr(sys.stdout, "reconfigure"):
 
 async def main() -> None:
     print("Lab 18: Semantic Kernel Multi-Step AI Automation Pipeline\n")
-    change = input(f"Enter change request, or press Enter for default:\n{DEFAULT_CHANGE}\n\nChange: ").strip()
-    change = change or DEFAULT_CHANGE
-    print("\n" + await run_change_pipeline(change))
+    print("Enter a change request, press Enter for the default request, or type 'quit' to exit.")
+
+    while True:
+        change = input(f"\nDefault change request:\n{DEFAULT_CHANGE}\n\nChange: ").strip()
+
+        if change.casefold() in {"quit", "exit"}:
+            print("Exiting Lab 18.")
+            break
+
+        change = change or DEFAULT_CHANGE
+        print("\n" + await run_change_pipeline(change))
 
 
 if __name__ == "__main__":

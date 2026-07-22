@@ -18,9 +18,15 @@ def get_collection():
     return client.get_or_create_collection(name=COLLECTION_NAME)
 
 
+def has_existing_index() -> bool:
+    """Return True when the persistent collection already contains documents."""
+    return get_collection().count() > 0
+
+
 def index_chunks(openai_client, chunks: list[DocumentChunk]) -> None:
     collection = get_collection()
     if collection.count() > 0:
+        print("Using existing ChromaDB vector store. Skipping re-indexing.")
         return
 
     collection.add(

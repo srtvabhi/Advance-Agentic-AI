@@ -15,9 +15,17 @@ if hasattr(sys.stdout, "reconfigure"):
 
 async def main() -> None:
     print("Lab 17: Semantic Kernel Orchestrated AI Workflow\n")
-    request = input(f"Enter vendor request, or press Enter for default:\n{DEFAULT_REQUEST}\n\nRequest: ").strip()
-    request = request or DEFAULT_REQUEST
-    print("\n" + await run_vendor_workflow(request))
+    print("Enter a vendor request, press Enter for the default request, or type 'quit' to exit.")
+
+    while True:
+        request = input(f"\nDefault request:\n{DEFAULT_REQUEST}\n\nRequest: ").strip()
+
+        if request.casefold() in {"quit", "exit"}:
+            print("Exiting Lab 17.")
+            break
+
+        request = request or DEFAULT_REQUEST
+        print("\n" + await run_vendor_workflow(request))
 
 
 if __name__ == "__main__":

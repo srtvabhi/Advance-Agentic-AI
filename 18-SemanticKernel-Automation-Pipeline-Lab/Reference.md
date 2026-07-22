@@ -146,6 +146,13 @@ Functions:
 
 - `main()`: Runs the lab from the command line and coordinates the full workflow.
 
+
+Code explanation:
+
+- `main()` starts an interactive loop so learners can test more than one request.
+- Pressing Enter uses the default request.
+- Typing `quit` or `exit` stops the lab cleanly.
+
 Code:
 
 ```python
@@ -166,14 +173,21 @@ if hasattr(sys.stdout, "reconfigure"):
 
 async def main() -> None:
     print("Lab 18: Semantic Kernel Multi-Step AI Automation Pipeline\n")
-    change = input(f"Enter change request, or press Enter for default:\n{DEFAULT_CHANGE}\n\nChange: ").strip()
-    change = change or DEFAULT_CHANGE
-    print("\n" + await run_change_pipeline(change))
+    print("Enter a change request, press Enter for the default request, or type 'quit' to exit.")
+
+    while True:
+        change = input(f"\nDefault change request:\n{DEFAULT_CHANGE}\n\nChange: ").strip()
+
+        if change.casefold() in {"quit", "exit"}:
+            print("Exiting Lab 18.")
+            break
+
+        change = change or DEFAULT_CHANGE
+        print("\n" + await run_change_pipeline(change))
 
 
 if __name__ == "__main__":
     asyncio.run(main())
-
 ```
 
 ### `models/__init__.py`
@@ -249,11 +263,18 @@ Key imports:
 - `from config.settings import PDF_DIR, SOURCE_DOCS_DIR, create_openai_client`
 - `from services.chunking_service import chunk_text`
 - `from services.pdf_service import ensure_pdf_exists, read_pdf_pages`
-- `from services.vector_store_service import index_chunks, semantic_search`
+- `from services.vector_store_service import has_existing_index, index_chunks, semantic_search`
 
 Classes:
 
 - `ChangeAutomationPlugin`: Defines a structured object, state model, plugin, service, or agent-related class used by the lab.
+
+
+Code explanation:
+
+- The plugin is the Semantic Kernel native-function layer.
+- `_ensure_index()` checks ChromaDB first and reuses the existing vector store when documents are already indexed.
+- Retrieval functions search the policy context, while action functions simulate enterprise workflow tasks.
 
 Code:
 
@@ -263,7 +284,7 @@ from semantic_kernel.functions import kernel_function
 from config.settings import PDF_DIR, SOURCE_DOCS_DIR, create_openai_client
 from services.chunking_service import chunk_text
 from services.pdf_service import ensure_pdf_exists, read_pdf_pages
-from services.vector_store_service import index_chunks, semantic_search
+from services.vector_store_service import has_existing_index, index_chunks, semantic_search
 
 
 class ChangeAutomationPlugin:
@@ -276,6 +297,10 @@ class ChangeAutomationPlugin:
         self._ensure_index()
 
     def _ensure_index(self) -> None:
+        if has_existing_index():
+            print("Using existing ChromaDB vector store. Skipping index build.")
+            return
+
         ensure_pdf_exists(self.source_file, self.pdf_file)
         chunks = []
         for page, text in read_pdf_pages(self.pdf_file):
@@ -303,7 +328,6 @@ class ChangeAutomationPlugin:
     @kernel_function(name="send_notification", description="Send a simulated change notification.")
     def send_notification(self, message: str) -> str:
         return f"Notification sent to CAB and service owners: {message}"
-
 ```
 
 ### `services/__init__.py`

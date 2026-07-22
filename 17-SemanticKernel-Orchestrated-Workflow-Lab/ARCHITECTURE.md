@@ -79,6 +79,7 @@ This view explains which file calls which function, starting from `main.py`.
 main.py
 |-- imports: run_vendor_workflow from services.orchestrated_workflow
 |-- function: main()
+|   |-- repeatedly accepts vendor requests until the user types quit or exit
 |-- services/chunking_service.py
 |   |-- chunk_text()
 |-- services/orchestrated_workflow.py
@@ -89,10 +90,15 @@ main.py
 |-- services/vector_store_service.py
 |   |-- create_embedding()
 |   |-- get_collection()
+|   |-- has_existing_index()
 |   |-- index_chunks()
 |   |-- semantic_search()
 |-- plugins/vendor_risk_plugin.py
 |   |-- VendorRiskPlugin()
+|   |-- _ensure_index()
+|   |-- classify_vendor()
+|   |-- retrieve_controls()
+|   |-- create_approval_task()
 ```
 
 ## File Responsibilities
@@ -104,7 +110,7 @@ main.py
 - `config/settings.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
 - `data/pdfs/vendor_risk_policy.pdf`: Contains local dummy knowledge-base source documents and PDFs.
 - `data/source_docs/vendor_risk_policy.txt`: Contains local dummy knowledge-base source documents and PDFs.
-- `main.py`: Entry point that accepts input, runs the workflow, and prints the result.
+- `main.py`: Entry point that repeatedly accepts vendor requests, runs the workflow, and exits when the user types `quit` or `exit`.
 - `models/__init__.py`: Defines data models or TypedDict state shared across the workflow.
 - `models/rag_models.py`: Defines data models or TypedDict state shared across the workflow.
 - `plugins/__init__.py`: Defines Semantic Kernel native plugin functions used by the workflow.
@@ -115,7 +121,7 @@ main.py
 - `services/chunking_service.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
 - `services/orchestrated_workflow.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
 - `services/pdf_service.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
-- `services/vector_store_service.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
+- `services/vector_store_service.py`: Stores and searches vendor risk policy embeddings in ChromaDB. It reuses the persistent vector store when documents are already indexed and skips re-indexing.
 - `vector_store/`: Stores persisted ChromaDB vector index files.
 
 ## Test Prompts
