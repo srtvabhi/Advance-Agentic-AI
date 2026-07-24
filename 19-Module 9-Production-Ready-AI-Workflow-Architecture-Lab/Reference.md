@@ -2,13 +2,6 @@
 
 This lab implements a production-style customer-support workflow using LangGraph.
 
-The important idea is:
-
-```text
-Do not only ask the model to describe production architecture.
-Build a workflow that behaves like a production system.
-```
-
 ## Setup
 
 ```powershell
