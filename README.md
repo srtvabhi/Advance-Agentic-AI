@@ -46,6 +46,10 @@ Each lab is organized as an enterprise-style project with its own folder, local 
 
 19. `19-Module 9-Production-Ready-AI-Workflow-Architecture-Lab`
 
+### Module 10: AI Guardrails, Safety, and Governance
+
+19-A. `19-A-Module 10-Secure-Procurement-Guardrails-Lab`
+
 Labs 20-30 are kept locally and are ignored from GitHub tracking.
 
 ## Lab Summaries
@@ -201,6 +205,14 @@ This lab designs a production-ready AI workflow architecture using LangGraph. It
 The objective is to design a production-ready AI workflow architecture. Learners move beyond prototype thinking and consider what production ownership really requires.
 
 Flow: requirement -> architecture design -> reliability planning -> cost/latency review -> production readiness summary. This teaches scalability, deployment patterns, dependency management, and operational readiness.
+
+### Lab 19-A: Secure Procurement Guardrails Workflow
+
+This lab combines guardrails, governance, retrieval grounding, RBAC, and human approval into one secure procurement workflow. It reviews vendor proposals for privacy exposure, prompt injection, unsafe content, requester authority, policy alignment, and approval requirements.
+
+The objective is to demonstrate practical AI safety and governance in a realistic enterprise process. Learners see that security cannot depend only on the model; deterministic checks, approved policy retrieval, output validation, human checkpoints, and audit records all work together.
+
+Flow: procurement request -> validation -> privacy guardrail -> prompt injection guardrail -> content filter -> RBAC check -> policy retrieval -> grounded risk assessment -> output guardrail -> approval decision -> human approval or finalization. This teaches secure workflow design, responsible AI controls, and auditable decision paths.
 
 ## Setup
 
