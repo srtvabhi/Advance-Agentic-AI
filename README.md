@@ -45,26 +45,8 @@ Each lab is organized as an enterprise-style project with its own folder, local 
 ### Module 9: Production-Grade AI Agent Design Patterns
 
 19. `19-Module 9-Production-Ready-AI-Workflow-Architecture-Lab`
-20. `20-Module 9-Scalable-AI-Orchestration-Pipeline-Lab`
-21. `21-Module 9-Retry-and-Fallback-Strategies-Lab`
 
-### Module 10: AI Guardrails, Safety, and Governance
-
-22. `22-Module 10-Guardrails-Agent-Workflow-Lab`
-23. `23-Module 10-Approval-Checkpoint-AI-Execution-Lab`
-24. `24-Module 10-Unsafe-Prompt-Testing-Lab`
-
-### Module 11: Observability and Monitoring for Agentic AI
-
-25. `25-Module 11-Agent-Workflow-Tracing-Lab`
-26. `26-Module 11-Token-Latency-Monitoring-Lab`
-27. `27-Module 11-RAG-Quality-Evaluation-Lab`
-
-### Module 12: End-to-End Enterprise Agentic AI Capstone
-
-28. `28-Module 12-End-to-End-Enterprise-Agentic-AI-Solution-Lab`
-29. `29-Module 12-Multi-Agent-RAG-Tools-Orchestration-Lab`
-30. `30-Module 12-Deploy-Evaluate-Enterprise-AI-Workflow-Lab`
+Labs 20-30 are kept locally and are ignored from GitHub tracking.
 
 ## Lab Summaries
 
@@ -220,94 +202,6 @@ The objective is to design a production-ready AI workflow architecture. Learners
 
 Flow: requirement -> architecture design -> reliability planning -> cost/latency review -> production readiness summary. This teaches scalability, deployment patterns, dependency management, and operational readiness.
 
-### Lab 20: Scalable Orchestration Pipeline
-
-This lab builds a scalable orchestration pipeline using LangGraph. It simulates event intake, queue-based processing, worker planning, scaling strategy, and final reporting.
-
-The objective is to build a scalable AI orchestration pipeline. Learners see how high-volume enterprise requests should be handled through controlled execution patterns.
-
-Flow: event batch -> route work -> plan worker pool -> scaling decision -> final operations report. This teaches queue-based orchestration, event-driven design, throughput planning, and scalable workflow operations.
-
-### Lab 21: Retry and Fallback Strategies
-
-This lab implements retry and fallback strategies using LangGraph. It simulates a primary service failure, retries within a limit, and then routes to a fallback path if needed.
-
-The objective is to implement retry and fallback strategies. Learners understand how reliable workflows handle dependency failures without retrying forever.
-
-Flow: request -> primary dependency -> success check -> retry if recoverable -> fallback if failed -> final response. This teaches graceful degradation, retry limits, dependency resilience, and recovery design.
-
-### Lab 22: Guardrails Agent Workflow
-
-This lab implements guardrails in a LangGraph AI workflow. It checks a request before execution, blocks unsafe content, reviews generated output, and records audit details.
-
-The objective is to implement guardrails in an AI agent workflow. Learners see where safety controls should be placed before and after model interaction.
-
-Flow: user request -> guardrail classification -> allow/block path -> response review -> audit record. This teaches prompt injection defense, privacy protection, safety routing, and responsible AI auditability.
-
-### Lab 23: Approval Checkpoint Execution
-
-This lab adds approval checkpoints to AI execution using LangGraph. It evaluates the requested action, checks risk, routes sensitive actions to approval, and records the outcome.
-
-The objective is to add approval checkpoints to AI execution. Learners see how human approval protects high-risk enterprise operations.
-
-Flow: role + action -> risk check -> approval needed? -> approval ticket or direct execution -> audit record. This teaches human approval systems, RBAC thinking, controlled execution, and governance evidence.
-
-### Lab 24: Unsafe Prompt Testing
-
-This lab tests AI workflows against unsafe prompt scenarios. It runs a test suite with safe and unsafe prompts, evaluates the decisions, and produces a governance report.
-
-The objective is to test AI agents against unsafe prompt scenarios. Learners see how safety can be tested systematically instead of relying on manual inspection.
-
-Flow: test prompt suite -> safety evaluation -> blocked/allowed counts -> improvement plan -> final report. This teaches prompt injection testing, unsafe request detection, content governance, and safety regression testing.
-
-### Lab 25: Workflow Tracing
-
-This lab uses LangSmith with LangGraph to trace a multi-step AI workflow. It follows an enterprise incident through triage, investigation, resolution messaging, trace notes, and final reporting.
-
-The objective is to trace an AI agent workflow execution. Learners see how observability helps teams understand what happened at each node.
-
-Flow: incident input -> triage -> investigation -> resolution message -> trace note -> final report. This teaches tracing, workflow visibility, debugging, prompt/response monitoring, and operational transparency.
-
-### Lab 26: Token and Latency Monitoring
-
-This lab monitors token usage and latency across an AI workflow. It drafts a response, reviews it, captures telemetry, summarizes metrics, and creates a monitoring report.
-
-The objective is to monitor token usage and latency. Learners understand that production systems must measure cost and performance as well as answer quality.
-
-Flow: business task -> draft response -> review response -> collect telemetry -> monitoring report. This teaches latency tracking, token accounting, cost awareness, and performance optimization.
-
-### Lab 27: RAG Quality Evaluation
-
-This lab evaluates RAG response quality with observability concepts. It retrieves HR policy context, generates an answer, and uses an LLM-as-judge style step to evaluate grounding and completeness.
-
-The objective is to evaluate RAG response quality using observability tools. Learners see that RAG systems need evidence checks, not just fluent answers.
-
-Flow: question -> retrieve policy context -> generate answer -> judge groundedness -> quality report. This teaches RAG evaluation, groundedness, completeness checks, and evidence-based quality review.
-
-### Lab 28: End-to-End Enterprise Solution
-
-This capstone lab builds an end-to-end enterprise agentic AI solution design. It turns a business problem into requirements, architecture, security review, observability plan, governance plan, and readiness summary.
-
-The objective is to build an end-to-end enterprise Agentic AI solution. Learners bring together planning, orchestration, governance, monitoring, and production readiness.
-
-Flow: business problem -> requirements -> architecture -> security/compliance -> observability/governance -> final solution. This teaches complete enterprise solution design rather than isolated agent examples.
-
-### Lab 29: Multi-Agent RAG and Tools Orchestration
-
-This capstone lab combines multi-agent orchestration, RAG, and tools. It retrieves policy context, creates a plan, runs tool simulations such as ticket creation and approval checks, reviews the result, and produces a final answer.
-
-The objective is to implement multi-agent orchestration with RAG and tools. Learners see how retrieved knowledge and controlled actions work together in enterprise workflows.
-
-Flow: user request -> retrieve context -> plan -> execute tools -> review -> final answer. This teaches policy-grounded execution, tool orchestration, review gates, and enterprise workflow automation.
-
-### Lab 30: Deploy and Evaluate Enterprise Workflow
-
-This capstone lab focuses on deployment and evaluation planning for an enterprise AI workflow. It creates a deployment plan, evaluation plan, readiness scorecard, cost/performance plan, and final report.
-
-The objective is to deploy and evaluate an enterprise AI workflow architecture. Learners think like production owners who must run, monitor, measure, and improve the system.
-
-Flow: workflow design -> deployment plan -> evaluation strategy -> readiness scorecard -> cost/performance review -> final report. This teaches operationalization, Azure deployment planning, evaluation, governance, and production readiness.
-
 ## Setup
 
 Create and activate a virtual environment from the repository root:
@@ -355,14 +249,10 @@ cd "13-OpenAI-Agentic-RAG-Lab"
 ..\.venv\Scripts\python.exe main.py
 ```
 
-```bash
-cd "30-Module 12-Deploy-Evaluate-Enterprise-AI-Workflow-Lab"
-..\.venv\Scripts\python.exe main.py
-```
-
 ## Notes
 
 - Do not commit real `.env` files.
 - Use `.env.example` files for sharing configuration templates.
 - `ARCHITECTURE.md` files explain each lab design.
 - `Reference.md` files explain important syntax and code behavior.
+- Labs 20-30 are available only in the local workspace and are ignored from GitHub tracking.

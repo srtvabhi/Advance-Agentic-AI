@@ -4,3 +4,14 @@
 __pycache__/
 *.pyc
 **/vector_store/
+/20-Module 9-Scalable-AI-Orchestration-Pipeline-Lab/
+/21-Module 9-Retry-and-Fallback-Strategies-Lab/
+/22-Module 10-Guardrails-Agent-Workflow-Lab/
+/23-Module 10-Approval-Checkpoint-AI-Execution-Lab/
+/24-Module 10-Unsafe-Prompt-Testing-Lab/
+/25-Module 11-Agent-Workflow-Tracing-Lab/
+/26-Module 11-Token-Latency-Monitoring-Lab/
+/27-Module 11-RAG-Quality-Evaluation-Lab/
+/28-Module 12-End-to-End-Enterprise-Agentic-AI-Solution-Lab/
+/29-Module 12-Multi-Agent-RAG-Tools-Orchestration-Lab/
+/30-Module 12-Deploy-Evaluate-Enterprise-AI-Workflow-Lab/
