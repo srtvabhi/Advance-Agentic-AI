@@ -169,7 +169,7 @@ Finalization nodes produce terminal outcomes such as `RECOMMENDATION_READY`, `AP
 
 ## Useful Test Scenarios
 
-1. Low-value office-supply request should complete without approval unless the model identifies high or critical risk.
+1. Low-value office-supply request with completed sanctions screening and vendor verification should return `RECOMMENDATION_READY`.
 2. High-value confidential-data request should pause for human approval, then finalize based on the grounded policy assessment.
 3. Prompt injection text should route to `SECURITY_REVIEW_REQUIRED`.
 4. Employee approval request should route to `ACCESS_DENIED`.
