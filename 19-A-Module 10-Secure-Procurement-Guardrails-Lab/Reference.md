@@ -127,7 +127,19 @@ graph.add_node(
 
 ## Code Explanation
 
-`main.py` starts the terminal menu and sends one procurement request into the graph.
+`main.py` accepts one natural-language procurement prompt, infers structured values, and sends one procurement request into the graph.
+
+`build_request_from_prompt()` converts learner text into the `ProcurementState` fields used by LangGraph.
+
+`extract_amount()` finds the purchase amount from text such as `USD 55,000`.
+
+`infer_requester_role()` reads role words such as `employee`, `procurement analyst`, `procurement manager`, or `compliance officer`.
+
+`infer_requested_action()` treats approval language as `approve_purchase`; otherwise it defaults to `review_vendor_risk`.
+
+`infer_data_classification()` reads `public`, `internal`, or `confidential` from the prompt.
+
+`extract_vendor_name()` reads simple patterns such as `Vendor name is Contoso Analytics Services`.
 
 `settings.py` prevents accidental global environment usage by loading `.env` from this lab folder.
 
@@ -153,12 +165,12 @@ graph.add_node(
 
 `human_approval_checkpoint()` pauses the workflow and validates the approver role when the graph resumes.
 
-Finalization nodes produce terminal outcomes such as `RECOMMENDATION_READY`, `APPROVED_RECOMMENDATION`, `ACCESS_DENIED`, or `SECURITY_REVIEW_REQUIRED`.
+Finalization nodes produce terminal outcomes such as `RECOMMENDATION_READY`, `APPROVED_RECOMMENDATION`, `REJECTED_BY_POLICY`, `ACCESS_DENIED`, or `SECURITY_REVIEW_REQUIRED`.
 
 ## Useful Test Scenarios
 
-1. Low-value purchase should complete without approval unless the model identifies high or critical risk.
-2. High-value confidential-data purchase should pause for human approval.
-3. Prompt injection should route to `SECURITY_REVIEW_REQUIRED`.
-4. Unauthorized employee approval should route to `ACCESS_DENIED`.
+1. Low-value office-supply request should complete without approval unless the model identifies high or critical risk.
+2. High-value confidential-data request should pause for human approval, then finalize based on the grounded policy assessment.
+3. Prompt injection text should route to `SECURITY_REVIEW_REQUIRED`.
+4. Employee approval request should route to `ACCESS_DENIED`.
 5. Proposal with contact details should redact PII before model assessment.
