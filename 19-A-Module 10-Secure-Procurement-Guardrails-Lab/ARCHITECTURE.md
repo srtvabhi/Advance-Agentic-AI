@@ -2,9 +2,7 @@
 
 ## Objective
 
-This lab replaces the separate guardrails, approval, and unsafe-prompt labs with one stronger business workflow.
-
-The business problem is secure procurement review. A procurement team receives vendor proposals that may contain confidential data, unsafe instructions, unsupported claims, or high-value purchase requests. The workflow must decide whether the request can be finalized, must be blocked, or must pause for human approval.
+The lab focuses on a procurement team that must review vendor proposals safely before making purchase recommendations. A proposal may contain confidential data, unsafe instructions, unsupported claims, or high-value purchase requests. The workflow must decide whether the request can be finalized, must be blocked, or must pause for human approval.
 
 This lab teaches:
 

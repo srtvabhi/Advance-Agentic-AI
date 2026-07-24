@@ -127,6 +127,18 @@ main.py
 |-- workflow.invoke(ticket)
 |-- print_result()
 |
+|-- config/settings.py
+|   |-- load_environment()
+|   |-- get_required_setting()
+|   |-- normalize_endpoint()
+|   |-- create_openai_client()
+|   |-- get_model_name()
+|   |-- get_model_target_configs()
+|   |-- get_embedding_model()
+|
+|-- models/support_models.py
+|   |-- SupportWorkflowState
+|
 |-- graphs/support_workflow_graph.py
 |   |-- build_support_workflow_graph()
 |   |-- route_after_validation()
@@ -136,11 +148,12 @@ main.py
 |   |-- route_after_policy()
 |
 |-- nodes/support_nodes.py
+|   |-- append_trace()
 |   |-- validate_ticket()
 |   |-- protect_sensitive_data()
 |   |-- classify_ticket()
 |   |-- assess_risk()
-|   |-- retrieve_knowledge_node()
+|   |-- retrieve_knowledge_node()  [registered in graph as retrieve_knowledge]
 |   |-- generate_response()
 |   |-- policy_check()
 |   |-- finalize_auto_response()

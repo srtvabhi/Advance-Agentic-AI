@@ -1,20 +1,12 @@
 # Lab 19-A Reference
 
-## Virtual Environment
+## Setup
 
-From the repository root:
-
-```bash
+```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate
-pip install -r "19-A-Module 10-Secure-Procurement-Guardrails-Lab\requirements.txt"
-```
-
-Run the lab:
-
-```bash
-cd "19-A-Module 10-Secure-Procurement-Guardrails-Lab"
-..\.venv\Scripts\python.exe main.py
+python -m pip install -r requirements.txt
+python main.py
 ```
 
 ## Environment File
