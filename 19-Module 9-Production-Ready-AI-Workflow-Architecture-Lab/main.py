@@ -18,10 +18,16 @@ if hasattr(sys.stdout, "reconfigure"):
 
 
 def build_ticket_from_input() -> dict:
-    print("Press Enter to use the default low-risk billing ticket.\n")
-    subject = input(f"Subject [{DEFAULT_TICKET['subject']}]: ").strip() or DEFAULT_TICKET["subject"]
-    body = input(f"Body [{DEFAULT_TICKET['body']}]: ").strip() or DEFAULT_TICKET["body"]
-    channel = input(f"Channel [{DEFAULT_TICKET['channel']}]: ").strip() or DEFAULT_TICKET["channel"]
+    print("Press Enter to use the default low-risk billing ticket.")
+    print("Type EMPTY for subject or body when you want to test validation failure.\n")
+
+    subject_input = input(f"Subject [{DEFAULT_TICKET['subject']}]: ").strip()
+    body_input = input(f"Body [{DEFAULT_TICKET['body']}]: ").strip()
+    channel_input = input(f"Channel [{DEFAULT_TICKET['channel']}]: ").strip()
+
+    subject = "" if subject_input.upper() == "EMPTY" else subject_input or DEFAULT_TICKET["subject"]
+    body = "" if body_input.upper() == "EMPTY" else body_input or DEFAULT_TICKET["body"]
+    channel = channel_input or DEFAULT_TICKET["channel"]
 
     return {
         "ticket_id": f"T-{uuid.uuid4().hex[:6].upper()}",

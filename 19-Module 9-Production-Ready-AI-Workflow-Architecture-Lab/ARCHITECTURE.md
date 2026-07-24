@@ -180,18 +180,18 @@ main.py
 
 Use these scenarios to test each lab objective.
 
-| Objective | Subject | Body | Expected Behavior |
-|---|---|---|---|
-| Ticket validation | Leave subject blank | Leave body blank | `validate_ticket()` fails and the workflow ends with `FAILED`. |
-| PII detection and redaction | `Critical production outage` | `Our production service is unavailable. Contact me at customer@example.com or +1 202 555 0199. This is affecting every user.` | `protect_sensitive_data()` detects email/phone, redacts them, and `assess_risk()` routes to human review because PII is present. |
-| Primary model retry | `Possible duplicate charge` | `I see two subscription charges for the same month. Could you check what happened?` | With a valid primary model, the workflow calls the primary model. To see retry behavior, temporarily use an invalid primary deployment or key. |
-| Fallback model activation | `Cannot access my account` | `I am locked out and need help resetting my password.` | Keep fallback settings valid, then temporarily set the primary deployment or key incorrectly. Terminal output should show `Fallback activated: True`. |
-| Approved knowledge retrieval | `Possible duplicate charge` | `I see two subscription charges for the same month. Could you check what happened?` | `retrieve_knowledge_node()` retrieves billing knowledge such as `KB-BILLING-001` and `KB-REFUND-001`. |
-| Safe response generation | `Cannot access my account` | `I am locked out and need help resetting my password.` | `generate_response()` should produce a safe account-access response based on approved knowledge and should not ask for passwords or one-time codes. |
-| Policy check | `Login code issue` | `My one-time code is not working and I need access to my account.` | `policy_check()` checks the generated draft for unsafe wording such as asking for passwords or authentication codes. |
-| Auto-response routing | `Possible duplicate charge` | `I see two subscription charges for the same month. Could you check what happened?` | Low-risk, no-PII ticket should route to `finalize_auto_response()` when policy passes. |
-| Human-review routing | `Critical production outage` | `Our production service is unavailable for all customers and executives are asking for a confirmed restoration time.` | High or critical urgency should route to `prepare_human_review()`. |
-| Reliability telemetry and trace output | Any valid scenario above | Use the final terminal output | `print_result()` shows model target, model used, retries, fallback status, model failures, and trace events for each node. |
+| Objective | Subject | Body | Channel | Expected Behavior |
+|---|---|---|---|---|
+| Ticket validation | Type `EMPTY` | Type `EMPTY` | `web` | `validate_ticket()` fails and the workflow ends with `FAILED`. Pressing Enter uses the default ticket, so use `EMPTY` to force a blank value. |
+| PII detection and redaction | `Critical production outage` | `Our production service is unavailable. Contact me at customer@example.com or +1 202 555 0199. This is affecting every user.` | `email` | `protect_sensitive_data()` detects email/phone, redacts them, and `assess_risk()` routes to human review because PII is present. |
+| Primary model retry | `Possible duplicate charge` | `I see two subscription charges for the same month. Could you check what happened?` | `web` | With a valid primary model, the workflow calls the primary model. To see retry behavior, temporarily use an invalid primary deployment or key. |
+| Fallback model activation | `Cannot access my account` | `I am locked out and need help resetting my password.` | `chat` | Keep fallback settings valid, then temporarily set the primary deployment or key incorrectly. Terminal output should show `Fallback activated: True`. |
+| Approved knowledge retrieval | `Possible duplicate charge` | `I see two subscription charges for the same month. Could you check what happened?` | `web` | `retrieve_knowledge_node()` retrieves billing knowledge such as `KB-BILLING-001` and `KB-REFUND-001`. |
+| Safe response generation | `Cannot access my account` | `I am locked out and need help resetting my password.` | `chat` | `generate_response()` should produce a safe account-access response based on approved knowledge and should not ask for passwords or one-time codes. |
+| Policy check | `Login code issue` | `My one-time code is not working and I need access to my account.` | `chat` | `policy_check()` checks the generated draft for unsafe wording such as asking for passwords or authentication codes. |
+| Auto-response routing | `Possible duplicate charge` | `I see two subscription charges for the same month. Could you check what happened?` | `web` | Low-risk, no-PII ticket should route to `finalize_auto_response()` when policy passes. |
+| Human-review routing | `Critical production outage` | `Our production service is unavailable for all customers and executives are asking for a confirmed restoration time.` | `phone` | High or critical urgency should route to `prepare_human_review()`. |
+| Reliability telemetry and trace output | Any valid scenario above | Use the final terminal output | `web` | `print_result()` shows model target, model used, retries, fallback status, model failures, and trace events for each node. |
 
 ## How To Run
 
