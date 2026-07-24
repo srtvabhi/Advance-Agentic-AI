@@ -4,7 +4,7 @@
 
 Design and execute a production-ready AI workflow pattern using LangGraph.
 
-This lab no longer asks the model to merely describe an architecture. It runs a realistic customer-support ticket through production-style controls:
+Run a realistic customer-support ticket through production-style controls:
 
 - Ticket validation
 - PII detection and redaction
