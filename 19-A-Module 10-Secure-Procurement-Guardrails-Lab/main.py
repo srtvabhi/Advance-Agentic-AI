@@ -9,7 +9,9 @@ from graphs.procurement_graph import build_procurement_graph
 from models.procurement_models import ProcurementState
 
 
-# Extract a purchase amount from a natural-language procurement prompt.
+# Business rule:
+# Every procurement request must have a purchase amount because approval routing
+# depends on thresholds such as USD 25,000 and USD 100,000.
 def extract_amount(prompt: str) -> float:
     match = re.search(r"(?:usd|\$)?\s*([0-9][0-9,]*(?:\.\d+)?)", prompt, flags=re.IGNORECASE)
     if not match:
@@ -17,7 +19,9 @@ def extract_amount(prompt: str) -> float:
     return float(match.group(1).replace(",", ""))
 
 
-# Infer requester role from the prompt. Defaults to a procurement analyst.
+# Business rule:
+# The requester role controls what action the user is allowed to perform.
+# If no role is mentioned, the lab treats the user as a procurement analyst.
 def infer_requester_role(prompt: str) -> str:
     prompt_lower = prompt.lower()
     if "compliance officer" in prompt_lower:
@@ -29,7 +33,9 @@ def infer_requester_role(prompt: str) -> str:
     return "procurement_analyst"
 
 
-# Infer requested action from the prompt. Approval language is treated as approve_purchase.
+# Business rule:
+# Reviewing vendor risk is allowed for procurement users, but approving a
+# purchase is a protected action and must go through RBAC checks.
 def infer_requested_action(prompt: str) -> str:
     prompt_lower = prompt.lower()
     if "approve" in prompt_lower and "purchase" in prompt_lower:
@@ -39,7 +45,9 @@ def infer_requested_action(prompt: str) -> str:
     return "review_vendor_risk"
 
 
-# Infer data classification from simple keywords in the prompt.
+# Business rule:
+# Data classification changes the risk posture. Confidential requests need
+# stronger review than public or internal requests.
 def infer_data_classification(prompt: str) -> str:
     prompt_lower = prompt.lower()
     explicit_match = re.search(
@@ -56,7 +64,9 @@ def infer_data_classification(prompt: str) -> str:
     return "internal"
 
 
-# Extract a vendor name from common prompt patterns.
+# Business rule:
+# Vendor name is mandatory because the workflow must check vendor risk,
+# prohibited-vendor policy, and produce an auditable recommendation.
 def extract_vendor_name(prompt: str) -> str:
     patterns = [
         r"vendor(?: name)?(?: is|:)\s*([^.\n]+)",
@@ -70,7 +80,9 @@ def extract_vendor_name(prompt: str) -> str:
     return "Vendor From User Prompt"
 
 
-# Convert one learner prompt into the structured state required by LangGraph.
+# Business rule:
+# The learner enters one natural-language request, but the enterprise workflow
+# needs structured fields so each guardrail and policy node can make decisions.
 def build_request_from_prompt(prompt: str) -> ProcurementState:
     return {
         "request_id": "REQ-CUSTOM-" + uuid.uuid4().hex[:8],
@@ -86,7 +98,9 @@ def build_request_from_prompt(prompt: str) -> ProcurementState:
     }
 
 
-# Print the final status, recommendation, and audit trail.
+# Business rule:
+# Every procurement review must end with a clear final status, recommendation,
+# and audit trail so the decision is explainable and traceable.
 def print_result(result: dict) -> None:
     print("\nFinal status:", result.get("final_status"))
     print("\nFinal recommendation:")
@@ -97,7 +111,9 @@ def print_result(result: dict) -> None:
         print(f"- {event['node']}: {event['decision']}")
 
 
-# Print the structured values inferred from the learner prompt.
+# Business rule:
+# Show inferred fields before running the workflow so learners can verify that
+# the request was interpreted correctly.
 def print_inferred_request(request: ProcurementState) -> None:
     print("\nInferred request:")
     print("Requester role:", request["requester_role"])
@@ -107,7 +123,9 @@ def print_inferred_request(request: ProcurementState) -> None:
     print("Data classification:", request["data_classification"])
 
 
-# Run one request through the LangGraph workflow and resume if human approval is needed.
+# Business rule:
+# The graph runs all guardrails first. If the purchase amount or risk requires
+# human approval, the workflow pauses and resumes only after an approver responds.
 def run_request(request: ProcurementState) -> None:
     workflow = build_procurement_graph()
     config = {"configurable": {"thread_id": request["request_id"]}}
@@ -138,7 +156,9 @@ def run_request(request: ProcurementState) -> None:
     print_result(result)
 
 
-# Main terminal loop so participants can test multiple requests without restarting Python.
+# Business rule:
+# Participants should be able to test multiple procurement scenarios in one
+# session and exit only when they type quit or exit.
 def main() -> None:
     load_environment()
     print("Lab 19-A: Secure Procurement Guardrails and Human Approval Workflow")
