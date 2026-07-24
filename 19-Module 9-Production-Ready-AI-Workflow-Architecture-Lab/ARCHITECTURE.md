@@ -2,34 +2,90 @@
 
 ## Objective
 
-Design a production-ready AI workflow architecture using LangGraph.
+Design and execute a production-ready AI workflow pattern using LangGraph.
+
+This lab no longer asks the model to merely describe an architecture. It runs a realistic customer-support ticket through production-style controls:
+
+- Ticket validation
+- PII detection and redaction
+- Primary model retry
+- Fallback model activation
+- Approved knowledge retrieval
+- Safe response generation
+- Policy check
+- Auto-response or human-review routing
+- Reliability telemetry and trace output
 
 ## Problem Statement
 
-Design an enterprise customer support AI assistant that handles high ticket volume, calls CRM tools, and needs production reliability.
+The customer support team receives high ticket volume. Agents manually triage cases, sensitive customer data may appear in tickets, CRM updates are inconsistent, and risky tickets need human review.
 
 ## Architecture Flow
 
 ```text
-Problem Statement
+Customer Support Ticket
    |
    v
-Intake Node
+validate_ticket
+   |
+   +-- invalid --> finalize_failure
    |
    v
-Architecture Node
+protect_sensitive_data
    |
    v
-Deployment Pattern Node
+classify_ticket
+   |
+   +-- primary model retry attempts
+   +-- fallback model if primary fails
+   +-- all model targets fail --> prepare_human_review
    |
    v
-Reliability Engineering Node
+assess_risk
+   |
+   +-- high risk / low confidence / PII --> prepare_human_review
    |
    v
-Cost And Latency Optimization Node
+retrieve_knowledge
    |
    v
-Final Summary Node
+generate_response
+   |
+   +-- primary model retry attempts
+   +-- fallback model if primary fails
+   +-- all model targets fail --> prepare_human_review
+   |
+   v
+policy_check
+   |
+   +-- passed --> finalize_auto_response
+   |
+   +-- failed --> prepare_human_review
+```
+
+## Retry And Fallback Flow
+
+```text
+Model request
+   |
+   +-- Primary attempt 1
+   |      +-- transient failure
+   +-- Primary attempt 2
+   |      +-- transient failure
+   +-- Primary attempt 3
+   |      +-- failure
+   |
+   +-- Activate fallback
+   |
+   +-- Fallback attempt 1
+   |      +-- transient failure
+   +-- Fallback attempt 2
+   |      +-- success
+   |
+   +-- Continue LangGraph workflow
+
+If both model targets fail:
+   +-- Route ticket to HUMAN_REVIEW_REQUIRED
 ```
 
 ## Folder Structure
@@ -42,72 +98,102 @@ Final Summary Node
 ├── main.py
 ├── Reference.md
 ├── requirements.txt
-├── config
+├── config/
 │   ├── __init__.py
 │   └── settings.py
-├── graphs
+├── graphs/
 │   ├── __init__.py
-│   └── architecture_graph.py
-├── models
+│   └── support_workflow_graph.py
+├── models/
 │   ├── __init__.py
-│   └── architecture_models.py
-├── nodes
+│   └── support_models.py
+├── nodes/
 │   ├── __init__.py
-│   └── architecture_nodes.py
-└── services
+│   └── support_nodes.py
+└── services/
     ├── __init__.py
-    └── llm_service.py
+    ├── knowledge_service.py
+    ├── model_gateway.py
+    ├── policy_service.py
+    └── security_service.py
 ```
 
 ## Tree-Based Call Architecture
 
-This view explains which file calls which function, starting from `main.py`.
-
 ```text
 main.py
-|-- imports: build_architecture_graph from graphs.architecture_graph
-|-- function: main()
-|-- graphs/architecture_graph.py
-|   |-- build_architecture_graph()
-|-- services/llm_service.py
-|   |-- ask_model()
-|-- nodes/architecture_nodes.py
-|   |-- intake_node()
-|   |-- architecture_node()
-|   |-- deployment_node()
-|   |-- reliability_node()
-|   |-- cost_latency_node()
-|   |-- summary_node()
+|-- build_ticket_from_input()
+|-- build_support_workflow_graph()
+|-- workflow.invoke(ticket)
+|-- print_result()
+|
+|-- graphs/support_workflow_graph.py
+|   |-- build_support_workflow_graph()
+|   |-- route_after_validation()
+|   |-- route_after_classification()
+|   |-- route_after_risk()
+|   |-- route_after_generation()
+|   |-- route_after_policy()
+|
+|-- nodes/support_nodes.py
+|   |-- validate_ticket()
+|   |-- protect_sensitive_data()
+|   |-- classify_ticket()
+|   |-- assess_risk()
+|   |-- retrieve_knowledge_node()
+|   |-- generate_response()
+|   |-- policy_check()
+|   |-- finalize_auto_response()
+|   |-- prepare_human_review()
+|   |-- finalize_failure()
+|
+|-- services/model_gateway.py
+|   |-- call_model_with_fallback()
+|   |-- call_single_target_with_retry()
+|   |-- is_retryable_exception()
+|   |-- calculate_backoff()
+|
+|-- services/security_service.py
+|   |-- find_pii()
+|   |-- redact_pii()
+|
+|-- services/knowledge_service.py
+|   |-- retrieve_knowledge()
+|
+|-- services/policy_service.py
+|   |-- check_response_policy()
 ```
 
 ## File Responsibilities
 
-- `.env`: Supports setup, configuration, reference, or documentation for the lab.
-- `.env.example`: Supports setup, configuration, reference, or documentation for the lab.
-- `ARCHITECTURE.md`: Supports setup, configuration, reference, or documentation for the lab.
-- `config/__init__.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
-- `config/settings.py`: Loads this lab local .env file and creates model, kernel, client, or tracing configuration.
-- `graphs/__init__.py`: Builds the orchestration flow and connects agents or LangGraph nodes.
-- `graphs/architecture_graph.py`: Builds the orchestration flow and connects agents or LangGraph nodes.
-- `main.py`: Entry point that accepts input, runs the workflow, and prints the result.
-- `models/__init__.py`: Defines data models or TypedDict state shared across the workflow.
-- `models/architecture_models.py`: Defines data models or TypedDict state shared across the workflow.
-- `nodes/__init__.py`: Contains workflow node functions that update state step by step.
-- `nodes/architecture_nodes.py`: Contains workflow node functions that update state step by step.
-- `Reference.md`: Supports setup, configuration, reference, or documentation for the lab.
-- `requirements.txt`: Supports setup, configuration, reference, or documentation for the lab.
-- `services/__init__.py`: Contains reusable business logic, retrieval, telemetry, output, or external-service simulation.
-- `services/llm_service.py`: Wraps Azure OpenAI model calls used by workflow nodes or agents.
+- `main.py`: Accepts a support ticket, runs the workflow, and prints final status, response, reliability telemetry, and trace.
+- `config/settings.py`: Loads the local `.env` file and reads primary/fallback Azure OpenAI settings.
+- `graphs/support_workflow_graph.py`: Builds the LangGraph workflow and conditional routes.
+- `models/support_models.py`: Defines the shared `SupportWorkflowState`.
+- `nodes/support_nodes.py`: Contains workflow steps that validate, classify, retrieve, generate, check, and finalize.
+- `services/model_gateway.py`: Implements explicit retry, exponential backoff, fallback activation, and all-target failure handling.
+- `services/security_service.py`: Detects and redacts simple PII patterns.
+- `services/knowledge_service.py`: Retrieves approved support knowledge.
+- `services/policy_service.py`: Blocks unsafe generated responses before auto-response.
 
 ## Test Prompts
 
-Use these prompts to test the lab objective:
+Use these sample ticket bodies:
 
-1. Design a production-ready workflow for an enterprise HR helpdesk with policy lookup, ticket creation, and manager escalation.
-2. Design a scalable architecture for insurance claim triage with audit logging and fallback handling.
-3. Create a production architecture for a finance invoice review process that needs approvals and monitoring.
-4. Design an enterprise customer support workflow with knowledge lookup, ticket creation, and operational reporting.
-5. Create a production workflow architecture for IT incident triage across multiple regions.
+1. Subject: `Possible duplicate charge`  
+   Body: `I see two subscription charges for the same month. Could you check what happened?`
+
+2. Subject: `Cannot access my account`  
+   Body: `I am locked out and need help resetting my password.`
+
+3. Subject: `Critical production outage`  
+   Body: `Our production service is unavailable. Contact me at customer@example.com. This is affecting every user.`
+
+4. Subject: `Refund request`  
+   Body: `I was charged incorrectly and need a guaranteed refund today.`
+
+5. Subject: `Login code issue`  
+   Body: `My one-time code is not working and I need access to my account.`
 
 ## How To Run
 
