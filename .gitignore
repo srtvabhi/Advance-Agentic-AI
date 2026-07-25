@@ -4,6 +4,7 @@
 __pycache__/
 *.pyc
 **/vector_store/
+/backup-lab/
 /20-Module 9-Scalable-AI-Orchestration-Pipeline-Lab/
 /21-Module 9-Retry-and-Fallback-Strategies-Lab/
 /22-Module 10-Guardrails-Agent-Workflow-Lab/
