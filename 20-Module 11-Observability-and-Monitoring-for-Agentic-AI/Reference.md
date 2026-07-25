@@ -1,6 +1,6 @@
 # Lab 20 Reference
 
-This reference explains the LangSmith observability code added to the Agentic RAG workflow.
+This reference explains the LangGraph, Azure OpenAI, and LangSmith observability code used in Lab 20.
 
 ## Setup
 
@@ -45,22 +45,49 @@ def configure_langsmith() -> None:
     os.environ.setdefault("LANGSMITH_PROJECT", "lab20_abhishek")
 ```
 
-This function ensures LangSmith tracing is enabled before the RAG workflow runs.
+This function enables tracing before LangGraph runs.
 
-## Traceable Syntax
+## LangChain Azure OpenAI Model
 
-LangSmith tracing uses the `@traceable` decorator.
+Function:
 
 ```python
-from langsmith import traceable
-
-
-@traceable(name="domain_router_agent", run_type="llm")
-def select_data_domain(question, run_config):
-    ...
+def create_chat_model() -> ChatOpenAI:
+    return ChatOpenAI(
+        model=get_required_setting("AZURE_OPENAI_DEPLOYMENT"),
+        base_url=get_required_setting("AZURE_OPENAI_ENDPOINT"),
+        api_key=get_required_setting("AZURE_OPENAI_API_KEY"),
+    )
 ```
 
-The decorator creates a span in LangSmith every time the function runs.
+This is the important change for token tracking. The lab uses LangChain `ChatOpenAI` with the Azure OpenAI `/openai/v1` endpoint. LangSmith can show token usage on these LLM spans.
+
+## LangGraph Syntax
+
+File:
+
+```text
+graph/rag_observability_graph.py
+```
+
+Graph creation:
+
+```python
+graph = StateGraph(RAGObservabilityState)
+graph.add_node("domain_router_agent", domain_router_node)
+graph.add_node("retrieval_planner_agent", retrieval_planner_node)
+graph.add_edge(START, "build_or_reuse_vector_indexes")
+graph.add_edge("domain_router_agent", "retrieval_planner_agent")
+workflow = graph.compile()
+```
+
+Each node receives the shared state and returns updates.
+
+```python
+def domain_router_node(state: RAGObservabilityState) -> dict:
+    selected_domain = select_data_domain(state["question"])
+    return {"selected_domain": selected_domain}
+```
 
 ## Main Workflow Trace
 
@@ -75,19 +102,15 @@ Function:
 ```python
 @traceable(name="lab20_agentic_rag_observability_workflow", run_type="chain")
 def run_agentic_rag(question: str) -> str:
-    ...
+    configure_langsmith()
+    workflow = build_rag_observability_graph()
+    result = workflow.invoke({"question": question, "metrics": []})
+    return result["final_output"]
 ```
 
-This is the parent trace. Inside it, learners should see child spans for:
+This creates the parent LangSmith trace and invokes the LangGraph workflow.
 
-- `build_or_reuse_vector_indexes`
-- `domain_router_agent`
-- `retrieval_planner_agent`
-- `separate_vector_store_retrieval`
-- `grounded_answer_agent`
-- `rag_quality_evaluation`
-
-## Agent Tracing
+## Agent Helper Functions
 
 File:
 
@@ -95,50 +118,50 @@ File:
 lab_agents/rag_agent.py
 ```
 
-The agent functions are traced separately:
+The helper functions are:
 
 ```python
-@traceable(name="domain_router_agent", run_type="llm")
-def select_data_domain(...):
-    ...
+select_data_domain()
+create_retrieval_plan()
+generate_grounded_answer()
+```
+
+Each helper calls:
+
+```python
+ChatOpenAI.invoke()
+```
+
+Because these are LangChain model calls, LangSmith can show automatic LLM usage metadata, including token usage when returned by the provider.
+
+## Traceable Syntax
+
+```python
+from langsmith import traceable
 
 
-@traceable(name="retrieval_planner_agent", run_type="llm")
-def create_retrieval_plan(...):
-    ...
-
-
-@traceable(name="grounded_answer_agent", run_type="llm")
-def generate_grounded_answer(...):
+@traceable(name="domain_router_agent", run_type="chain")
+def select_data_domain(question: str) -> str:
     ...
 ```
 
-This allows learners to see each agentic decision step in LangSmith.
+The decorator creates a named span in LangSmith. The nested `ChatOpenAI` call creates an LLM span inside it.
 
 ## Vector Retrieval Tracing
-
-File:
-
-```text
-services/rag_pipeline.py
-```
 
 Function:
 
 ```python
 @traceable(name="separate_vector_store_retrieval", run_type="retriever")
-def traced_vector_retrieval(openai_client, question, selected_domain, top_k):
+def traced_vector_retrieval(question, selected_domain, top_k, openai_client):
     return semantic_search(openai_client, question, category_filter=selected_domain, top_k=top_k)
 ```
 
-The trace input is cleaned so LangSmith shows:
+The retriever span shows:
 
 - question
 - selected domain
 - top_k
-
-The trace output shows:
-
 - source
 - page
 - category
@@ -146,13 +169,9 @@ The trace output shows:
 
 ## Latency Monitoring
 
-File:
+LangSmith automatically shows span duration in the trace waterfall.
 
-```text
-services/observability_service.py
-```
-
-Function:
+The lab also prints local timing with:
 
 ```python
 def timed_step(step_name: str, action):
@@ -162,22 +181,30 @@ def timed_step(step_name: str, action):
     return result, {"step": step_name, "latency_ms": latency_ms}
 ```
 
-This measures each step locally and prints a terminal summary.
-
 ## Token Monitoring
 
-Function:
+There are two token views:
+
+| Token View | Where To See It | Meaning |
+|---|---|---|
+| Automatic LLM token usage | LangSmith nested `ChatOpenAI` LLM spans | Provider/model token metadata captured by LangSmith. |
+| Estimated text tokens | `token_usage_estimation` span | Simple learner-friendly estimate for question, retrieved context, plan, and final answer. |
+
+The estimated span uses:
 
 ```python
-def estimate_tokens(text: str) -> int:
-    return max(1, len(text) // 4)
+@traceable(name="token_usage_estimation", run_type="chain")
+def estimate_rag_token_usage(question, retrieval_plan, retrieved_context, final_answer):
+    return {
+        "question": estimate_tokens(question),
+        "retrieval_plan": estimate_tokens(retrieval_plan),
+        "retrieved_context": estimate_tokens(retrieved_context),
+        "final_answer": estimate_tokens(final_answer),
+        "total_estimated_tokens": ...,
+    }
 ```
 
-This is an estimated token count for teaching. It helps learners compare question size, retrieved context size, plan size, and answer size.
-
 ## RAG Quality Evaluation
-
-Function:
 
 ```python
 @traceable(name="rag_quality_evaluation", run_type="chain")
@@ -193,11 +220,9 @@ This produces:
 - `overall_score`
 - `passed`
 
-The goal is to teach how RAG responses can be evaluated after generation.
-
 ## What To Check In LangSmith
 
-After running the lab, open project:
+Open project:
 
 ```text
 lab20_abhishek
@@ -205,14 +230,13 @@ lab20_abhishek
 
 Check:
 
-1. Parent trace name: `lab20_agentic_rag_observability_workflow`
-2. Domain selected by `domain_router_agent`
-3. Retrieval plan generated by `retrieval_planner_agent`
-4. Vector store evidence returned by `separate_vector_store_retrieval`
-5. Final answer generated by `grounded_answer_agent`
-6. Evaluation result from `rag_quality_evaluation`
-7. Latency for each span
-8. Inputs and outputs for each agent step
+1. Parent trace: `lab20_agentic_rag_observability_workflow`
+2. LangGraph node spans such as `domain_router_agent`, `retrieval_planner_agent`, and `grounded_answer_agent`
+3. Nested `ChatOpenAI` spans for automatic token usage
+4. Retriever span: `separate_vector_store_retrieval`
+5. Estimated text-token span: `token_usage_estimation`
+6. Evaluation span: `rag_quality_evaluation`
+7. Span durations in the waterfall view
 
 ## Useful Prompts
 

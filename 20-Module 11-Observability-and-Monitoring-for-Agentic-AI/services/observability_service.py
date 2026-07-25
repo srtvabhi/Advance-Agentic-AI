@@ -20,12 +20,34 @@ def timed_step(step_name: str, action: Callable[[], T]) -> tuple[T, dict[str, An
 
 
 # Observability rule:
-# OpenAI Agents SDK does not expose token usage consistently for every wrapped
-# step, so this lab shows a simple estimated-token metric for teaching.
+# LangSmith captures provider token usage on LangChain ChatOpenAI spans.
+# This helper estimates token size for non-LLM text sections such as retrieved context.
 def estimate_tokens(text: str) -> int:
     if not text:
         return 0
     return max(1, len(text) // 4)
+
+
+# Observability rule:
+# Create a dedicated LangSmith span for token monitoring so learners can click
+# this run and inspect token estimates as structured output.
+@traceable(name="token_usage_estimation", run_type="chain")
+def estimate_rag_token_usage(
+    question: str,
+    retrieval_plan: str,
+    retrieved_context: str,
+    final_answer: str,
+) -> dict[str, int]:
+    return {
+        "question": estimate_tokens(question),
+        "retrieval_plan": estimate_tokens(retrieval_plan),
+        "retrieved_context": estimate_tokens(retrieved_context),
+        "final_answer": estimate_tokens(final_answer),
+        "total_estimated_tokens": estimate_tokens(question)
+        + estimate_tokens(retrieval_plan)
+        + estimate_tokens(retrieved_context)
+        + estimate_tokens(final_answer),
+    }
 
 
 # Observability rule:

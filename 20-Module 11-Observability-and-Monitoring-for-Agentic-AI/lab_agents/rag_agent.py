@@ -1,63 +1,73 @@
-from typing import Literal
-
-from agents import Agent, RunConfig, Runner
 from langsmith import traceable
-from pydantic import BaseModel
 
-from config.settings import get_chat_model
-
-
-class DomainSelection(BaseModel):
-    domain: Literal["HR", "Sales", "Marketing", "All"]
+from config.settings import create_chat_model
 
 
+VALID_DOMAINS = {"HR", "Sales", "Marketing", "All"}
+
+
+# LangGraph node helper:
+# Use a LangChain chat model so LangSmith can automatically capture LLM span
+# metadata such as latency and token usage.
+def invoke_llm(system_prompt: str, user_prompt: str) -> str:
+    llm = create_chat_model()
+    response = llm.invoke(
+        [
+            ("system", system_prompt),
+            ("user", user_prompt),
+        ]
+    )
+    return str(response.content)
+
+
+# Agentic RAG step:
+# Decide which enterprise knowledge domain should be searched before retrieval.
 @traceable(
     name="domain_router_agent",
-    run_type="llm",
+    run_type="chain",
     process_inputs=lambda inputs: {"question": inputs["question"]},
 )
-def select_data_domain(question: str, run_config: RunConfig) -> str:
-    agent = Agent(
-        name="Enterprise Domain Router",
-        instructions=(
-            "Route each business question to exactly one enterprise data domain. "
-            "Use HR for employee policy, travel, approval, reimbursement, and people questions. "
-            "Use Sales for revenue, pipeline, region, product sales, win rate, and deal risks. "
-            "Use Marketing for campaigns, audience, messaging, demand generation, and adoption. "
-            "Use All only when the question clearly needs multiple departments."
-        ),
-        model=get_chat_model(),
-        output_type=DomainSelection,
+def select_data_domain(question: str) -> str:
+    system_prompt = (
+        "Route each business question to exactly one enterprise data domain.\n"
+        "Valid domains: HR, Sales, Marketing, All.\n"
+        "Use HR for employee policy, travel, approval, reimbursement, and people questions.\n"
+        "Use Sales for revenue, pipeline, region, product sales, win rate, and deal risks.\n"
+        "Use Marketing for campaigns, audience, messaging, demand generation, and adoption.\n"
+        "Use All only when the question clearly needs multiple departments.\n"
+        "Return only the domain name and no extra text."
     )
-    result = Runner.run_sync(agent, question, run_config=run_config, max_turns=1)
-    return result.final_output.domain
+    selected = invoke_llm(system_prompt, question).strip()
+    for domain in VALID_DOMAINS:
+        if domain.lower() == selected.lower():
+            return domain
+    return "All"
 
 
+# Agentic RAG step:
+# Create a short retrieval plan that explains what evidence should be searched.
 @traceable(
     name="retrieval_planner_agent",
-    run_type="llm",
+    run_type="chain",
     process_inputs=lambda inputs: {
         "question": inputs["question"],
         "selected_domain": inputs["selected_domain"],
     },
 )
-def create_retrieval_plan(question: str, selected_domain: str, run_config: RunConfig) -> str:
-    agent = Agent(
-        name="Enterprise Retrieval Planner",
-        instructions=(
-            "Create a concise three-bullet retrieval plan for answering an enterprise question. "
-            "Explain why the selected HR, Sales, Marketing, or All domain is useful."
-        ),
-        model=get_chat_model(),
+def create_retrieval_plan(question: str, selected_domain: str) -> str:
+    system_prompt = (
+        "Create a concise three-bullet retrieval plan for answering an enterprise question. "
+        "Explain why the selected HR, Sales, Marketing, or All domain is useful."
     )
-    prompt = f"Question: {question}\nSelected data domain: {selected_domain}"
-    result = Runner.run_sync(agent, prompt, run_config=run_config, max_turns=1)
-    return str(result.final_output)
+    user_prompt = f"Question: {question}\nSelected data domain: {selected_domain}"
+    return invoke_llm(system_prompt, user_prompt)
 
 
+# Agentic RAG step:
+# Generate the final answer using only retrieved enterprise context.
 @traceable(
     name="grounded_answer_agent",
-    run_type="llm",
+    run_type="chain",
     process_inputs=lambda inputs: {
         "question": inputs["question"],
         "selected_domain": inputs["selected_domain"],
@@ -70,24 +80,18 @@ def generate_grounded_answer(
     selected_domain: str,
     plan: str,
     retrieved_chunks,
-    run_config: RunConfig,
 ) -> str:
     context = "\n\n".join(
         f"Source: {chunk.citation()}\nContent: {chunk.text}"
         for chunk in retrieved_chunks
     )
-    agent = Agent(
-        name="Enterprise RAG Answer Agent",
-        instructions=(
-            "Answer only from the retrieved enterprise context. If required context is missing, "
-            "state what is missing. Pay close attention to threshold words such as over, under, "
-            "between, before, and after. Include short citations and identify the data domain used."
-        ),
-        model=get_chat_model(),
+    system_prompt = (
+        "Answer only from the retrieved enterprise context. If required context is missing, "
+        "state what is missing. Pay close attention to threshold words such as over, under, "
+        "between, before, and after. Include short citations and identify the data domain used."
     )
-    prompt = (
+    user_prompt = (
         f"Question:\n{question}\n\nSelected data domain:\n{selected_domain}\n\n"
         f"Retrieval plan:\n{plan}\n\nRetrieved context:\n{context}\n\nAnswer:"
     )
-    result = Runner.run_sync(agent, prompt, run_config=run_config, max_turns=1)
-    return str(result.final_output)
+    return invoke_llm(system_prompt, user_prompt)
