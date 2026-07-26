@@ -18,7 +18,13 @@ MARKETING_VECTOR_STORE_DIR = VECTOR_STORE_DIR / "marketing_knowledge"
 
 
 def load_environment() -> None:
-    load_dotenv(BASE_DIR / ".env", override=True)
+    env_file = BASE_DIR / ".env"
+    if not env_file.exists():
+        raise FileNotFoundError(
+            f"Missing local environment file: {env_file}. "
+            "Create this file from .env.example so the lab does not use global environment variables."
+        )
+    load_dotenv(env_file, override=True)
 
 
 def configure_langsmith() -> None:
